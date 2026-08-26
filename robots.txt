@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://itblogtools.github.io/sitemap.xml
