@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>내 PC 사양으로 이 게임 돌아갈까?</title>
+<style>
+  :root{
+    --bg:#0d1117;
+    --panel:#151b23;
+    --line:#2b3440;
+    --text:#e6edf3;
+    --sub:#7d8590;
+    --accent:#39ff88;
+    --accent-dim:#1e7a4c;
+    --bad:#ff5c5c;
+    --amber:#ffb454;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;}
+  label{display:block;font-size:12px;color:var(--sub);margin-bottom:6px;margin-top:14px;}
+  label:first-of-type{margin-top:0;}
+  select{
+    width:100%;padding:12px;font-size:14px;background:var(--bg);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;font-family:inherit;
+  }
+
+  button.primary{
+    width:100%;margin-top:18px;background:var(--accent);color:#04140b;border:none;border-radius:8px;
+    padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+  button.primary:active{transform:scale(0.98);}
+
+  .result{display:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;}
+  .result.show{display:block;}
+  .verdict{font-size:20px;font-weight:700;margin-bottom:8px;}
+  .verdict.good{color:var(--accent);}
+  .verdict.mid{color:var(--amber);}
+  .verdict.bad{color:var(--bad);}
+  .result p{color:var(--sub);font-size:13px;line-height:1.6;margin:4px 0;}
+
+  .barrow{margin-top:14px;}
+  .barlabel{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-bottom:4px;}
+  .bartrack{position:relative;height:10px;background:var(--bg);border-radius:6px;overflow:hidden;border:1px solid var(--line);}
+  .barfill{position:absolute;left:0;top:0;height:100%;background:var(--accent);border-radius:6px;}
+  .barmark{position:absolute;top:-3px;width:2px;height:16px;background:var(--amber);}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:14px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> pc-spec-check --run</div>
+  <h1>내 PC 사양으로 이 게임 돌아갈까?</h1>
+  <p class="desc">CPU · GPU · RAM · 저장장치를 선택하면 원하는 게임을 원활하게 돌릴 수 있는지 대략적으로 진단해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>내 컴퓨터의 <b>그래픽카드(GPU)</b>를 목록에서 선택하세요. 모르신다면 '장치 관리자 → 디스플레이 어댑터'에서 확인할 수 있어요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>CPU, RAM, 저장장치</b> 종류도 순서대로 선택하세요.</span></div>
+      <div class="step"><span class="num">3</span><span>검색창에 <b>게임 이름</b>을 입력하면 목록이 좁혀져요. 원하는 게임을 선택하세요.</span></div>
+      <div class="step"><span class="num">4</span><span><b>'사양 확인하기'</b> 버튼을 누르면 가능(고옵션) / 무난(옵션 하향 필요) / 불가능(사양 부족) 3단계로 즉시 진단돼요.</span></div>
+      <div class="step"><span class="num">5</span><span>결과 아래 <b>막대 그래프</b>로 내 GPU·CPU 점수와 그 게임의 권장 사양 기준선을 비교해볼 수 있어요.</span></div>
+      <div class="tip">💡 이 도구는 대략적인 추정치예요. 구매 전 최종 확인은 게임 공식 홈페이지의 사양표로 한 번 더 체크해보시는 걸 추천해요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label>그래픽카드 (GPU)</label>
+    <select id="gpu"></select>
+
+    <label>CPU</label>
+    <select id="cpu"></select>
+
+    <label>RAM (메모리)</label>
+    <select id="ram">
+      <option value="1">8GB</option>
+      <option value="2" selected>16GB</option>
+      <option value="3">32GB</option>
+      <option value="4">64GB 이상</option>
+    </select>
+
+    <label>저장장치</label>
+    <select id="storage">
+      <option value="0">HDD</option>
+      <option value="1">SATA SSD</option>
+      <option value="2" selected>NVMe SSD</option>
+    </select>
+
+    <label>확인하고 싶은 게임 (검색 가능)</label>
+    <input type="text" id="gameFilter" placeholder="게임 이름 입력하여 검색..." style="width:100%;padding:12px;font-size:14px;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;font-family:inherit;margin-bottom:8px;">
+    <select id="game"></select>
+
+    <button class="primary" id="checkBtn">사양 확인하기</button>
+  </div>
+
+  <div class="result" id="result">
+    <div class="verdict" id="verdict"></div>
+    <p id="verdictDetail"></p>
+
+    <div class="barrow">
+      <div class="barlabel"><span>GPU 성능</span><span id="gpuScoreLabel"></span></div>
+      <div class="bartrack"><div class="barfill" id="gpuBar"></div><div class="barmark" id="gpuMark"></div></div>
+    </div>
+    <div class="barrow">
+      <div class="barlabel"><span>CPU 성능</span><span id="cpuScoreLabel"></span></div>
+      <div class="bartrack"><div class="barfill" id="cpuBar"></div><div class="barmark" id="cpuMark"></div></div>
+    </div>
+
+    <p id="ramNote" style="margin-top:12px;"></p>
+
+    <p style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);color:var(--sub);">
+      💡 정확한 판단을 위해 <b style="color:var(--text);">"게임이름 + 최소 사양"</b>으로 검색해서 스팀(Steam) 페이지나 공식 홈페이지의 사양표도 꼭 함께 확인해보세요. 이 결과는 대략적인 참고용입니다.
+    </p>
+  </div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 하드웨어 상대 성능을 단순화한 대략적인 추정치를 기반으로 합니다. 실제 프레임(FPS)은 해상도, 그래픽 옵션, 드라이버 버전, 백그라운드 프로그램 등에 따라 달라질 수 있어요. 정확한 최소/권장 사양은 각 게임의 공식 스토어 페이지를 참고해주세요.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>내 PC로 이 게임 돌아갈까? 도구는 그래픽카드(GPU), CPU, RAM, 저장장치 정보를 선택하면 원하는 게임을 실행할 수 있는지 즉시 진단해주는 계산기입니다. 게임을 구매하기 전에 "내 컴퓨터로 잘 돌아갈까?"라는 궁금증을 해소하기 위해 만들어졌으며, GPU와 CPU의 상대적 성능 점수를 기반으로 최소 사양과 권장 사양 대비 여부를 판단합니다. 33종의 인기 게임 데이터를 내장하고 있어 검색창에 이름만 입력하면 바로 비교해볼 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>게임을 구매하기 전 사양표를 직접 비교하려면 GPU 벤치마크 순위, CPU 세대별 성능 차이 등 배경 지식이 필요해 일반 사용자에게는 진입장벽이 높습니다. 특히 스팀 같은 플랫폼은 환불 조건이 '플레이 시간 2시간 이내'로 제한되어 있어, 사양 문제를 뒤늦게 발견하면 환불조차 어려운 상황이 생길 수 있습니다. 이런 시행착오와 금전적 손해를 줄이기 위해, 복잡한 사양표 대조 과정을 자동화한 도구로 만들게 되었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>신작 게임을 구매하기 전, 내 컴퓨터로 실행 가능한지 미리 확인하고 싶을 때</li>
+      <li>컴퓨터 업그레이드를 고민 중이며, 어느 부품(GPU vs CPU)이 병목인지 파악하고 싶을 때</li>
+      <li>여러 게임 중 어떤 걸 먼저 구매할지 사양 기준으로 비교하고 싶을 때</li>
+      <li>중고 PC나 완제품을 구매하기 전, 표기된 사양이 게임용으로 충분한지 가늠하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구는 하드웨어 성능을 단순화한 점수 모델을 사용하는 추정 도구이며, 실제 프레임 수치를 정밀하게 예측하지는 않습니다. 같은 GPU라도 드라이버 버전, VRAM 용량, 쿨링 성능에 따라 실제 성능 편차가 발생할 수 있고, 노트북용 그래픽카드는 동일 모델명이라도 데스크탑용보다 성능이 낮게 설정된 경우가 많습니다(TGP 제한). 구매를 확정하기 전에는 반드시 게임 공식 홈페이지나 스팀 페이지의 정확한 최소/권장 사양표를 함께 확인하시길 권장합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. "무난" 판정이 나왔는데 실제로는 버벅여요.</div>
+      <div class="a">CPU 점수가 최소 사양에 가까운 경우 병목 현상이 발생할 수 있습니다. 백그라운드 프로그램을 종료하거나 그래픽 옵션 중 그림자 품질, 안티앨리어싱을 낮추면 체감 성능이 개선됩니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 원하는 게임이 목록에 없어요.</div>
+      <div class="a">현재 33종의 인기 게임 위주로 데이터를 구축해두었습니다. 목록에 없는 게임은 비슷한 장르와 출시 연도의 게임 사양을 참고해 대략적으로 가늠해보시거나, 공식 사양표를 직접 확인해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 노트북 사양도 정확히 진단되나요?</div>
+      <div class="a">노트북 그래픽카드는 데스크탑용과 동일 모델명이어도 전력 제한으로 실제 성능이 낮은 경우가 많아, 이 도구의 점수를 그대로 적용하면 다소 낙관적인 결과가 나올 수 있습니다. 제조사가 명시한 실제 성능 정보를 함께 참고하세요.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var GPUS = [
+    {label:'내장그래픽 (통합 GPU)', score:1},
+    {label:'GTX 1650', score:3},
+    {label:'GTX 1660 Super', score:4},
+    {label:'RTX 3050', score:4.5},
+    {label:'RTX 3060', score:5.5},
+    {label:'RTX 3060 Ti', score:6},
+    {label:'RTX 3070', score:6.5},
+    {label:'RTX 3080', score:7.5},
+    {label:'RTX 4060', score:6},
+    {label:'RTX 4060 Ti', score:6.5},
+    {label:'RTX 4070', score:7.5},
+    {label:'RTX 4070 Ti', score:8},
+    {label:'RTX 4080', score:8.5},
+    {label:'RTX 4090', score:9.5},
+    {label:'RX 6600', score:4.5},
+    {label:'RX 6700 XT', score:6},
+    {label:'RX 7600', score:5},
+    {label:'RX 7800 XT', score:7},
+    {label:'RX 7900 XTX', score:9}
+  ];
+
+  var CPUS = [
+    {label:'Intel i3 (10~12세대)', score:3},
+    {label:'Intel i5 (10~12세대)', score:5},
+    {label:'Intel i5 (13~14세대)', score:6.5},
+    {label:'Intel i7 (10~12세대)', score:6.5},
+    {label:'Intel i7 (13~14세대)', score:8},
+    {label:'Intel i9', score:9},
+    {label:'Ryzen 5 3600 / 5600', score:5.5},
+    {label:'Ryzen 7 5700X / 5800X', score:7},
+    {label:'Ryzen 7 7700X', score:8},
+    {label:'Ryzen 9 7900X / 7950X', score:9}
+  ];
+
+  var GAMES = [
+    // 온라인 · e스포츠
+    {label:'리그 오브 레전드', gpuMin:1, gpuRec:2, cpuMin:2, cpuRec:3, ramMin:1},
+    {label:'발로란트', gpuMin:1.5, gpuRec:2.5, cpuMin:2.5, cpuRec:3.5, ramMin:1},
+    {label:'오버워치 2', gpuMin:2, gpuRec:4, cpuMin:3, cpuRec:5, ramMin:1},
+    {label:'카운터 스트라이크 2 (CS2)', gpuMin:2, gpuRec:3.5, cpuMin:3, cpuRec:4.5, ramMin:1},
+    {label:'배틀그라운드', gpuMin:3, gpuRec:5, cpuMin:4, cpuRec:5.5, ramMin:2},
+    {label:'에이펙스 레전드', gpuMin:2.5, gpuRec:4.5, cpuMin:3.5, cpuRec:5, ramMin:2},
+    {label:'포트나이트', gpuMin:2, gpuRec:4, cpuMin:3, cpuRec:4.5, ramMin:1},
+    {label:'서든어택', gpuMin:1, gpuRec:2, cpuMin:2, cpuRec:3, ramMin:1},
+    {label:'배틀필드 시리즈 (최신작)', gpuMin:4, gpuRec:6.5, cpuMin:4.5, cpuRec:6, ramMin:2},
+    {label:'콜 오브 듀티 (모던 워페어 계열)', gpuMin:4, gpuRec:6.5, cpuMin:4.5, cpuRec:6, ramMin:2},
+
+    // 캐주얼 · 샌드박스
+    {label:'마인크래프트 (자바)', gpuMin:1, gpuRec:1.5, cpuMin:2, cpuRec:3, ramMin:1},
+    {label:'로블록스', gpuMin:1, gpuRec:1.5, cpuMin:1.5, cpuRec:2.5, ramMin:1},
+    {label:'스타듀밸리', gpuMin:1, gpuRec:1, cpuMin:1.5, cpuRec:2, ramMin:1},
+    {label:'테라리아', gpuMin:1, gpuRec:1, cpuMin:1.5, cpuRec:2, ramMin:1},
+    {label:'원신', gpuMin:1.5, gpuRec:3, cpuMin:2.5, cpuRec:4, ramMin:2},
+    {label:'발헤임', gpuMin:2, gpuRec:3.5, cpuMin:3, cpuRec:4.5, ramMin:2},
+    {label:'팰월드', gpuMin:3, gpuRec:5, cpuMin:4, cpuRec:5.5, ramMin:2},
+
+    // 오픈월드 · RPG
+    {label:'엘든 링', gpuMin:3.5, gpuRec:5.5, cpuMin:4, cpuRec:5.5, ramMin:2},
+    {label:'발더스 게이트 3', gpuMin:3, gpuRec:5.5, cpuMin:4, cpuRec:5.5, ramMin:2},
+    {label:'호그와트 레거시', gpuMin:3.5, gpuRec:6, cpuMin:4, cpuRec:6, ramMin:2},
+    {label:'사이버펑크 2077', gpuMin:4, gpuRec:7, cpuMin:4, cpuRec:6.5, ramMin:2},
+    {label:'스타필드', gpuMin:4.5, gpuRec:7, cpuMin:5, cpuRec:6.5, ramMin:2},
+    {label:'위쳐 3 (넥스트젠)', gpuMin:3, gpuRec:5, cpuMin:4, cpuRec:5.5, ramMin:2},
+    {label:'GTA 5', gpuMin:2, gpuRec:4, cpuMin:3, cpuRec:4.5, ramMin:2},
+    {label:'레드 데드 리뎀션 2', gpuMin:3.5, gpuRec:6, cpuMin:4, cpuRec:5.5, ramMin:2},
+    {label:'붉은사막', gpuMin:4, gpuRec:6.5, cpuMin:4.5, cpuRec:6, ramMin:2},
+    {label:'몬스터헌터 와일즈', gpuMin:4, gpuRec:6.5, cpuMin:5, cpuRec:6.5, ramMin:2},
+    {label:'데스티니 가디언즈', gpuMin:3, gpuRec:5.5, cpuMin:4, cpuRec:5.5, ramMin:2},
+
+    // 스토리 · 호러 · 액션
+    {label:'라스트 오브 어스 파트 1', gpuMin:4, gpuRec:6.5, cpuMin:4.5, cpuRec:6, ramMin:2},
+    {label:'레지던트 이블 4 리메이크', gpuMin:3, gpuRec:5.5, cpuMin:4, cpuRec:5.5, ramMin:2},
+    {label:'사일런트 힐 2 리메이크', gpuMin:3.5, gpuRec:6, cpuMin:4, cpuRec:5.5, ramMin:2},
+
+    // 대전 격투
+    {label:'철권 8', gpuMin:2.5, gpuRec:4.5, cpuMin:3.5, cpuRec:5, ramMin:2},
+    {label:'스트리트 파이터 6', gpuMin:2.5, gpuRec:4.5, cpuMin:3.5, cpuRec:5, ramMin:2}
+  ];
+
+  var gpuSel = document.getElementById('gpu');
+  var cpuSel = document.getElementById('cpu');
+  var gameSel = document.getElementById('game');
+
+  GPUS.forEach(function(g, i){
+    var o = document.createElement('option');
+    o.value = i; o.textContent = g.label;
+    gpuSel.appendChild(o);
+  });
+  gpuSel.value = 4;
+
+  CPUS.forEach(function(c, i){
+    var o = document.createElement('option');
+    o.value = i; o.textContent = c.label;
+    cpuSel.appendChild(o);
+  });
+  cpuSel.value = 1;
+
+  function renderGameOptions(filterText){
+    gameSel.innerHTML = '';
+    GAMES.forEach(function(gm, i){
+      if (filterText && gm.label.toLowerCase().indexOf(filterText.toLowerCase()) === -1) return;
+      var o = document.createElement('option');
+      o.value = i; o.textContent = gm.label;
+      gameSel.appendChild(o);
+    });
+  }
+  renderGameOptions('');
+
+  document.getElementById('gameFilter').addEventListener('input', function(e){
+    renderGameOptions(e.target.value);
+  });
+
+  document.getElementById('checkBtn').addEventListener('click', function(){
+    var gpu = GPUS[parseInt(gpuSel.value, 10)];
+    var cpu = CPUS[parseInt(cpuSel.value, 10)];
+    var ram = parseInt(document.getElementById('ram').value, 10);
+    var game = GAMES[parseInt(gameSel.value, 10)];
+
+    var verdictEl = document.getElementById('verdict');
+    var detailEl = document.getElementById('verdictDetail');
+    var ramNote = document.getElementById('ramNote');
+
+    var gpuOk = gpu.score >= game.gpuRec;
+    var cpuOk = cpu.score >= game.cpuRec;
+    var gpuMinOk = gpu.score >= game.gpuMin;
+    var cpuMinOk = cpu.score >= game.cpuMin;
+    var ramOk = ram >= game.ramMin;
+
+    var cls, tag, text, detail;
+    if (gpuOk && cpuOk && ramOk){
+      cls = 'good';
+      tag = '\u2705 \uac00\ub2a5 (\uace0\uc635\uc158)';
+      text = '\uc774 \uac8c\uc784\uc744 \uace0\uc635\uc158\uc5d0\uc11c\ub3c4 \uc548\uc815\uc801\uc73c\ub85c \ub3cc\ub9b4 \uc218 \uc788\ub294 \uc0ac\uc591\uc785\ub2c8\ub2e4.';
+    } else if (gpuMinOk && cpuMinOk && ramOk){
+      cls = 'mid';
+      tag = '\u26a0\ufe0f \ubb34\ub09c (\uc635\uc158 \ud558\ud5a5 \ud544\uc694)';
+      text = '\ucd5c\uc800 \uc0ac\uc591\uc740 \ub118\uc9c0\ub9cc \uad8c\uc7a5 \uc0ac\uc591\uc5d0\ub294 \ubbf8\uce58\uc9c0 \ubabb\ud574\uc694. \uadf8\ub798\ud53d \uc635\uc158\uc744 \uc911~\ub0ae\uc74c\uc73c\ub85c \ub0ae\ucd94\uba74 \ubb38\uc81c\uc5c6\uc774 \ud50c\ub808\uc774\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.';
+    } else {
+      cls = 'bad';
+      tag = '\u274c \ubd88\uac00\ub2a5 (\uc0ac\uc591 \ubd80\uc871)';
+      text = '\ud604\uc7ac \uc0ac\uc591\uc774 \uc774 \uac8c\uc784\uc758 \ucd5c\uc800 \uc694\uad6c\uc0ac\ud56d\uc5d0 \ubbf8\uce58\uc9c0 \ubabb\ud574\uc694. \uadf8\ub798\ud53d\uce74\ub4dc \ub610\ub294 CPU \uc5c5\uadf8\ub808\uc774\ub4dc\ub97c \uace0\ub824\ud574\ubcf4\uc138\uc694.';
+    }
+
+    verdictEl.className = 'verdict ' + cls;
+    verdictEl.textContent = tag;
+    detailEl.textContent = text;
+
+    document.getElementById('gpuScoreLabel').textContent = gpu.score + ' / 10';
+    document.getElementById('cpuScoreLabel').textContent = cpu.score + ' / 10';
+    document.getElementById('gpuBar').style.width = (gpu.score * 10) + '%';
+    document.getElementById('cpuBar').style.width = (cpu.score * 10) + '%';
+    document.getElementById('gpuMark').style.left = (game.gpuRec * 10) + '%';
+    document.getElementById('cpuMark').style.left = (game.cpuRec * 10) + '%';
+
+    if (!ramOk){
+      ramNote.textContent = '\u26a0\ufe0f RAM\uc774 \uad8c\uc7a5 \uc0ac\uc591\ubcf4\ub2e4 \ubd80\uc871\ud574\uc694. \uc99d\uc124\uc744 \uace0\ub824\ud574\ubcf4\uc138\uc694.';
+      ramNote.style.color = 'var(--bad)';
+    } else {
+      ramNote.textContent = 'RAM \uc0ac\uc591\uc740 \ucda9\ubd84\ud569\ub2c8\ub2e4.';
+      ramNote.style.color = 'var(--sub)';
+    }
+
+    document.getElementById('result').classList.add('show');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소개 | IT 도구모음</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --amber:#ffb454;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;justify-content:center;padding:24px 16px 60px;}
+  .wrap{width:100%;max-width:720px;}
+
+  .back{display:inline-block;color:var(--sub);font-size:13px;text-decoration:none;margin-bottom:16px;}
+  .back:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;margin-bottom:6px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:26px;font-weight:800;margin:4px 0 16px;color:var(--text);}
+
+  p, li{font-size:14px;line-height:1.8;color:var(--text);}
+  ul{padding-left:20px;margin:8px 0;}
+  li{margin-bottom:8px;}
+
+  h2{font-size:17px;font-weight:700;color:var(--accent);margin:32px 0 12px;padding-bottom:8px;border-bottom:1px dashed var(--line);}
+
+  .principles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}
+  @media (max-width:520px){.principles{grid-template-columns:1fr;}}
+  .principle{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .principle .badge{
+    display:inline-block;width:34px;height:34px;border-radius:8px;background:var(--accent-dim);
+    border:1px solid var(--accent);color:var(--accent);font-weight:700;font-size:14px;
+    display:flex;align-items:center;justify-content:center;margin-bottom:10px;
+  }
+  .principle h3{font-size:14px;margin:0 0 6px;color:var(--text);}
+  .principle p{font-size:12px;color:var(--sub);margin:0;line-height:1.6;}
+
+  .categories{display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+  .cat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--sub);}
+  .cat b{color:var(--text);}
+
+  .cta{
+    display:inline-block;margin-top:20px;background:var(--accent);color:#04140b;
+    padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;
+  }
+
+  footer{margin-top:40px;padding-top:16px;border-top:1px dashed var(--line);color:var(--sub);font-size:12px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html">← 도구모음으로 돌아가기</a>
+  <div class="titlebar"><span class="prompt">$</span> cat about.md</div>
+  <h1>IT 도구모음 소개</h1>
+
+  <p>IT 도구모음은 일상과 업무에서 자주 필요한 자잘한 작업들을 <b>회원가입이나 설치 없이, 브라우저에서 바로</b> 처리할 수 있도록 만든 무료 도구 모음 사이트입니다.</p>
+
+  <p>비밀번호를 하나 만들려고, JSON 코드 하나 정리하려고, 내 PC 사양이 게임을 돌릴 수 있는지 확인하려고 프로그램을 설치하거나 여러 사이트를 헤매고 싶지 않으셨나요? 이 사이트는 그런 순간마다 "그냥 여기 접속하면 되지"라고 떠올릴 수 있는 곳을 목표로 만들어지고 있습니다.</p>
+
+  <h2>이런 원칙으로 만들고 있어요</h2>
+  <div class="principles">
+    <div class="principle">
+      <div class="badge">01</div>
+      <h3>완전 무료</h3>
+      <p>모든 도구는 별도 비용 없이 사용하실 수 있습니다.</p>
+    </div>
+    <div class="principle">
+      <div class="badge">02</div>
+      <h3>회원가입 불필요</h3>
+      <p>로그인이나 개인정보 입력 없이 바로 사용 가능합니다.</p>
+    </div>
+    <div class="principle">
+      <div class="badge">03</div>
+      <h3>설치 불필요</h3>
+      <p>앱이나 프로그램 설치 없이 브라우저만 있으면 됩니다.</p>
+    </div>
+    <div class="principle">
+      <div class="badge">04</div>
+      <h3>데이터 미저장</h3>
+      <p>입력하신 내용은 서버에 저장되거나 전송되지 않습니다.</p>
+    </div>
+  </div>
+
+  <h2>어떤 도구들을 다루나요</h2>
+  <div class="categories">
+    <div class="cat">🎲 <b>심심할 때</b> — 짧은 시간에 즐길 수 있는 미니게임</div>
+    <div class="cat">🖥️ <b>PC & 게임</b> — 사양 진단, 성능 비교 등 게이머를 위한 도구</div>
+    <div class="cat">🔐 <b>보안 & 프라이버시</b> — 비밀번호, 네트워크 정보 등 안전하게 관리하는 도구</div>
+    <div class="cat">👨‍💻 <b>개발자 도구</b> — 코드 정리, 데이터 변환 등 실무에 바로 쓰는 도구</div>
+  </div>
+  <p style="color:var(--sub); font-size:13px;">정확한 도구 목록과 개수는 계속 업데이트되고 있으며, 최신 목록은 메인 페이지에서 바로 확인하실 수 있습니다.</p>
+
+  <h2>운영 방향</h2>
+  <p>이 사이트는 IT 관련 정보를 다루는 블로그 활동의 연장선으로 시작되었습니다. 글로 설명하는 것보다 직접 사용해볼 수 있는 도구가 더 도움이 된다고 생각해서, 하나씩 도구를 만들어 채워가고 있습니다. 새로운 도구에 대한 의견이나 제안은 언제든 환영합니다.</p>
+
+  <a class="cta" href="index.html">도구 목록 보러가기 →</a>
+
+  <footer>IT 도구모음 · 문의사항은 개인정보처리방침 페이지의 연락처를 참고해주세요</footer>
+</div>
+</body>
+</html>

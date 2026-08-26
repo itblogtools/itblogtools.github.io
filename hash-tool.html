@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>해시 생성기 (MD5·SHA-256)</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#4da3ff; --accent-dim:#1e4a7a; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  textarea{
+    width:100%;min-height:100px;background:var(--panel);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px;
+    font-family:inherit;line-height:1.5;resize:vertical;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+
+  .resultlist{display:flex;flex-direction:column;gap:8px;}
+  .hashrow{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;}
+  .hashrow .lbl{font-size:11px;color:var(--amber);font-weight:700;margin-bottom:6px;}
+  .hashrow .valrow{display:flex;gap:8px;align-items:center;}
+  .hashrow .val{flex:1;font-size:12px;color:var(--accent);word-break:break-all;}
+  .hashrow .copybtn{
+    background:var(--bg);border:1px solid var(--line);color:var(--sub);
+    border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;white-space:nowrap;
+  }
+  .hashrow .copybtn.copied{color:var(--accent);border-color:var(--accent);}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> hash-generator --run</div>
+  <h1>해시 생성기</h1>
+  <p class="desc">텍스트를 입력하면 SHA-1, SHA-256, SHA-512 해시값을 동시에 계산해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>입력창에 <b>해시로 변환할 텍스트</b>를 입력하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>입력하는 즉시 <b>SHA-1, SHA-256, SHA-512</b> 세 가지 해시값이 자동으로 계산돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>필요한 해시값 옆의 <b>'복사'</b> 버튼으로 바로 가져다 쓰세요.</span></div>
+      <div class="tip">💡 같은 텍스트는 항상 같은 해시값을 만들어내지만, 원문 글자 하나만 바뀌어도 해시값은 완전히 달라져요. 파일 무결성 검증에 이 원리가 활용됩니다.</div>
+    </div>
+  </details>
+
+  <label style="font-size:12px;color:var(--sub);">입력 텍스트</label>
+  <textarea id="input" placeholder="해시로 변환할 텍스트를 입력하세요"></textarea>
+
+  <div class="resultlist" id="resultList"></div>
+</div>
+
+<script>
+(function(){
+  var input = document.getElementById('input');
+  var resultList = document.getElementById('resultList');
+  var ALGOS = [
+    {name:'SHA-1', label:'SHA-1'},
+    {name:'SHA-256', label:'SHA-256'},
+    {name:'SHA-512', label:'SHA-512'}
+  ];
+
+  function buf2hex(buffer){
+    return Array.from(new Uint8Array(buffer)).map(function(b){
+      return b.toString(16).padStart(2,'0');
+    }).join('');
+  }
+
+  function renderRows(){
+    resultList.innerHTML = '';
+    ALGOS.forEach(function(a){
+      var row = document.createElement('div');
+      row.className = 'hashrow';
+      row.innerHTML = '<div class="lbl">' + a.label + '</div><div class="valrow"><span class="val" id="val-' + a.name + '">-</span><button class="copybtn" data-target="val-' + a.name + '">복사</button></div>';
+      resultList.appendChild(row);
+    });
+    document.querySelectorAll('.copybtn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var el = document.getElementById(btn.dataset.target);
+        if (navigator.clipboard && el.textContent !== '-'){
+          navigator.clipboard.writeText(el.textContent).then(function(){
+            btn.textContent = '복사됨!';
+            btn.classList.add('copied');
+            setTimeout(function(){ btn.textContent = '복사'; btn.classList.remove('copied'); }, 1200);
+          });
+        }
+      });
+    });
+  }
+  renderRows();
+
+  async function computeHashes(){
+    var text = input.value;
+    if (!text){
+      ALGOS.forEach(function(a){
+        document.getElementById('val-'+a.name).textContent = '-';
+      });
+      return;
+    }
+    var enc = new TextEncoder().encode(text);
+    for (var i=0; i<ALGOS.length; i++){
+      var a = ALGOS[i];
+      try {
+        var digest = await crypto.subtle.digest(a.name, enc);
+        document.getElementById('val-'+a.name).textContent = buf2hex(digest);
+      } catch(e){
+        document.getElementById('val-'+a.name).textContent = '이 브라우저에서 지원되지 않아요';
+      }
+    }
+  }
+
+  input.addEventListener('input', computeHashes);
+})();
+</script>
+
+<div class="wrap" style="padding-top:0;">
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>해시 생성기는 텍스트를 입력하면 SHA-1, SHA-256, SHA-512 세 가지 해시 알고리즘으로 즉시 변환해주는 도구입니다. 입력하는 즉시 실시간으로 계산되며, 브라우저에 내장된 Web Crypto API를 사용해 안전하고 빠르게 처리합니다. 각 해시값은 원클릭으로 복사할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>파일 다운로드 후 무결성을 검증하거나, 비밀번호를 코드에 저장하기 전 해시로 변환해서 확인하거나, API 서명값을 검증하는 등 해시값을 다뤄야 하는 상황이 개발 작업에서 자주 발생합니다. 매번 터미널을 열어 명령어를 입력하기보다, 텍스트를 붙여넣기만 하면 여러 알고리즘의 해시값을 한 번에 확인할 수 있는 가벼운 도구가 있으면 훨씬 빠르게 작업할 수 있다고 생각해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>다운로드한 파일의 체크섬(SHA-256 등)이 공식 배포처와 일치하는지 확인할 때</li>
+      <li>코드에서 사용할 해시값을 미리 계산해서 테스트하고 싶을 때</li>
+      <li>API 요청 서명이나 웹훅 검증 로직을 테스트하고 싶을 때</li>
+      <li>같은 입력값이 항상 같은 해시를 만드는지 알고리즘 동작을 확인하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>해시는 되돌릴 수 없는 단방향 변환입니다. 해시값만으로는 원문을 복원할 수 없지만, 비밀번호처럼 예측 가능한 짧은 문자열은 미리 계산된 해시 테이블(레인보우 테이블)로 역추적될 위험이 있습니다. 실제 서비스에서 비밀번호를 저장할 때는 단순 SHA-256이 아니라 솔트(salt)와 반복 연산이 포함된 bcrypt, Argon2 같은 전용 알고리즘을 사용해야 합니다. 이 도구는 학습과 검증 목적의 참고용이며, 입력한 텍스트는 브라우저 안에서만 처리되고 서버로 전송되지 않습니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. MD5는 왜 지원하지 않나요?</div>
+      <div class="a">MD5는 이미 충돌 공격(서로 다른 입력이 같은 해시를 만드는 공격)이 실용적으로 가능하다고 알려진 취약한 알고리즘이라, 브라우저의 표준 Web Crypto API에서도 지원하지 않습니다. 새로운 용도에는 SHA-256 이상을 권장합니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 같은 텍스트인데 공백 하나 차이로 해시가 완전히 달라요.</div>
+      <div class="a">정상입니다. 해시 함수는 입력이 1비트만 달라져도 결과값이 완전히 다르게 나오도록 설계되어 있습니다(눈사태 효과). 이 덕분에 원문의 미세한 변조도 즉시 감지할 수 있습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 텍스트가 저장되나요?</div>
+      <div class="a">아니요. 모든 계산은 브라우저 안에서만 이뤄지며, 입력한 내용은 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

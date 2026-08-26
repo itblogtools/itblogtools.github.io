@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>컬러 코드 변환기 (HEX·RGB·HSL)</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .preview{
+    height:140px;border-radius:12px;border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;transition:background .1s ease;
+  }
+  .preview input[type=color]{
+    width:70px;height:70px;border:3px solid rgba(255,255,255,0.3);border-radius:50%;
+    cursor:pointer;background:none;padding:0;
+  }
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:11px;color:var(--sub);}
+  .fieldrow{display:flex;gap:8px;}
+  .fieldrow input{
+    flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;min-width:0;
+  }
+  .fieldrow input:focus{outline:none;border-color:var(--accent);}
+  .copybtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--sub);
+    border-radius:8px;padding:0 12px;font-size:11px;cursor:pointer;white-space:nowrap;
+  }
+  .copybtn.copied{color:var(--accent);border-color:var(--accent);}
+  .copybtn:active{transform:scale(0.95);}
+
+  .palette{display:flex;gap:8px;}
+  .swatch{
+    flex:1;aspect-ratio:1/1;border-radius:8px;border:1px solid var(--line);cursor:pointer;
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;
+  }
+  .swatch span{font-size:9px;color:rgba(255,255,255,0.8);background:rgba(0,0,0,0.35);padding:1px 4px;border-radius:4px;}
+  .sectiontitle{font-size:12px;color:var(--amber);font-weight:700;margin-top:4px;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> color-tool --run</div>
+  <h1>컬러 코드 변환기</h1>
+  <p class="desc">색상을 고르면 HEX, RGB, HSL 코드를 동시에 확인하고, 어울리는 팔레트도 함께 볼 수 있어요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>미리보기 영역의 <b>동그란 색상 선택기</b>를 눌러서 원하는 색을 고르세요.</span></div>
+      <div class="step"><span class="num">2</span><span>또는 아래 <b>HEX·RGB·HSL 입력창</b>에 직접 코드를 입력해도 돼요. 어느 한 곳만 바꿔도 나머지가 자동으로 계산돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>각 코드 옆 <b>'복사'</b> 버튼으로 원하는 형식을 바로 가져다 쓰세요.</span></div>
+      <div class="step"><span class="num">4</span><span>하단의 <b>추천 팔레트</b>에서 비슷한 톤의 색상 5가지를 확인하고, 클릭하면 그 색으로 바로 전환돼요.</span></div>
+      <div class="tip">💡 CSS 작업 중이라면 HEX나 RGB를, 디자인 도구에서 명도·채도를 조절하고 싶다면 HSL 값을 활용하시면 편해요.</div>
+    </div>
+  </details>
+
+  <div class="preview" id="previewBox">
+    <input type="color" id="colorPicker" value="#39ff88">
+  </div>
+
+  <div class="panel">
+    <div class="field">
+      <label>HEX</label>
+      <div class="fieldrow">
+        <input type="text" id="hexInput" value="#39FF88">
+        <button class="copybtn" data-target="hexInput">복사</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>RGB</label>
+      <div class="fieldrow">
+        <input type="text" id="rgbInput" value="rgb(57, 255, 136)">
+        <button class="copybtn" data-target="rgbInput">복사</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>HSL</label>
+      <div class="fieldrow">
+        <input type="text" id="hslInput" value="hsl(148, 100%, 61%)">
+        <button class="copybtn" data-target="hslInput">복사</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sectiontitle">🎨 추천 팔레트 (클릭해서 전환)</div>
+  <div class="palette" id="palette"></div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>컬러 코드 변환기는 색상 피커로 색을 고르거나 코드를 직접 입력하면 HEX, RGB, HSL 세 가지 형식을 동시에 확인하고, 같은 색조의 5단계 팔레트를 자동으로 추천해주는 도구입니다. 세 형식 중 어느 곳에 값을 입력해도 나머지가 실시간으로 계산되며, 팔레트의 색상을 클릭하면 그 색으로 바로 전환됩니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>디자인 작업을 하다 보면 같은 색을 여러 형식으로 표현해야 하는 상황이 자주 생깁니다. 포토샵이나 피그마에서는 RGB로 색을 뽑았는데 실제 웹사이트 코드에는 HEX로 넣어야 하는 경우가 대표적입니다. 또한 브랜드 컬러 하나를 정했다면 그 색을 기준으로 어울리는 배경색이나 강조색도 함께 정해야 하는데, 이를 감으로만 찾으려면 시간이 오래 걸립니다. 색상 형식 변환과 팔레트 추천을 한 번에 해결하기 위해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>디자인 툴에서 뽑은 RGB 색상을 CSS 코드용 HEX로 바꿔야 할 때</li>
+      <li>브랜드 컬러 하나로 어울리는 배경색·보조색 팔레트를 만들고 싶을 때</li>
+      <li>HSL의 명도(L) 값만 조절해서 같은 색조의 밝은/어두운 버전을 만들고 싶을 때</li>
+      <li>블로그나 홈페이지를 직접 꾸밀 때, 색상 코드 때문에 작업이 막히지 않게 하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>색상은 모니터나 화면 설정에 따라 미묘하게 다르게 보일 수 있습니다. 이 도구에서 확인한 색이 실제 인쇄물이나 다른 기기에서는 살짝 다르게 보일 수 있다는 점을 참고해주세요. 또한 텍스트와 배경 색상을 함께 정하실 때는 단순히 예쁜 조합을 넘어서 명암 대비가 충분한지도 함께 고려해야 가독성이 확보됩니다. 이 도구는 색상 코드 변환에 집중한 도구라 접근성(명암비) 검사 기능은 제공하지 않으니, 필요하시면 별도의 명암비 검사 도구를 함께 활용해주세요.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. HEX 코드 앞의 #은 꼭 붙여야 하나요?</div>
+      <div class="a">입력창에서는 없어도 자동으로 인식하지만, 실제 CSS 코드에서 사용하실 땐 꼭 포함해야 합니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. HSL 값은 언제 사용하는 게 좋나요?</div>
+      <div class="a">명도나 채도만 살짝 조절하고 싶을 때, 또는 같은 색조의 팔레트를 만들 때 HSL이 가장 직관적입니다. 코드 작성 자체는 HEX나 RGB가 더 널리 쓰입니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 인쇄용 CMYK 값도 확인할 수 있나요?</div>
+      <div class="a">이 도구는 웹 색상(HEX·RGB·HSL)에 집중한 도구라 CMYK는 지원하지 않습니다. 인쇄용 색상은 전문 인쇄 소프트웨어의 프로파일 변환을 거치는 것이 정확합니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var colorPicker = document.getElementById('colorPicker');
+  var previewBox = document.getElementById('previewBox');
+  var hexInput = document.getElementById('hexInput');
+  var rgbInput = document.getElementById('rgbInput');
+  var hslInput = document.getElementById('hslInput');
+  var palette = document.getElementById('palette');
+
+  function hexToRgb(hex){
+    hex = hex.replace('#', '');
+    if (hex.length === 3){
+      hex = hex.split('').map(function(c){ return c + c; }).join('');
+    }
+    var num = parseInt(hex, 16);
+    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+  }
+  function rgbToHex(r, g, b){
+    return '#' + [r, g, b].map(function(v){
+      var h = Math.max(0, Math.min(255, v)).toString(16).toUpperCase();
+      return h.length === 1 ? '0' + h : h;
+    }).join('');
+  }
+  function rgbToHsl(r, g, b){
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min){
+      h = s = 0;
+    } else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max){
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+  }
+  function hslToRgb(h, s, l){
+    h /= 360; s /= 100; l /= 100;
+    var r, g, b;
+    if (s === 0){
+      r = g = b = l;
+    } else {
+      function hue2rgb(p, q, t){
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1/6) return p + (q - p) * 6 * t;
+        if (t < 1/2) return q;
+        if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+      }
+      var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+      var p = 2 * l - q;
+      r = hue2rgb(p, q, h + 1/3);
+      g = hue2rgb(p, q, h);
+      b = hue2rgb(p, q, h - 1/3);
+    }
+    return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+  }
+
+  function renderPalette(baseHex){
+    var rgb = hexToRgb(baseHex);
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    palette.innerHTML = '';
+    var lightnessSteps = [20, 40, 60, 80, 92];
+    lightnessSteps.forEach(function(l){
+      var c = hslToRgb(hsl.h, hsl.s, l);
+      var hex = rgbToHex(c.r, c.g, c.b);
+      var sw = document.createElement('div');
+      sw.className = 'swatch';
+      sw.style.background = hex;
+      sw.innerHTML = '<span>' + hex + '</span>';
+      sw.addEventListener('click', function(){
+        updateAll(hex);
+      });
+      palette.appendChild(sw);
+    });
+  }
+
+  function updateAll(hex){
+    hex = hex.toUpperCase();
+    if (!/^#[0-9A-F]{6}$/.test(hex)) return;
+    var rgb = hexToRgb(hex);
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+    hexInput.value = hex;
+    rgbInput.value = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+    hslInput.value = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+    previewBox.style.background = hex;
+    colorPicker.value = hex;
+    renderPalette(hex);
+  }
+
+  colorPicker.addEventListener('input', function(){
+    updateAll(colorPicker.value);
+  });
+
+  hexInput.addEventListener('change', function(){
+    var v = hexInput.value.trim();
+    if (v[0] !== '#') v = '#' + v;
+    updateAll(v);
+  });
+
+  rgbInput.addEventListener('change', function(){
+    var m = rgbInput.value.match(/(\d+)\D+(\d+)\D+(\d+)/);
+    if (m){
+      updateAll(rgbToHex(parseInt(m[1],10), parseInt(m[2],10), parseInt(m[3],10)));
+    }
+  });
+
+  hslInput.addEventListener('change', function(){
+    var m = hslInput.value.match(/(\d+)\D+(\d+)%\D+(\d+)%/);
+    if (m){
+      var rgb = hslToRgb(parseInt(m[1],10), parseInt(m[2],10), parseInt(m[3],10));
+      updateAll(rgbToHex(rgb.r, rgb.g, rgb.b));
+    }
+  });
+
+  document.querySelectorAll('.copybtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var targetEl = document.getElementById(btn.dataset.target);
+      if (navigator.clipboard){
+        navigator.clipboard.writeText(targetEl.value).then(function(){
+          btn.textContent = '복사됨!';
+          btn.classList.add('copied');
+          setTimeout(function(){ btn.textContent = '복사'; btn.classList.remove('copied'); }, 1500);
+        });
+      }
+    });
+  });
+
+  updateAll('#39FF88');
+})();
+</script>
+</body>
+</html>

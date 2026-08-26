@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>정규식(Regex) 테스터</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+
+  .patternrow{display:flex;gap:8px;align-items:center;}
+  .patternrow .slash{color:var(--sub);font-size:16px;}
+  .patternrow input{
+    flex:1;background:var(--bg);border:1px solid var(--line);color:var(--accent);
+    border-radius:8px;padding:12px;font-size:14px;font-family:inherit;min-width:0;
+  }
+  .patternrow input:focus{outline:none;border-color:var(--accent);}
+  .flagsinput{
+    width:60px;background:var(--bg);border:1px solid var(--line);color:var(--amber);
+    border-radius:8px;padding:12px 8px;font-size:14px;font-family:inherit;text-align:center;
+  }
+  .flagsinput:focus{outline:none;border-color:var(--accent);}
+
+  .flaghint{font-size:11px;color:var(--sub);}
+
+  textarea{
+    width:100%;min-height:120px;background:var(--bg);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:12px;font-size:13px;
+    font-family:inherit;line-height:1.6;resize:vertical;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+
+  .status{font-size:12px;padding:10px 14px;border-radius:8px;}
+  .status.ok{background:rgba(57,255,136,0.08);color:var(--accent);border:1px solid var(--accent-dim);}
+  .status.bad{background:rgba(255,92,92,0.08);color:var(--bad);border:1px solid var(--bad);}
+  .status.idle{background:var(--panel);color:var(--sub);border:1px solid var(--line);}
+
+  .resultbox{
+    background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:14px;
+    font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-all;color:var(--text);
+    min-height:60px;
+  }
+  .resultbox mark{background:var(--accent-dim);color:var(--accent);border-radius:3px;padding:0 2px;}
+
+  .matchlist{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;}
+  .matchitem{
+    background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;
+    font-size:12px;color:var(--sub);display:flex;justify-content:space-between;gap:8px;
+  }
+  .matchitem b{color:var(--accent);}
+
+  label{font-size:12px;color:var(--sub);}
+
+  .presetrow{display:flex;gap:6px;flex-wrap:wrap;}
+  .presetbtn{
+    background:var(--bg);border:1px solid var(--line);color:var(--sub);
+    border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;
+  }
+  .presetbtn:active{transform:scale(0.96);}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> regex-tester --run</div>
+  <h1>정규식(Regex) 테스터</h1>
+  <p class="desc">패턴과 테스트 텍스트를 입력하면 매칭되는 부분이 실시간으로 하이라이트돼요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>정규식 패턴</b>을 입력하세요. 슬래시(/) 없이 패턴 내용만 입력하면 돼요.</span></div>
+      <div class="step"><span class="num">2</span><span>필요하면 <b>플래그</b>를 입력하세요. 예: 전체 찾기는 'g', 대소문자 무시는 'gi'</span></div>
+      <div class="step"><span class="num">3</span><span>아래 <b>테스트 텍스트</b>에 검사할 문장을 입력하세요.</span></div>
+      <div class="step"><span class="num">4</span><span>일치하는 부분이 <b>초록색으로 자동 하이라이트</b>되고, 아래에 매칭된 목록도 함께 표시돼요.</span></div>
+      <div class="tip">💡 자주 쓰는 패턴이 헷갈린다면 아래 '자주 쓰는 패턴' 버튼을 눌러서 바로 불러와보세요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label>정규식 패턴</label>
+    <div class="patternrow">
+      <span class="slash">/</span>
+      <input type="text" id="patternInput" placeholder="예: [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+" value="\d+">
+      <span class="slash">/</span>
+      <input type="text" id="flagsInput" class="flagsinput" value="g" placeholder="g">
+    </div>
+    <div class="flaghint">플래그: g(전체) · i(대소문자무시) · m(여러줄) · 조합 가능 (예: gi)</div>
+
+    <label>자주 쓰는 패턴</label>
+    <div class="presetrow">
+      <div class="presetbtn" data-pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" data-flags="g">이메일</div>
+      <div class="presetbtn" data-pattern="https?:\/\/[^\s]+" data-flags="g">URL</div>
+      <div class="presetbtn" data-pattern="01[0-9]-?\d{3,4}-?\d{4}" data-flags="g">휴대폰번호</div>
+      <div class="presetbtn" data-pattern="\d+" data-flags="g">숫자</div>
+      <div class="presetbtn" data-pattern="^[a-zA-Z0-9]{4,12}$" data-flags="">아이디(4~12자)</div>
+    </div>
+  </div>
+
+  <label>테스트 텍스트</label>
+  <textarea id="testInput">문의사항은 info@example.com 또는 010-1234-5678로 연락주세요. 방문자 수: 12,543명</textarea>
+
+  <div class="status idle" id="statusBox">패턴과 텍스트를 입력하면 실시간으로 검사돼요.</div>
+
+  <label>결과 (일치 부분 하이라이트)</label>
+  <div class="resultbox" id="resultBox"></div>
+
+  <label>매칭된 항목 목록</label>
+  <div class="matchlist" id="matchList"></div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>정규식(Regex) 테스터는 정규식 패턴과 테스트 텍스트를 입력하면, 일치하는 부분이 실시간으로 하이라이트되고 매칭된 항목 목록까지 보여주는 도구입니다. 이메일, URL, 휴대폰번호처럼 자주 쓰이는 패턴은 버튼 클릭 한 번으로 바로 불러와 테스트할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>회원가입 폼의 입력값 검증처럼 정규식은 다양한 상황에서 쓰이지만, 정규식 문법 자체가 굉장히 압축적이라 눈으로만 봐서는 무슨 뜻인지 파악하기 어렵습니다. 정규식을 잘못 만들면 원하는 걸 못 찾거나 반대로 원치 않는 것까지 매칭되는 경우가 생기는데, 이걸 실제 서비스에 적용하기 전에 미리 검증할 수 있는 도구가 필요하다고 생각해 만들게 되었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>회원가입 폼의 이메일·전화번호 형식 검증 정규식을 만들고 테스트할 때</li>
+      <li>긴 문서에서 특정 패턴(전화번호, 이메일 등)만 골라내고 싶을 때</li>
+      <li>정규식을 처음 배우면서 패턴이 실제로 어떻게 매칭되는지 눈으로 확인하고 싶을 때</li>
+      <li>이미 작성한 정규식이 예외 케이스를 놓치지 않는지 검증하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>'g' 플래그를 빼먹으면 첫 번째로 일치하는 것만 찾고 이후 매칭은 검사하지 않는다는 점을 기억해주세요. 텍스트 전체에서 여러 개를 찾고 싶으시다면 반드시 'g'를 포함해야 합니다. 또한 마침표(.)나 괄호처럼 정규식에서 특별한 의미를 가진 문자를 그냥 문자 그대로 찾고 싶으시다면, 앞에 백슬래시(\)를 붙여서 이스케이프 처리를 해주셔야 합니다. 이 도구는 브라우저 안에서만 정규식을 실행하며, 입력하신 패턴과 텍스트는 어디로도 전송되지 않습니다. 복잡한 패턴을 한 번에 완성하려고 하지 마시고, 간단한 부분부터 테스트하면서 점진적으로 확장해나가시는 것을 추천합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 분명 일치하는 부분이 있는데 매칭되지 않아요.</div>
+      <div class="a">g 플래그 없이 반복 매칭을 시도했거나, 대소문자가 다른 경우일 수 있습니다. 필요에 따라 g, i 플래그를 추가하여 재시도해보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 패턴이 너무 광범위하게 매칭돼요.</div>
+      <div class="a">탐욕적(greedy) 수량자(*, +)가 필요 이상으로 넓게 매칭하는 경우입니다. 수량자 뒤에 ?를 추가하면 게으른(lazy) 매칭으로 바뀌어 최소 범위로만 매칭됩니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 한글 패턴도 매칭할 수 있나요?</div>
+      <div class="a">네, 가능합니다. 예를 들어 [가-힣]+ 패턴을 사용하면 연속된 한글 문자를 찾을 수 있습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var patternInput = document.getElementById('patternInput');
+  var flagsInput = document.getElementById('flagsInput');
+  var testInput = document.getElementById('testInput');
+  var statusBox = document.getElementById('statusBox');
+  var resultBox = document.getElementById('resultBox');
+  var matchList = document.getElementById('matchList');
+
+  function escapeHtml(str){
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function run(){
+    var pattern = patternInput.value;
+    var flags = flagsInput.value;
+    var text = testInput.value;
+
+    if (!pattern){
+      statusBox.className = 'status idle';
+      statusBox.textContent = '패턴과 텍스트를 입력하면 실시간으로 검사돼요.';
+      resultBox.innerHTML = escapeHtml(text);
+      matchList.innerHTML = '';
+      return;
+    }
+
+    var regex;
+    try {
+      regex = new RegExp(pattern, flags);
+    } catch (e){
+      statusBox.className = 'status bad';
+      statusBox.textContent = '✗ 정규식 오류: ' + e.message;
+      resultBox.innerHTML = escapeHtml(text);
+      matchList.innerHTML = '';
+      return;
+    }
+
+    var matches = [];
+    if (flags.indexOf('g') > -1){
+      var m;
+      var guardCount = 0;
+      while ((m = regex.exec(text)) !== null && guardCount < 500){
+        matches.push(m);
+        if (m[0] === '') regex.lastIndex++;
+        guardCount++;
+      }
+    } else {
+      var single = text.match(regex);
+      if (single) matches.push(single);
+    }
+
+    if (matches.length === 0){
+      statusBox.className = 'status bad';
+      statusBox.textContent = '일치하는 부분이 없어요.';
+      resultBox.innerHTML = escapeHtml(text);
+      matchList.innerHTML = '';
+      return;
+    }
+
+    statusBox.className = 'status ok';
+    statusBox.textContent = '✓ ' + matches.length + '개 일치했어요.';
+
+    // build highlighted HTML
+    var html = '';
+    var lastIndex = 0;
+    matches.forEach(function(m){
+      var start = m.index;
+      var end = start + m[0].length;
+      html += escapeHtml(text.slice(lastIndex, start));
+      html += '<mark>' + escapeHtml(m[0]) + '</mark>';
+      lastIndex = end;
+    });
+    html += escapeHtml(text.slice(lastIndex));
+    resultBox.innerHTML = html;
+
+    matchList.innerHTML = '';
+    matches.forEach(function(m, i){
+      var item = document.createElement('div');
+      item.className = 'matchitem';
+      item.innerHTML = '<span>#' + (i+1) + ' <b>' + escapeHtml(m[0]) + '</b></span><span>위치 ' + m.index + '</span>';
+      matchList.appendChild(item);
+    });
+  }
+
+  patternInput.addEventListener('input', run);
+  flagsInput.addEventListener('input', run);
+  testInput.addEventListener('input', run);
+
+  document.querySelectorAll('.presetbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      patternInput.value = btn.dataset.pattern;
+      flagsInput.value = btn.dataset.flags;
+      run();
+    });
+  });
+
+  run();
+})();
+</script>
+</body>
+</html>

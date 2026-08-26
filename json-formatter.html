@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>JSON 포맷터 &amp; 유효성 검사기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:640px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .toolbar{display:flex;gap:8px;flex-wrap:wrap;}
+  button{
+    background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:10px 14px;font-size:13px;font-family:inherit;cursor:pointer;
+  }
+  button.primary{background:var(--accent);color:var(--dark);border:none;font-weight:700;}
+  button:active{transform:scale(0.97);}
+
+  textarea{
+    width:100%;min-height:220px;background:var(--panel);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:14px;font-size:13px;
+    font-family:'JetBrains Mono','Courier New',monospace;line-height:1.5;resize:vertical;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+
+  .status{
+    display:flex;align-items:center;gap:8px;font-size:13px;padding:10px 14px;border-radius:8px;
+  }
+  .status.ok{background:rgba(57,255,136,0.08);color:var(--accent);border:1px solid var(--accent-dim);}
+  .status.bad{background:rgba(255,92,92,0.08);color:var(--bad);border:1px solid var(--bad);}
+  .status.idle{background:var(--panel);color:var(--sub);border:1px solid var(--line);}
+
+  .outputwrap{position:relative;}
+  .copybtn{
+    position:absolute;top:10px;right:10px;background:var(--panel);border:1px solid var(--line);
+    color:var(--sub);border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;
+  }
+  .copybtn.copied{color:var(--accent);border-color:var(--accent);}
+
+  .stats{display:flex;gap:16px;font-size:12px;color:var(--sub);flex-wrap:wrap;}
+  .stats b{color:var(--text);}
+
+  .guide{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;
+  }
+  .guide summary{
+    cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);
+    list-style:none;display:flex;align-items:center;justify-content:space-between;
+  }
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{
+    flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);
+    color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .guide .step b{color:var(--text);}
+  .guide .tip{
+    margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);
+    font-size:12px;color:var(--sub);line-height:1.6;
+  }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> json-formatter --run</div>
+  <h1>JSON 포맷터 &amp; 유효성 검사기</h1>
+  <p class="desc">압축된 JSON을 보기 좋게 정렬하거나, 문법 오류가 있는지 바로 확인할 수 있어요.</p>
+
+  <details class="guide" open>
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>입력창에 <b>정리하고 싶은 JSON 코드</b>를 붙여넣으세요. 압축되어 있거나 지저분한 형태여도 상관없어요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>'정렬(Format)'</b> 버튼을 누르면 들여쓰기가 적용되어 구조가 한눈에 보이는 형태로 정리돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>반대로 용량을 줄이고 싶다면 <b>'압축(Minify)'</b> 버튼을 눌러 공백 없는 한 줄 형태로 바꿀 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>문법에 오류가 있다면 상태 표시줄에 <b>어떤 오류인지 바로 안내</b>돼요. 오류가 있으면 결과가 나오지 않아요.</span></div>
+      <div class="step"><span class="num">5</span><span>결과가 마음에 들면 결과창 우측 상단의 <b>'복사'</b> 버튼으로 바로 가져다 쓰세요.</span></div>
+      <div class="tip">💡 어떻게 되는지 감이 안 오신다면 <b style="color:var(--text);">'예시 불러오기'</b> 버튼을 눌러보세요. 샘플 JSON이 자동으로 입력됩니다.</div>
+    </div>
+  </details>
+
+  <label>입력 (JSON)</label>
+  <textarea id="input" placeholder='{"name":"claude","tags":["ai","assistant"],"active":true}'></textarea>
+
+  <div class="toolbar">
+    <button class="primary" id="formatBtn">정렬(Format)</button>
+    <button id="minifyBtn">압축(Minify)</button>
+    <button id="clearBtn">지우기</button>
+    <button id="sampleBtn">예시 불러오기</button>
+  </div>
+
+  <div class="status idle" id="statusBox">JSON을 입력하고 '정렬' 버튼을 눌러보세요.</div>
+
+  <label>결과</label>
+  <div class="outputwrap">
+    <textarea id="output" readonly placeholder="여기에 결과가 표시됩니다"></textarea>
+    <button class="copybtn" id="copyBtn">복사</button>
+  </div>
+
+  <div class="stats" id="statsBox"></div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>JSON 포맷터 & 유효성 검사기는 압축되거나 정리되지 않은 JSON 코드를 붙여넣으면 들여쓰기가 적용된 보기 좋은 형태로 정렬해주고, 문법 오류가 있는지 실시간으로 검증해주는 도구입니다. 반대로 정렬된 JSON을 공백 없는 한 줄 형태로 압축(Minify)할 수도 있습니다. 회원가입이나 설치 없이 브라우저에서 바로 사용할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>API 응답이나 설정 파일 형태로 JSON을 접하는 일이 개발자가 아니어도 흔해졌지만, 이런 데이터는 대부분 용량을 줄이기 위해 압축된 상태로 제공됩니다. 압축된 JSON은 중괄호와 대괄호가 뒤섞여 있어 구조를 파악하기 어렵고, 문법 오류를 직접 찾아내는 것도 시간이 오래 걸립니다. 코드 에디터를 켜지 않고도 빠르게 확인하고 정리할 수 있는 가벼운 도구가 필요하다고 생각해 만들게 되었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>API 응답이 제대로 왔는지 구조를 눈으로 확인하고 싶을 때</li>
+      <li>package.json 같은 설정 파일을 수정하거나 정리해야 할 때</li>
+      <li>JSON 코드에 문법 오류가 있는지, 어디가 잘못됐는지 빠르게 찾고 싶을 때</li>
+      <li>서로 다른 시스템 간 데이터를 주고받을 때 형식을 확인하고 싶을 때</li>
+      <li>정리된 JSON을 실제 전송·저장용으로 압축해서 용량을 줄이고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구는 브라우저 안에서만 동작하며, 입력한 JSON 데이터는 서버로 전송되지 않습니다. 다만 회사 업무 관련 민감한 데이터를 다루실 때는 사내 정책상 외부 웹사이트에 데이터를 붙여넣는 것 자체가 제한되는 경우가 있으니 미리 확인하시는 것이 안전합니다. 또한 매우 큰 용량의 JSON(수 MB 이상)을 붙여넣으면 브라우저 성능에 따라 처리 속도가 느려질 수 있습니다. JSON5나 JSONC처럼 주석이 포함된 확장 문법은 표준 JSON 파서로 처리할 수 없어 오류로 인식되니 참고해주세요.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. "Unexpected token" 오류가 발생해요.</div>
+      <div class="a">대부분 문자열에 작은따옴표(')를 사용했거나, 배열·객체의 마지막 항목 뒤에 불필요한 쉼표가 남아있는 경우입니다. JSON은 큰따옴표만 허용하며 마지막 쉼표를 허용하지 않습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 키(key)에 오류가 발생해요.</div>
+      <div class="a">JSON은 객체의 키에도 반드시 큰따옴표를 요구합니다. {name: "Kim"} 형태는 JavaScript 객체 리터럴 문법이라 JSON 표준에서는 오류로 처리되니 {"name": "Kim"} 형태로 수정해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 정렬과 압축, 어떤 걸 써야 하나요?</div>
+      <div class="a">사람이 읽고 분석해야 할 때는 정렬(Format)을, 실제 전송하거나 저장 공간을 아껴야 할 때는 압축(Minify)을 사용하시면 됩니다. 데이터 자체의 의미는 동일합니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var input = document.getElementById('input');
+  var output = document.getElementById('output');
+  var statusBox = document.getElementById('statusBox');
+  var statsBox = document.getElementById('statsBox');
+
+  function countKeys(obj, count){
+    count = count || {n:0};
+    if (obj !== null && typeof obj === 'object'){
+      if (Array.isArray(obj)){
+        obj.forEach(function(v){ countKeys(v, count); });
+      } else {
+        Object.keys(obj).forEach(function(k){
+          count.n++;
+          countKeys(obj[k], count);
+        });
+      }
+    }
+    return count.n;
+  }
+
+  function tryParse(){
+    var raw = input.value.trim();
+    if (!raw){
+      statusBox.className = 'status idle';
+      statusBox.textContent = 'JSON을 입력하고 \'정렬\' 버튼을 눌러보세요.';
+      output.value = '';
+      statsBox.textContent = '';
+      return null;
+    }
+    try {
+      var parsed = JSON.parse(raw);
+      statusBox.className = 'status ok';
+      statusBox.textContent = '✓ 올바른 JSON 형식입니다.';
+      return parsed;
+    } catch (e){
+      statusBox.className = 'status bad';
+      statusBox.textContent = '✗ JSON 오류: ' + e.message;
+      output.value = '';
+      statsBox.textContent = '';
+      return null;
+    }
+  }
+
+  document.getElementById('formatBtn').addEventListener('click', function(){
+    var parsed = tryParse();
+    if (parsed === null) return;
+    var formatted = JSON.stringify(parsed, null, 2);
+    output.value = formatted;
+    var keyCount = countKeys(parsed);
+    statsBox.innerHTML = '글자 수: <b>' + formatted.length + '</b> &nbsp; 키(key) 개수: <b>' + keyCount + '</b>';
+  });
+
+  document.getElementById('minifyBtn').addEventListener('click', function(){
+    var parsed = tryParse();
+    if (parsed === null) return;
+    var minified = JSON.stringify(parsed);
+    output.value = minified;
+    var keyCount = countKeys(parsed);
+    statsBox.innerHTML = '글자 수: <b>' + minified.length + '</b> &nbsp; 키(key) 개수: <b>' + keyCount + '</b>';
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', function(){
+    input.value = '';
+    output.value = '';
+    statsBox.textContent = '';
+    statusBox.className = 'status idle';
+    statusBox.textContent = 'JSON을 입력하고 \'정렬\' 버튼을 눌러보세요.';
+  });
+
+  document.getElementById('sampleBtn').addEventListener('click', function(){
+    input.value = '{"blog":"IT 정보 블로그","tools":["게임","PC사양체크","비밀번호생성기","JSON포맷터"],"visitors":12500,"active":true,"meta":{"lastUpdated":"2026-08-21","tags":["IT","개발","도구"]}}';
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    if (!output.value) return;
+    if (navigator.clipboard){
+      navigator.clipboard.writeText(output.value).then(function(){
+        var btn = document.getElementById('copyBtn');
+        btn.textContent = '복사됨!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = '복사'; btn.classList.remove('copied'); }, 1500);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

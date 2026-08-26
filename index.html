@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>IT 도구모음 | 게임부터 개발자 도구까지</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+
+  .sitenav{
+    position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);
+    backdrop-filter:blur(6px);border-bottom:1px solid var(--line);
+  }
+  .sitenav-inner{
+    max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;
+    gap:16px;overflow-x:auto;
+  }
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .content{width:100%;max-width:760px;display:flex;flex-direction:column;gap:22px;padding:20px 16px 60px;}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:26px;font-weight:800;margin:6px 0 4px;color:var(--text);letter-spacing:-0.01em;}
+  .desc{color:var(--sub);font-size:14px;line-height:1.6;margin:0 0 4px;}
+
+  .cursor{display:inline-block;width:9px;height:16px;background:var(--accent);animation:blink 1s step-end infinite;vertical-align:-2px;margin-left:2px;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .category{margin-top:8px;scroll-margin-top:64px;}
+  .catlabel{
+    font-size:12px;color:var(--amber);font-weight:700;letter-spacing:0.04em;
+    margin-bottom:12px;padding-bottom:8px;border-bottom:1px dashed var(--line);
+  }
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){.grid{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:18px;text-decoration:none;color:inherit;display:flex;flex-direction:column;gap:8px;
+    transition:transform .12s ease, border-color .12s ease;
+  }
+  .card:active{transform:scale(0.98);}
+  .card:hover{border-color:var(--accent);}
+
+  .card .icon{
+    width:42px;height:42px;border-radius:10px;background:var(--accent-dim);
+    display:flex;align-items:center;justify-content:center;font-size:20px;
+    border:1px solid var(--accent);
+  }
+  .card .name{font-size:16px;font-weight:700;color:var(--text);}
+  .card .sub{font-size:12px;color:var(--sub);line-height:1.5;}
+  .card .tag{
+    align-self:flex-start;font-size:10px;color:var(--accent);background:rgba(57,255,136,0.08);
+    padding:3px 8px;border-radius:20px;border:1px solid var(--accent-dim);margin-top:2px;
+  }
+
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;}
+  footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;}
+</style>
+</head>
+<body>
+
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <div class="titlebar"><span class="prompt">$</span> tool-hub --list-all</div>
+  <h1>IT 도구모음<span class="cursor"></span></h1>
+  <p class="desc">심심할 때 하는 미니게임부터 자주 쓰는 개발자 도구까지, 필요한 걸 골라 바로 써보세요. 전부 브라우저에서 바로 실행되고, 별도 설치는 필요 없습니다.</p>
+
+  <div class="category" id="cat-fun">
+    <div class="catlabel">🎲 심심할 때</div>
+    <div class="grid">
+      <a class="card" href="mini-games-20.html">
+        <div class="icon">🎲</div>
+        <div class="name">랜덤 미니게임</div>
+        <div class="sub">숫자맞추기·클릭게임·퍼즐 등 20종 중 랜덤</div>
+        <div class="tag">1~3분</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="category" id="cat-pc">
+    <div class="catlabel">🖥️ PC & 게임</div>
+    <div class="grid">
+      <a class="card" href="pc-game-check.html">
+        <div class="icon">🎯</div>
+        <div class="name">내 PC로 이 게임 돌아갈까?</div>
+        <div class="sub">GPU·CPU·RAM 입력하면 3초 진단, 33종 인기 게임 지원</div>
+        <div class="tag">사양 체크</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="category" id="cat-security">
+    <div class="catlabel">🔐 보안 & 프라이버시</div>
+    <div class="grid">
+      <a class="card" href="password-tool.html">
+        <div class="icon">🔑</div>
+        <div class="name">비밀번호 생성기 & 강도체크</div>
+        <div class="sub">조건 설정하면 3초 생성, 기존 비밀번호 진단도 가능</div>
+        <div class="tag">보안</div>
+      </a>
+      <a class="card" href="ip-info-tool.html">
+        <div class="icon">🌐</div>
+        <div class="name">내 IP / 브라우저 정보 확인</div>
+        <div class="sub">IP·위치·통신사·브라우저 정보를 한 번에 조회</div>
+        <div class="tag">네트워크</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="category" id="cat-dev">
+    <div class="catlabel">👨‍💻 개발자 도구</div>
+    <div class="grid">
+      <a class="card" href="json-formatter.html">
+        <div class="icon">{ }</div>
+        <div class="name">JSON 포맷터 & 검사기</div>
+        <div class="sub">압축된 JSON 정렬, 문법 오류 실시간 검증</div>
+        <div class="tag">개발</div>
+      </a>
+      <a class="card" href="encode-tool.html">
+        <div class="icon">64</div>
+        <div class="name">Base64 / URL 인코더·디코더</div>
+        <div class="sub">텍스트를 즉시 인코딩·디코딩, 방향 전환도 자유롭게</div>
+        <div class="tag">개발</div>
+      </a>
+      <a class="card" href="color-tool.html">
+        <div class="icon">🎨</div>
+        <div class="name">컬러 코드 변환기</div>
+        <div class="sub">HEX·RGB·HSL 동시 확인, 추천 팔레트 자동 생성</div>
+        <div class="tag">디자인</div>
+      </a>
+      <a class="card" href="regex-tool.html">
+        <div class="icon">/.*/</div>
+        <div class="name">정규식(Regex) 테스터</div>
+        <div class="sub">패턴 매칭을 실시간 하이라이트로 확인</div>
+        <div class="tag">개발</div>
+      </a>
+      <a class="card" href="timestamp-tool.html">
+        <div class="icon">⏱</div>
+        <div class="name">Unix 타임스탬프 변환기</div>
+        <div class="sub">타임스탬프↔날짜 상호 변환, 현재 시각 실시간 표시</div>
+        <div class="tag">개발</div>
+      </a>
+      <a class="card" href="uuid-tool.html">
+        <div class="icon">#</div>
+        <div class="name">UUID 생성기</div>
+        <div class="sub">고유 식별자를 한 번에 최대 50개까지 즉시 생성</div>
+        <div class="tag">개발</div>
+      </a>
+      <a class="card" href="hash-tool.html">
+        <div class="icon">#</div>
+        <div class="name">해시 생성기 (SHA-256 등)</div>
+        <div class="sub">텍스트를 SHA-1·256·512 해시로 실시간 변환</div>
+        <div class="tag">개발</div>
+      </a>
+      <a class="card" href="diff-tool.html">
+        <div class="icon">±</div>
+        <div class="name">텍스트 비교기 (Diff Checker)</div>
+        <div class="sub">두 텍스트의 달라진 부분을 줄 단위로 하이라이트</div>
+        <div class="tag">개발</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="category" id="cat-life">
+    <div class="catlabel">🧰 생활 도구</div>
+    <div class="grid">
+      <a class="card" href="qr-generator.html">
+        <div class="icon">▦</div>
+        <div class="name">QR코드 생성기</div>
+        <div class="sub">URL·텍스트 입력하면 QR코드 즉시 생성 및 저장</div>
+        <div class="tag">생활</div>
+      </a>
+      <a class="card" href="char-counter.html">
+        <div class="icon">가</div>
+        <div class="name">글자 수 세기</div>
+        <div class="sub">자소서·에세이 글자수 실시간 확인, 제한 초과 경고</div>
+        <div class="tag">생활</div>
+      </a>
+      <a class="card" href="filesize-tool.html">
+        <div class="icon">↓</div>
+        <div class="name">파일 용량 / 다운로드 시간 계산기</div>
+        <div class="sub">파일크기+속도로 예상 다운로드 시간, 단위 변환</div>
+        <div class="tag">생활</div>
+      </a>
+      <a class="card" href="age-tool.html">
+        <div class="icon">🎂</div>
+        <div class="name">만나이 계산기</div>
+        <div class="sub">만나이·연나이·세는나이 동시 확인, 생일까지 D-day</div>
+        <div class="tag">생활</div>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    더 많은 도구가 계속 추가될 예정입니다 · 모든 도구는 브라우저 안에서만 동작하며 입력값을 저장하지 않습니다
+    <div class="links">
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+    </div>
+  </footer>
+</div>
+</body>
+</html>

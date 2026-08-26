@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>글자 수 세기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  textarea{
+    width:100%;min-height:220px;background:var(--panel);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:14px;font-size:14px;
+    font-family:inherit;line-height:1.6;resize:vertical;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+
+  .limitrow{
+    display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line);
+    border-radius:8px;padding:12px 14px;
+  }
+  .limitrow label{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .limitrow input{
+    flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit;
+  }
+  .limitrow input:focus{outline:none;border-color:var(--accent);}
+
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:400px){.statgrid{grid-template-columns:1fr;}}
+  .statcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .statcard .label{font-size:11px;color:var(--sub);margin-bottom:6px;}
+  .statcard .value{font-size:22px;font-weight:700;color:var(--text);}
+  .statcard.limit{grid-column:1 / -1;}
+  .statcard.limit .value{color:var(--accent);}
+  .statcard.limit.over .value{color:var(--bad);}
+  .statcard.limit.warn .value{color:var(--amber);}
+
+  .bar{height:8px;background:var(--bg);border-radius:6px;overflow:hidden;margin-top:10px;border:1px solid var(--line);}
+  .barfill{height:100%;background:var(--accent);transition:width .15s ease, background .15s ease;}
+  .barfill.warn{background:var(--amber);}
+  .barfill.over{background:var(--bad);}
+
+  .clearbtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--sub);
+    border-radius:8px;padding:10px 16px;font-size:12px;font-family:inherit;cursor:pointer;
+    align-self:flex-start;
+  }
+  .clearbtn:active{transform:scale(0.97);}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> char-counter --run</div>
+  <h1>글자 수 세기</h1>
+  <p class="desc">자소서, 에세이, SNS 게시글 등 글자 수 제한이 있을 때 실시간으로 확인해보세요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>아래 입력창에 <b>글자 수를 세고 싶은 텍스트</b>를 붙여넣거나 직접 입력하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>입력하는 즉시 <b>글자 수, 공백 제외 글자 수, 단어 수, 문단 수</b>가 자동으로 계산돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>자소서처럼 <b>글자 수 제한</b>이 있다면, '글자 수 제한' 칸에 숫자를 입력해보세요. 남은 글자 수가 색깔로 바로 표시돼요.</span></div>
+      <div class="step"><span class="num">4</span><span>제한을 초과하면 빨간색으로, 90% 이상 채워지면 주황색으로 경고해줘요.</span></div>
+      <div class="tip">💡 대부분의 자소서 양식은 '공백 포함' 글자 수를 기준으로 해요. 어떤 기준인지 헷갈린다면 두 값을 모두 확인해보세요.</div>
+    </div>
+  </details>
+
+  <textarea id="textInput" placeholder="여기에 텍스트를 입력하거나 붙여넣으세요"></textarea>
+
+  <div class="limitrow">
+    <label>글자 수 제한</label>
+    <input type="number" id="limitInput" placeholder="예: 500 (선택사항)" min="0">
+  </div>
+
+  <div class="statgrid">
+    <div class="statcard">
+      <div class="label">글자 수 (공백 포함)</div>
+      <div class="value" id="charCount">0</div>
+    </div>
+    <div class="statcard">
+      <div class="label">글자 수 (공백 제외)</div>
+      <div class="value" id="charNoSpaceCount">0</div>
+    </div>
+    <div class="statcard">
+      <div class="label">단어 수</div>
+      <div class="value" id="wordCount">0</div>
+    </div>
+    <div class="statcard">
+      <div class="label">문단 수</div>
+      <div class="value" id="paraCount">0</div>
+    </div>
+    <div class="statcard limit hidden" id="limitCard">
+      <div class="label" id="limitLabel">남은 글자 수</div>
+      <div class="value" id="limitValue">-</div>
+      <div class="bar"><div class="barfill" id="limitBar" style="width:0%;"></div></div>
+    </div>
+  </div>
+
+  <button class="clearbtn" id="clearBtn">전체 지우기</button>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>글자 수 세기는 자소서, 에세이, SNS 게시글처럼 글자 수 제한이 있는 글을 쓸 때, 텍스트를 입력하는 즉시 공백 포함/제외 글자 수, 단어 수, 문단 수를 실시간으로 계산해주는 도구입니다. 목표 글자 수를 설정해두면 남은 글자 수가 색상으로 표시되어, 제한을 초과했는지 한눈에 확인할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>자소서나 에세이는 대부분 온라인 지원 시스템에 붙여넣는 방식으로 제출하는데, 이 시스템들이 계산하는 글자 수 기준이 워드나 한글 프로그램과 미묘하게 다른 경우가 많습니다. 특히 줄바꿈이나 특수문자 처리 방식의 차이 때문에 예상치 못하게 글자 수가 어긋나는 경우가 흔합니다. 이런 상황에서 여러 프로그램을 오가며 확인하는 번거로움을 줄이고, 공백 포함/제외 기준을 한 화면에서 동시에 확인할 수 있도록 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>기업마다 다른 자소서 글자수 제한(공백 포함 500자 등)에 맞춰 작성할 때</li>
+      <li>트위터 등 SNS 플랫폼별 글자수 제한을 확인하고 싶을 때</li>
+      <li>대학 과제나 리포트의 분량 요건을 맞춰야 할 때</li>
+      <li>공백 포함/제외 기준이 헷갈려서 두 값을 동시에 확인하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>지원하려는 곳의 기준이 공백 포함인지 제외인지 먼저 확인하는 것이 가장 중요합니다. 공고문이나 지원 양식에 명시되어 있는 경우가 많은데, 명시가 안 되어 있다면 대부분 공백 포함 기준인 경우가 많습니다. 특수문자나 이모지도 1글자로 계산된다는 점도 기억해두세요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 내용은 어디로도 전송되지 않습니다. 글자 수를 딱 100%까지 채우기보다는 90% 선에서 마무리하시는 걸 추천합니다. 나중에 오탈자를 고치거나 표현을 다듬을 때 여유 공간이 있어야 수정이 훨씬 수월합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 워드에서는 500자였는데 여기서는 다르게 나와요.</div>
+      <div class="a">문단 사이 줄바꿈이 여러 번 들어간 경우, 각 줄바꿈이 별도 문자로 계산되어 차이가 발생할 수 있습니다. 불필요한 빈 줄을 정리한 뒤 다시 확인해보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 공백 포함/제외 중 어느 기준을 써야 하나요?</div>
+      <div class="a">공고문에 명시가 없다면 대부분 공백 포함 기준을 사용하는 것이 일반적입니다. 확실하지 않다면 지원 기관에 직접 문의하는 것이 가장 정확합니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 텍스트가 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 내용은 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var textInput = document.getElementById('textInput');
+  var limitInput = document.getElementById('limitInput');
+  var charCount = document.getElementById('charCount');
+  var charNoSpaceCount = document.getElementById('charNoSpaceCount');
+  var wordCount = document.getElementById('wordCount');
+  var paraCount = document.getElementById('paraCount');
+  var limitCard = document.getElementById('limitCard');
+  var limitLabel = document.getElementById('limitLabel');
+  var limitValue = document.getElementById('limitValue');
+  var limitBar = document.getElementById('limitBar');
+  var clearBtn = document.getElementById('clearBtn');
+
+  function update(){
+    var text = textInput.value;
+    var chars = text.length;
+    var charsNoSpace = text.replace(/\s/g, '').length;
+    var words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
+    var paras = text.trim().length === 0 ? 0 : text.split(/\n+/).filter(function(p){ return p.trim().length > 0; }).length;
+
+    charCount.textContent = chars.toLocaleString();
+    charNoSpaceCount.textContent = charsNoSpace.toLocaleString();
+    wordCount.textContent = words.toLocaleString();
+    paraCount.textContent = paras.toLocaleString();
+
+    var limit = parseInt(limitInput.value, 10);
+    if (limit && limit > 0){
+      limitCard.classList.remove('hidden');
+      var remaining = limit - chars;
+      var pct = Math.min(100, (chars / limit) * 100);
+
+      limitCard.classList.remove('over', 'warn');
+      limitBar.classList.remove('over', 'warn');
+
+      if (remaining < 0){
+        limitLabel.textContent = '제한 초과';
+        limitValue.textContent = Math.abs(remaining).toLocaleString() + '자 초과';
+        limitCard.classList.add('over');
+        limitBar.classList.add('over');
+      } else if (pct >= 90){
+        limitLabel.textContent = '남은 글자 수';
+        limitValue.textContent = remaining.toLocaleString() + '자';
+        limitCard.classList.add('warn');
+        limitBar.classList.add('warn');
+      } else {
+        limitLabel.textContent = '남은 글자 수';
+        limitValue.textContent = remaining.toLocaleString() + '자';
+      }
+      limitBar.style.width = Math.min(100, pct) + '%';
+    } else {
+      limitCard.classList.add('hidden');
+    }
+  }
+
+  textInput.addEventListener('input', update);
+  limitInput.addEventListener('input', update);
+  clearBtn.addEventListener('click', function(){
+    textInput.value = '';
+    limitInput.value = '';
+    update();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

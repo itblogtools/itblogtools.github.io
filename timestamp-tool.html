@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Unix 타임스탬프 변환기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .nowcard{
+    background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:18px;text-align:center;
+  }
+  .nowcard .lbl{font-size:11px;color:var(--sub);margin-bottom:6px;}
+  .nowcard .val{font-size:24px;font-weight:700;color:var(--accent);}
+  .nowcard .sub2{font-size:12px;color:var(--sub);margin-top:6px;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  label{font-size:12px;color:var(--sub);}
+  .fieldrow{display:flex;gap:8px;}
+  .fieldrow input, .fieldrow select{
+    flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;min-width:0;
+  }
+  .fieldrow input:focus, .fieldrow select:focus{outline:none;border-color:var(--accent);}
+  .copybtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--sub);
+    border-radius:8px;padding:0 12px;font-size:11px;cursor:pointer;white-space:nowrap;
+  }
+  .copybtn.copied{color:var(--accent);border-color:var(--accent);}
+  .copybtn:active{transform:scale(0.95);}
+
+  .resultgrid{display:flex;flex-direction:column;gap:8px;}
+  .resultrow{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;gap:8px;}
+  .resultrow .k{font-size:11px;color:var(--sub);white-space:nowrap;}
+  .resultrow .v{font-size:13px;color:var(--text);font-weight:700;word-break:break-all;text-align:right;}
+
+  .sectiontitle{font-size:13px;color:var(--amber);font-weight:700;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> timestamp-tool --run</div>
+  <h1>Unix 타임스탬프 변환기</h1>
+  <p class="desc">타임스탬프와 실제 날짜·시간을 서로 변환해요. 초 단위와 밀리초 단위 모두 지원합니다.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>상단 카드에서 <b>현재 시각의 타임스탬프</b>를 실시간으로 확인할 수 있어요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>타임스탬프 → 날짜</b> 칸에 숫자를 입력하면 실제 날짜·시간으로 자동 변환돼요.</span></div>
+      <div class="step"><span class="num">3</span><span><b>날짜 → 타임스탬프</b> 칸에서 날짜와 시간을 선택하면 초/밀리초 단위 타임스탬프가 나와요.</span></div>
+      <div class="step"><span class="num">4</span><span>결과 옆 <b>'복사'</b> 버튼으로 필요한 값을 바로 가져다 쓰세요.</span></div>
+      <div class="tip">💡 API 응답이나 로그에서 본 숫자가 10자리면 '초' 단위, 13자리면 '밀리초' 단위일 가능성이 높아요.</div>
+    </div>
+  </details>
+
+  <div class="nowcard">
+    <div class="lbl">지금 이 순간의 타임스탬프</div>
+    <div class="val" id="nowTimestamp">-</div>
+    <div class="sub2" id="nowDate">-</div>
+  </div>
+
+  <div class="panel">
+    <label>타임스탬프 → 날짜</label>
+    <div class="fieldrow">
+      <input type="text" id="tsInput" placeholder="예: 1735689600">
+      <select id="tsUnit">
+        <option value="s">초</option>
+        <option value="ms">밀리초</option>
+      </select>
+    </div>
+    <div class="resultgrid" id="tsResult"></div>
+  </div>
+
+  <div class="panel">
+    <label>날짜 → 타임스탬프</label>
+    <div class="fieldrow">
+      <input type="date" id="dateInput">
+      <input type="time" id="timeInput" step="1">
+    </div>
+    <div class="resultgrid" id="dateResult"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var nowTimestamp = document.getElementById('nowTimestamp');
+  var nowDate = document.getElementById('nowDate');
+  var tsInput = document.getElementById('tsInput');
+  var tsUnit = document.getElementById('tsUnit');
+  var tsResult = document.getElementById('tsResult');
+  var dateInput = document.getElementById('dateInput');
+  var timeInput = document.getElementById('timeInput');
+  var dateResult = document.getElementById('dateResult');
+
+  function pad(n){ return n < 10 ? '0' + n : n; }
+  function formatDate(d){
+    return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()) + ' ' +
+           pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds());
+  }
+  function formatDateISO(d){
+    return d.toISOString();
+  }
+
+  function updateNow(){
+    var now = new Date();
+    nowTimestamp.textContent = Math.floor(now.getTime()/1000).toLocaleString();
+    nowDate.textContent = formatDate(now) + ' (로컬 시간 기준)';
+  }
+  setInterval(updateNow, 1000);
+  updateNow();
+
+  function buildRow(k, v){
+    var row = document.createElement('div');
+    row.className = 'resultrow';
+    var span = document.createElement('span');
+    span.className = 'k';
+    span.textContent = k;
+    var vspan = document.createElement('span');
+    vspan.className = 'v';
+    vspan.textContent = v;
+    row.appendChild(span);
+    row.appendChild(vspan);
+    return row;
+  }
+
+  function runTsToDate(){
+    var raw = tsInput.value.trim();
+    tsResult.innerHTML = '';
+    if (!raw){ return; }
+    var num = parseFloat(raw);
+    if (isNaN(num)){
+      tsResult.appendChild(buildRow('오류', '숫자를 입력해주세요'));
+      return;
+    }
+    var ms = tsUnit.value === 's' ? num * 1000 : num;
+    var d = new Date(ms);
+    if (isNaN(d.getTime())){
+      tsResult.appendChild(buildRow('오류', '변환할 수 없는 값이에요'));
+      return;
+    }
+    tsResult.appendChild(buildRow('로컬 날짜/시간', formatDate(d)));
+    tsResult.appendChild(buildRow('UTC (ISO 8601)', formatDateISO(d)));
+    tsResult.appendChild(buildRow('요일', ['일','월','화','수','목','금','토'][d.getDay()] + '요일'));
+  }
+
+  function runDateToTs(){
+    dateResult.innerHTML = '';
+    if (!dateInput.value){ return; }
+    var timeVal = timeInput.value || '00:00:00';
+    var d = new Date(dateInput.value + 'T' + timeVal);
+    if (isNaN(d.getTime())){
+      dateResult.appendChild(buildRow('오류', '날짜를 확인해주세요'));
+      return;
+    }
+    var sec = Math.floor(d.getTime()/1000);
+    dateResult.appendChild(buildRow('타임스탬프 (초)', sec.toLocaleString()));
+    dateResult.appendChild(buildRow('타임스탬프 (밀리초)', d.getTime().toLocaleString()));
+    dateResult.appendChild(buildRow('UTC (ISO 8601)', formatDateISO(d)));
+  }
+
+  tsInput.addEventListener('input', runTsToDate);
+  tsUnit.addEventListener('change', runTsToDate);
+  dateInput.addEventListener('change', runDateToTs);
+  timeInput.addEventListener('change', runDateToTs);
+
+  // init with current values
+  tsInput.value = Math.floor(Date.now()/1000);
+  tsUnit.value = 's';
+  runTsToDate();
+
+  var now = new Date();
+  dateInput.value = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
+  timeInput.value = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  runDateToTs();
+})();
+</script>
+
+<div class="wrap" style="padding-top:0;">
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>Unix 타임스탬프 변환기는 유닉스 타임스탬프(1970년 1월 1일 UTC 자정부터 경과한 초 또는 밀리초)와 실제 날짜·시간을 서로 변환해주는 도구입니다. 타임스탬프를 입력하면 로컬 날짜, UTC 시간, 요일까지 함께 보여주고, 반대로 날짜와 시간을 선택하면 초 단위·밀리초 단위 타임스탬프를 동시에 계산해줍니다. 현재 시각의 타임스탬프도 실시간으로 표시됩니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>API 응답이나 서버 로그를 확인하다 보면 1735689600 같은 숫자로 시간이 표기되어 있는 경우를 자주 마주칩니다. 이 숫자가 정확히 언제를 의미하는지 머릿속으로 계산하기는 쉽지 않고, 자릿수(초 단위인지 밀리초 단위인지)를 헷갈려서 엉뚱한 날짜로 오해하는 경우도 흔합니다. 개발자들이 API 디버깅이나 로그 분석 중 이런 숫자를 빠르게 사람이 읽을 수 있는 날짜로 확인할 수 있도록 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>API 응답에 담긴 타임스탬프 값이 정확히 언제를 의미하는지 확인하고 싶을 때</li>
+      <li>서버 로그의 타임스탬프를 사람이 읽을 수 있는 날짜로 빠르게 변환하고 싶을 때</li>
+      <li>특정 날짜와 시간을 코드에 사용할 타임스탬프 값으로 미리 계산해두고 싶을 때</li>
+      <li>초 단위와 밀리초 단위 타임스탬프를 헷갈리지 않고 정확히 구분하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>타임스탬프 값이 10자리 정도면 초 단위, 13자리 정도면 밀리초 단위일 가능성이 높습니다. 단위를 잘못 선택하면 완전히 다른 연도로 계산될 수 있으니 자릿수를 먼저 확인해주세요. 이 도구는 브라우저의 로컬 시간대를 기준으로 날짜를 표시하며, UTC 값도 함께 제공하니 시간대 차이가 중요한 작업에서는 UTC 값을 활용하시길 권장합니다. 입력하신 값은 브라우저 안에서만 계산되며 서버로 전송되지 않습니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 타임스탬프가 1970년으로 계산돼요.</div>
+      <div class="a">밀리초 단위 값을 초 단위로 잘못 선택했을 가능성이 높습니다. 자릿수를 확인하고 단위(초/밀리초)를 다시 선택해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 로컬 시간과 UTC 시간이 왜 다르게 나오나요?</div>
+      <div class="a">유닉스 타임스탬프 자체는 시간대와 무관한 절대값이지만, 이를 사람이 읽는 날짜로 표시할 때는 시간대에 따라 다르게 보입니다. 한국은 UTC보다 9시간 빠릅니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 1970년 이전 날짜도 변환할 수 있나요?</div>
+      <div class="a">네, 음수 타임스탬프를 입력하면 1970년 이전 날짜로도 변환됩니다.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

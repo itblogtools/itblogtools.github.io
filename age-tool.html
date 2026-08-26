@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>만나이 계산기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  input[type=date]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
+  }
+  input[type=date]:focus{outline:none;border-color:var(--accent);}
+
+  .bigresult{
+    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:28px;text-align:center;
+  }
+  .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .bigresult .val{font-size:44px;font-weight:700;color:var(--accent);}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+
+  .subgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .subcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;text-align:center;}
+  .subcard .k{font-size:11px;color:var(--sub);margin-bottom:6px;}
+  .subcard .v{font-size:20px;font-weight:700;color:var(--text);}
+
+  .dday{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;text-align:center;}
+  .dday .k{font-size:12px;color:var(--sub);}
+  .dday .v{font-size:16px;font-weight:700;color:var(--amber);margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> age-calc --run</div>
+  <h1>만나이 계산기</h1>
+  <p class="desc">생년월일만 입력하면 만나이, 연나이, 세는나이를 한 번에 확인할 수 있어요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>생년월일</b>을 선택하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>입력하는 즉시 <b>만나이가 큰 숫자로</b> 바로 표시돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>아래에서 <b>연나이, 세는나이</b>도 함께 비교해서 확인할 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>다음 생일까지 <b>며칠 남았는지</b>도 함께 알려드려요.</span></div>
+      <div class="tip">💡 2023년 6월부터 법적으로는 '만나이'가 공식 기준이에요. 병원 진료, 계약서 작성 등 대부분의 공식 문서에는 만나이를 사용해요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label>생년월일</label>
+    <input type="date" id="birthInput">
+  </div>
+
+  <div class="bigresult">
+    <div class="lbl">만나이</div>
+    <div class="val" id="mainAge">-</div>
+    <div class="sub2" id="mainAgeSub">생년월일을 선택해주세요</div>
+  </div>
+
+  <div class="subgrid">
+    <div class="subcard">
+      <div class="k">연나이 (올해 기준)</div>
+      <div class="v" id="yearAge">-</div>
+    </div>
+    <div class="subcard">
+      <div class="k">세는나이 (한국식)</div>
+      <div class="v" id="koreanAge">-</div>
+    </div>
+  </div>
+
+  <div class="dday">
+    <div class="k">다음 생일까지</div>
+    <div class="v" id="nextBirthday">-</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var birthInput = document.getElementById('birthInput');
+  var mainAge = document.getElementById('mainAge');
+  var mainAgeSub = document.getElementById('mainAgeSub');
+  var yearAge = document.getElementById('yearAge');
+  var koreanAge = document.getElementById('koreanAge');
+  var nextBirthday = document.getElementById('nextBirthday');
+
+  function calc(){
+    var val = birthInput.value;
+    if (!val){
+      mainAge.textContent = '-';
+      mainAgeSub.textContent = '생년월일을 선택해주세요';
+      yearAge.textContent = '-';
+      koreanAge.textContent = '-';
+      nextBirthday.textContent = '-';
+      return;
+    }
+    var birth = new Date(val + 'T00:00:00');
+    var today = new Date();
+    today.setHours(0,0,0,0);
+
+    // 만나이
+    var age = today.getFullYear() - birth.getFullYear();
+    var hasHadBirthdayThisYear = (today.getMonth() > birth.getMonth()) ||
+      (today.getMonth() === birth.getMonth() && today.getDate() >= birth.getDate());
+    if (!hasHadBirthdayThisYear) age--;
+    mainAge.textContent = age + '세';
+    mainAgeSub.textContent = birth.getFullYear() + '년 ' + (birth.getMonth()+1) + '월 ' + birth.getDate() + '일생 기준';
+
+    // 연나이 (올해 - 출생연도)
+    yearAge.textContent = (today.getFullYear() - birth.getFullYear()) + '세';
+
+    // 세는나이 (한국식, 출생 시 1살 + 매년 1/1 증가)
+    koreanAge.textContent = (today.getFullYear() - birth.getFullYear() + 1) + '세';
+
+    // 다음 생일까지 D-day
+    var nextBday = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    if (nextBday < today){
+      nextBday = new Date(today.getFullYear()+1, birth.getMonth(), birth.getDate());
+    }
+    var diffDays = Math.round((nextBday - today) / (1000*60*60*24));
+    if (diffDays === 0){
+      nextBirthday.textContent = '오늘이 생일이에요! 🎉';
+    } else {
+      nextBirthday.textContent = diffDays + '일 남음 (' + (nextBday.getMonth()+1) + '월 ' + nextBday.getDate() + '일)';
+    }
+  }
+
+  birthInput.addEventListener('input', calc);
+  birthInput.addEventListener('change', calc);
+})();
+</script>
+
+<div class="wrap" style="padding-top:0;">
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>만나이 계산기는 생년월일을 입력하면 만나이, 연나이, 한국식 세는나이를 한 번에 계산해서 보여주는 도구입니다. 세 가지 나이 계산 방식의 차이를 헷갈려하시는 분들을 위해, 오늘 날짜를 기준으로 세 값을 동시에 비교할 수 있도록 만들었습니다. 다음 생일까지 남은 일수도 함께 확인할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>2023년 6월부터 '만 나이 통일법'이 시행되면서 법적, 사회적으로 만나이가 공식 기준이 되었지만, 여전히 일상 대화에서는 세는나이를 쓰는 경우가 많고, 병역이나 정년처럼 일부 제도에서는 연나이를 기준으로 삼기도 합니다. 세 가지 나이 계산법이 혼재되어 있다 보니 "내가 지금 정확히 몇 살이지?"라는 질문에 바로 답하기 어려운 경우가 많아, 이를 한 번에 계산해서 보여주는 도구를 만들게 되었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>병원 진료나 계약서 작성 등 공식 문서에 만나이를 정확히 기재해야 할 때</li>
+      <li>세는나이(한국 나이)와 만나이 차이가 헷갈려서 정확히 확인하고 싶을 때</li>
+      <li>병역, 정년 등 연나이 기준 제도와 관련해 내 나이를 확인해야 할 때</li>
+      <li>다음 생일까지 며칠 남았는지 궁금할 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구는 오늘 날짜를 기준으로 계산됩니다. 특정 시점(예: 입학일, 계약일) 기준의 나이가 필요하시다면, 그 날짜를 기준으로 별도로 계산하셔야 정확합니다. 법령이나 제도별로 나이 기준이 다를 수 있으니(예: 청소년보호법은 연나이 기준), 공식적인 절차에 사용하실 때는 해당 기관의 정확한 기준을 함께 확인하시길 권장합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 만나이와 세는나이는 왜 차이가 나나요?</div>
+      <div class="a">세는나이는 태어난 해를 1살로 치고 매년 1월 1일마다 한 살씩 더하는 한국 전통 방식이고, 만나이는 태어난 날을 0살로 시작해서 생일이 지날 때마다 한 살씩 늘어나는 국제 표준 방식입니다. 생일 전이라면 최대 2살까지 차이가 날 수 있습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 연나이는 어디에 쓰이나요?</div>
+      <div class="a">병역법, 청소년보호법 등 일부 법령에서는 여전히 '올해 연도 - 출생연도'로 계산하는 연나이를 기준으로 삼습니다. 관련 제도를 확인하실 땐 어떤 나이 기준을 쓰는지 먼저 확인하시는 게 좋습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 생년월일이 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
