@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>음주 / 카페인 계산기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .warnbanner{
+    background:rgba(255,92,92,0.08);border:1px solid var(--bad);border-radius:10px;
+    padding:14px 16px;font-size:12.5px;color:var(--text);line-height:1.7;
+  }
+  .warnbanner b{color:var(--bad);}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .tabs{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;}
+  .tab{flex:1;text-align:center;padding:10px 4px;border-radius:7px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;}
+  .tab.active{background:var(--accent);color:var(--dark);}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  input[type=number], select{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:11px 12px;font-size:14px;font-family:inherit;
+  }
+  input:focus, select:focus{outline:none;border-color:var(--accent);}
+  .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:460px){.fieldgrid{grid-template-columns:1fr;}}
+  .genderrow{display:flex;gap:8px;}
+  .genderbtn{flex:1;text-align:center;background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px;font-size:13px;cursor:pointer;}
+  .genderbtn.active{border-color:var(--accent);color:var(--accent);}
+
+  .bigresult{
+    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:24px;text-align:center;
+  }
+  .bigresult.warn{border-color:var(--bad);}
+  .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .bigresult .val{font-size:30px;font-weight:700;color:var(--accent);word-break:break-all;}
+  .bigresult.warn .val{color:var(--bad);}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+
+  .detailtable{display:flex;flex-direction:column;gap:6px;}
+  .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
+  .drow .k{color:var(--sub);}
+  .drow .v{color:var(--text);font-weight:700;text-align:right;}
+
+  .drinklist{display:flex;flex-direction:column;gap:8px;}
+  .drinkrow{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:8px;align-items:center;}
+  .drinkrow select{flex:1;}
+  .drinkrow input{width:70px;}
+  .drinkrow .removebtn{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:6px;padding:8px 10px;font-size:11px;cursor:pointer;}
+  .addbtn{
+    background:var(--panel);border:1px dashed var(--line);color:var(--accent);
+    border-radius:10px;padding:10px;font-size:13px;font-family:inherit;cursor:pointer;text-align:center;
+  }
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> alcohol-caffeine-calc --run</div>
+  <h1>음주 / 카페인 계산기</h1>
+  <p class="desc">음주량으로 대략적인 혈중알코올농도를, 카페인 섭취량으로 체내 잔존량을 추정해드려요.</p>
+
+  <div class="warnbanner">
+    ⚠️ <b>운전 관련 중요 안내:</b> 이 도구의 혈중알코올농도(BAC) 추정치는 개인차가 크게 반영되지 않은 참고용 수치입니다. <b>절대 이 결과를 음주운전 가능 여부 판단에 사용하지 마세요.</b> 술을 마셨다면 혈중알코올농도와 상관없이 절대 운전하지 마시고, 대중교통이나 대리운전을 이용하세요.
+  </div>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>상단 탭에서 <b>'음주(BAC)'</b> 또는 <b>'카페인'</b>을 선택하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>음주 탭이라면 <b>성별·체중·술 종류·양·경과시간</b>을, 카페인 탭이라면 <b>마신 음료 종류와 잔 수</b>를 입력하세요.</span></div>
+      <div class="step"><span class="num">3</span><span>결과에서 <b>추정 혈중알코올농도</b> 또는 <b>체내 잔존 카페인량</b>을 확인하세요.</span></div>
+      <div class="tip">💡 두 계산 모두 위드마크 공식·카페인 반감기(약 5시간)라는 일반 공식을 사용한 평균적 추정치예요. 개인의 체질, 건강 상태, 공복 여부에 따라 실제 수치는 크게 달라질 수 있어요.</div>
+    </div>
+  </details>
+
+  <div class="tabs">
+    <div class="tab active" data-mode="alcohol">음주 (BAC)</div>
+    <div class="tab" data-mode="caffeine">카페인</div>
+  </div>
+
+  <!-- 음주 계산 -->
+  <div id="alcoholPanel" class="panel">
+    <label>성별 (분포계수 산정용)</label>
+    <div class="genderrow">
+      <div class="genderbtn active" data-gender="male">남성</div>
+      <div class="genderbtn" data-gender="female">여성</div>
+    </div>
+
+    <div class="fieldgrid">
+      <div>
+        <label>체중</label>
+        <input type="number" id="weightInput" value="70" step="1">
+      </div>
+      <div>
+        <label>경과 시간</label>
+        <input type="number" id="hoursInput" value="1" step="0.5" min="0">
+      </div>
+    </div>
+
+    <label>마신 술 종류</label>
+    <select id="drinkType">
+      <option value="12">맥주 (알코올 약 5%)</option>
+      <option value="20">막걸리 (알코올 약 6%)</option>
+      <option value="17">와인 (알코올 약 14%)</option>
+      <option value="20" data-abv="17">소주 (알코올 약 17%)</option>
+      <option value="40">위스키/양주 (알코올 약 40%)</option>
+    </select>
+
+    <label>마신 양 (mL, 총량)</label>
+    <input type="number" id="volumeInput" value="360" step="10">
+  </div>
+
+  <!-- 카페인 계산 -->
+  <div id="caffeinePanel" class="panel hidden">
+    <label>마신 음료</label>
+    <div class="drinklist" id="drinkList"></div>
+    <div class="addbtn" id="addDrinkBtn">+ 음료 추가</div>
+    <label style="margin-top:6px;">마신 후 경과 시간</label>
+    <input type="number" id="caffeineHours" value="2" step="0.5" min="0">
+  </div>
+
+  <div class="bigresult" id="mainResultBox">
+    <div class="lbl" id="mainLbl">추정 결과</div>
+    <div class="val" id="mainVal">-</div>
+    <div class="sub2" id="mainSub"></div>
+  </div>
+
+  <div class="detailtable" id="detailTable"></div>
+
+  <div class="disclaimer" id="disclaimerBox">
+    ※ 혈중알코올농도는 위드마크(Widmark) 공식을 기반으로 한 <b style="color:var(--text);">평균적 추정치</b>이며, 실제 수치는 체질, 간 기능, 공복 여부, 음주 속도 등에 따라 크게 달라질 수 있습니다. 카페인 잔존량 역시 평균 반감기(약 5시간)를 적용한 단순 추정치로, 개인의 카페인 대사 속도에 따라 차이가 있습니다. 이 도구는 참고·교육용이며, 의학적 판단이나 법적 판단(음주운전 등)의 근거로 사용할 수 없습니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>음주/카페인 계산기는 마신 술의 종류와 양, 체중, 경과 시간을 입력하면 위드마크 공식을 기반으로 대략적인 혈중알코올농도(BAC)를 추정해주고, 마신 카페인 음료의 종류와 양을 입력하면 반감기를 적용해 현재 체내에 남아있을 것으로 추정되는 카페인 양을 계산해주는 도구입니다. 두 계산 모두 일반적인 평균 공식을 사용한 참고용 추정치를 제공합니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>회식이나 모임 자리에서 "내가 지금 얼마나 취한 상태인지"를 스스로 가늠해보고 싶을 때, 또는 카페인 음료를 여러 잔 마신 뒤 "지금 카페인이 몸에 얼마나 남아있어서 잠이 안 오는 건지" 궁금할 때가 있습니다. 이런 궁금증에 과학적 공식을 기반으로 한 대략적인 답을 제공하고, 특히 음주 후에는 어떤 결과가 나오든 절대 운전대를 잡으면 안 된다는 안전 메시지를 함께 전달하고 싶어서 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>술을 마신 뒤 대략적인 혈중알코올농도 추이를 참고해서 언제쯤 몸이 회복될지 가늠하고 싶을 때 (운전 여부 판단 목적 절대 아님)</li>
+      <li>카페인 음료를 여러 잔 마신 뒤, 하루 권장 섭취 한도에 얼마나 가까워졌는지 확인하고 싶을 때</li>
+      <li>늦은 오후에 마신 커피가 저녁까지 얼마나 몸에 남아있을지 궁금해서 수면에 미칠 영향을 가늠하고 싶을 때</li>
+      <li>음주와 카페인 섭취 습관을 스스로 되돌아보고 관리하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p><b>이 도구가 제시하는 혈중알코올농도는 절대로 음주운전 가능 여부를 판단하는 근거로 사용해서는 안 됩니다.</b> 위드마크 공식은 평균적인 인체 반응을 가정한 계산식일 뿐이며, 실제 개인의 체질, 간 기능, 음주 속도, 공복 여부, 복용 중인 약물 등에 따라 실제 혈중알코올농도는 이 추정치와 크게 다를 수 있습니다. 술을 마셨다면 계산 결과와 상관없이 절대 운전하지 마시고, 대중교통이나 대리운전, 콜택시를 이용하시기 바랍니다. 카페인 잔존량 계산 역시 평균 반감기를 적용한 단순 추정치이며, 개인의 카페인 대사 능력(유전적 요인 포함)에 따라 실제 체내 잔존량은 다를 수 있습니다. 카페인에 민감하거나 임신 중이신 분, 특정 질환이 있으신 분은 카페인 섭취량을 더욱 보수적으로 관리하시고 필요시 의료진과 상담하시길 권장합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 이 결과로 운전해도 되는지 판단할 수 있나요?</div>
+      <div class="a">절대 안 됩니다. 이 도구는 참고용 추정치일 뿐이며, 실제 혈중알코올농도는 개인차가 매우 큽니다. 술을 마셨다면 이 결과와 무관하게 절대 운전하지 마세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 하루 카페인 권장 섭취 한도는 얼마인가요?</div>
+      <div class="a">식품의약품안전처 기준으로 건강한 성인은 하루 400mg 이하, 임산부는 300mg 이하를 권장합니다. 카페인에 민감한 분이나 청소년은 이보다 더 낮은 기준을 적용하는 것이 안전합니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 정보가 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.tab');
+  var alcoholPanel = document.getElementById('alcoholPanel');
+  var caffeinePanel = document.getElementById('caffeinePanel');
+  var mainLbl = document.getElementById('mainLbl');
+  var mainVal = document.getElementById('mainVal');
+  var mainSub = document.getElementById('mainSub');
+  var mainResultBox = document.getElementById('mainResultBox');
+  var detailTable = document.getElementById('detailTable');
+
+  var mode = 'alcohol';
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      mode = tab.dataset.mode;
+      alcoholPanel.classList.toggle('hidden', mode !== 'alcohol');
+      caffeinePanel.classList.toggle('hidden', mode !== 'caffeine');
+      if (mode === 'alcohol') calcAlcohol(); else calcCaffeine();
+    });
+  });
+
+  // ---------- 음주 계산 ----------
+  var genderBtns = document.querySelectorAll('.genderbtn');
+  var weightInput = document.getElementById('weightInput');
+  var hoursInput = document.getElementById('hoursInput');
+  var drinkType = document.getElementById('drinkType');
+  var volumeInput = document.getElementById('volumeInput');
+  var gender = 'male';
+
+  genderBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      genderBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      gender = btn.dataset.gender;
+      calcAlcohol();
+    });
+  });
+
+  function calcAlcohol(){
+    var weight = parseFloat(weightInput.value) || 0;
+    var hours = parseFloat(hoursInput.value) || 0;
+    var abv = parseFloat(drinkType.value) || 0;
+    var volume = parseFloat(volumeInput.value) || 0;
+
+    if (weight <= 0 || volume <= 0){
+      mainVal.textContent = '-';
+      mainSub.textContent = '체중과 음주량을 입력해주세요';
+      detailTable.innerHTML = '';
+      mainResultBox.classList.remove('warn');
+      return;
+    }
+
+    var alcoholGrams = volume * (abv/100) * 0.8;
+    var r = gender === 'male' ? 0.68 : 0.55;
+    var beta = 0.015; // %/hour elimination
+
+    var bac = (alcoholGrams / (weight * r * 10)) - (beta * hours);
+    bac = Math.max(0, bac);
+
+    mainLbl.textContent = '추정 혈중알코올농도 (BAC)';
+    mainVal.textContent = bac.toFixed(3) + '%';
+    mainSub.textContent = bac <= 0 ? '체내 알코올이 대사되어 사라진 것으로 추정돼요' : '섭취 후 ' + hours + '시간 경과 기준 추정치';
+    mainResultBox.classList.toggle('warn', bac > 0);
+
+    detailTable.innerHTML = '';
+    var rows = [
+      ['섭취 알코올량', Math.round(alcoholGrams) + 'g'],
+      ['분포계수(r)', r + ' (' + (gender==='male'?'남성':'여성') + ' 기준)'],
+      ['경과시간 분해량', (beta*hours).toFixed(3) + '%'],
+    ];
+    rows.forEach(function(r2){
+      var row = document.createElement('div');
+      row.className = 'drow';
+      row.innerHTML = '<span class="k">' + r2[0] + '</span><span class="v">' + r2[1] + '</span>';
+      detailTable.appendChild(row);
+    });
+    var noteRow = document.createElement('div');
+    noteRow.className = 'drow';
+    noteRow.innerHTML = '<span class="k" style="color:var(--bad);">⚠️ 참고용 수치이며 절대 운전 판단에 사용 금지</span><span class="v"></span>';
+    detailTable.appendChild(noteRow);
+  }
+
+  [weightInput, hoursInput, drinkType, volumeInput].forEach(function(el){
+    el.addEventListener('input', calcAlcohol);
+    el.addEventListener('change', calcAlcohol);
+  });
+
+  // ---------- 카페인 계산 ----------
+  var CAFFEINE_DRINKS = [
+    {label:'아메리카노 (1잔, 약 150mg)', mg:150},
+    {label:'에스프레소 샷 (1샷, 약 75mg)', mg:75},
+    {label:'믹스커피 (1봉, 약 70mg)', mg:70},
+    {label:'에너지드링크 (1캔, 약 80mg)', mg:80},
+    {label:'녹차 (1잔, 약 30mg)', mg:30},
+    {label:'홍차 (1잔, 약 40mg)', mg:40},
+    {label:'콜라 (1캔, 약 35mg)', mg:35},
+    {label:'초콜릿 (1개, 약 20mg)', mg:20}
+  ];
+
+  var drinkListEl = document.getElementById('drinkList');
+  var addDrinkBtn = document.getElementById('addDrinkBtn');
+  var caffeineHours = document.getElementById('caffeineHours');
+  var caffeineEntries = [];
+  var cIdCounter = 0;
+
+  function addCaffeineDrink(){
+    var id = cIdCounter++;
+    caffeineEntries.push({id:id, drinkIdx:0, count:1});
+    renderCaffeineDrinks();
+  }
+
+  function renderCaffeineDrinks(){
+    drinkListEl.innerHTML = '';
+    caffeineEntries.forEach(function(e){
+      var row = document.createElement('div');
+      row.className = 'drinkrow';
+      var options = CAFFEINE_DRINKS.map(function(d, i){
+        return '<option value="'+i+'"' + (i===e.drinkIdx?' selected':'') + '>' + d.label + '</option>';
+      }).join('');
+      row.innerHTML =
+        '<select data-id="'+e.id+'" data-field="drinkIdx">' + options + '</select>' +
+        '<input type="number" min="1" value="'+e.count+'" data-id="'+e.id+'" data-field="count">' +
+        '<button class="removebtn" data-remove="'+e.id+'">삭제</button>';
+      drinkListEl.appendChild(row);
+    });
+
+    drinkListEl.querySelectorAll('select, input').forEach(function(el){
+      el.addEventListener('input', function(){
+        var id = parseInt(el.dataset.id, 10);
+        var field = el.dataset.field;
+        var entry = caffeineEntries.find(function(x){ return x.id === id; });
+        if (entry) entry[field] = field === 'count' ? parseFloat(el.value)||1 : parseInt(el.value,10);
+        calcCaffeine();
+      });
+    });
+    drinkListEl.querySelectorAll('[data-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        caffeineEntries = caffeineEntries.filter(function(x){ return x.id !== parseInt(btn.dataset.remove,10); });
+        renderCaffeineDrinks();
+        calcCaffeine();
+      });
+    });
+  }
+
+  function calcCaffeine(){
+    if (mode !== 'caffeine') return;
+    var totalMg = 0;
+    caffeineEntries.forEach(function(e){
+      var drink = CAFFEINE_DRINKS[e.drinkIdx];
+      if (drink) totalMg += drink.mg * (e.count || 0);
+    });
+
+    var hours = parseFloat(caffeineHours.value) || 0;
+    var halfLife = 5; // hours
+    var remaining = totalMg * Math.pow(0.5, hours / halfLife);
+
+    mainLbl.textContent = '현재 체내 잔존 카페인 (추정)';
+    mainVal.textContent = Math.round(remaining) + 'mg';
+    var dailyLimit = 400;
+    var pct = Math.round((totalMg / dailyLimit) * 100);
+    mainSub.textContent = '총 섭취량 ' + Math.round(totalMg) + 'mg (일일 권장 400mg의 ' + pct + '%)';
+    mainResultBox.classList.toggle('warn', totalMg > dailyLimit);
+
+    detailTable.innerHTML = '';
+    var rows = [
+      ['총 섭취 카페인', Math.round(totalMg) + 'mg'],
+      ['경과 시간', hours + '시간'],
+      ['반감기 적용 잔존량', Math.round(remaining) + 'mg'],
+      ['일일 권장 한도 (성인 기준)', '400mg'],
+    ];
+    rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'drow';
+      row.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
+      detailTable.appendChild(row);
+    });
+  }
+
+  addDrinkBtn.addEventListener('click', addCaffeineDrink);
+  caffeineHours.addEventListener('input', calcCaffeine);
+
+  // init
+  addCaffeineDrink();
+  calcAlcohol();
+})();
+</script>
+</body>
+</html>
