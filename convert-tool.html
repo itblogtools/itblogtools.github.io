@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>환율 / 단위 변환기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .tabs{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;}
+  .tab{flex:1;text-align:center;padding:10px 4px;border-radius:7px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;}
+  .tab.active{background:var(--accent);color:var(--dark);}
+
+  .subtabs{display:flex;gap:6px;flex-wrap:wrap;}
+  .subtab{
+    background:var(--panel);border:1px solid var(--line);color:var(--sub);
+    border-radius:20px;padding:6px 12px;font-size:12px;cursor:pointer;
+  }
+  .subtab.active{border-color:var(--accent);color:var(--accent);}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  input[type=number], select{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px;font-size:15px;font-family:inherit;
+  }
+  input:focus, select:focus{outline:none;border-color:var(--accent);}
+
+  .convertrow{display:flex;align-items:center;gap:10px;}
+  .convertcol{flex:1;display:flex;flex-direction:column;gap:6px;}
+  .swapbtn{
+    flex-shrink:0;width:38px;height:38px;border-radius:50%;background:var(--panel);
+    border:1px solid var(--line);color:var(--accent);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:16px;margin-top:18px;
+  }
+  .swapbtn:active{transform:scale(0.92);}
+
+  .status{font-size:12px;padding:10px 14px;border-radius:8px;}
+  .status.ok{background:rgba(57,255,136,0.08);color:var(--accent);border:1px solid var(--accent-dim);}
+  .status.bad{background:rgba(255,92,92,0.08);color:var(--bad);border:1px solid var(--bad);}
+  .status.idle{background:var(--panel);color:var(--sub);border:1px solid var(--line);}
+
+  .bigresult{
+    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:24px;text-align:center;
+  }
+  .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .bigresult .val{font-size:26px;font-weight:700;color:var(--accent);word-break:break-all;}
+  .bigresult .sub2{font-size:11px;color:var(--sub);margin-top:8px;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> convert --run</div>
+  <h1>환율 / 단위 변환기</h1>
+  <p class="desc">실시간 환율로 통화를 변환하거나, 길이·무게·부피·온도 단위를 즉시 변환해요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>상단 탭에서 <b>'환율'</b> 또는 <b>'단위'</b>를 선택하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>환율 탭이라면 <b>변환할 통화 2개</b>를 고르고 금액을 입력하세요. 단위 탭이라면 <b>카테고리(길이·무게·부피·온도)</b>를 먼저 고르세요.</span></div>
+      <div class="step"><span class="num">3</span><span>가운데 <b>↔ 버튼</b>으로 방향을 바로 바꿀 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>입력하는 즉시 변환 결과가 <b>바로 표시</b>돼요.</span></div>
+      <div class="tip">💡 환율은 실시간 API로 조회돼요. 인터넷 연결이 필요하고, 환율은 은행 고시 환율과 소폭 차이가 있을 수 있어요.</div>
+    </div>
+  </details>
+
+  <div class="tabs">
+    <div class="tab active" data-mode="currency">환율 변환</div>
+    <div class="tab" data-mode="unit">단위 변환</div>
+  </div>
+
+  <!-- 환율 변환 -->
+  <div id="currencyPanel" class="panel">
+    <div class="convertrow">
+      <div class="convertcol">
+        <label>보유 통화</label>
+        <select id="fromCurrency">
+          <option value="KRW">KRW - 대한민국 원</option>
+          <option value="USD" selected>USD - 미국 달러</option>
+          <option value="JPY">JPY - 일본 엔</option>
+          <option value="EUR">EUR - 유로</option>
+          <option value="CNY">CNY - 중국 위안</option>
+          <option value="GBP">GBP - 영국 파운드</option>
+        </select>
+        <input type="number" id="currencyAmount" value="100">
+      </div>
+      <div class="swapbtn" id="currencySwap">⇄</div>
+      <div class="convertcol">
+        <label>변환할 통화</label>
+        <select id="toCurrency">
+          <option value="KRW" selected>KRW - 대한민국 원</option>
+          <option value="USD">USD - 미국 달러</option>
+          <option value="JPY">JPY - 일본 엔</option>
+          <option value="EUR">EUR - 유로</option>
+          <option value="CNY">CNY - 중국 위안</option>
+          <option value="GBP">GBP - 영국 파운드</option>
+        </select>
+        <input type="text" id="currencyResult" readonly>
+      </div>
+    </div>
+    <div class="status idle" id="currencyStatus">환율 정보를 불러오는 중...</div>
+  </div>
+
+  <!-- 단위 변환 -->
+  <div id="unitPanel" class="panel hidden">
+    <div class="subtabs" id="unitCategoryTabs">
+      <div class="subtab active" data-cat="length">길이</div>
+      <div class="subtab" data-cat="weight">무게</div>
+      <div class="subtab" data-cat="volume">부피</div>
+      <div class="subtab" data-cat="temp">온도</div>
+    </div>
+    <div class="convertrow">
+      <div class="convertcol">
+        <label>입력</label>
+        <select id="fromUnit"></select>
+        <input type="number" id="unitAmount" value="1">
+      </div>
+      <div class="swapbtn" id="unitSwap">⇄</div>
+      <div class="convertcol">
+        <label>결과</label>
+        <select id="toUnit"></select>
+        <input type="text" id="unitResult" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="bigresult">
+    <div class="lbl" id="mainLbl">변환 결과</div>
+    <div class="val" id="mainVal">-</div>
+    <div class="sub2" id="mainSub"></div>
+  </div>
+
+  <div class="disclaimer" id="disclaimerBox">
+    ※ 환율 정보는 외부 API(open.er-api.com)를 통해 실시간으로 조회되며, 은행이나 환전소의 실제 고시 환율과 소폭 차이가 있을 수 있습니다. 실제 환전이나 송금 시에는 반드시 해당 은행의 고시 환율을 확인해주세요. 단위 변환은 표준 국제 단위 기준으로 계산됩니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>환율/단위 변환기는 실시간 환율 정보를 기반으로 여러 나라 통화를 즉시 변환해주고, 길이·무게·부피·온도 같은 단위도 함께 변환해주는 도구입니다. 원화, 달러, 엔화, 유로, 위안, 파운드 등 주요 통화 간 변환을 지원하며, 단위 변환에서는 미터법과 야드파운드법을 오가며 계산할 수 있습니다. 해외여행이나 직구, 요리 레시피 등 일상에서 자주 마주치는 환율·단위 변환을 한 곳에서 빠르게 처리할 수 있도록 만들었습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>해외여행을 준비하거나 해외직구를 할 때 "이 가격이 원화로 얼마지?"를 계산하려고 매번 검색창에 환율을 검색하는 게 번거롭습니다. 또 해외 레시피를 보면 온스나 화씨온도로 표기되어 있어서 한국 단위로 바꾸는 데 시간이 걸리기도 하고요. 이렇게 흩어져 있는 변환 작업을 한 페이지에서 빠르게 처리할 수 있는 도구가 있으면 훨씬 편리하겠다고 생각해서, 환율과 단위 변환을 함께 묶어 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>해외여행 전, 여행 경비를 현지 통화로 미리 환산해서 예산을 세우고 싶을 때</li>
+      <li>해외직구 사이트에서 본 가격이 원화로 얼마인지 즉시 확인하고 싶을 때</li>
+      <li>해외 레시피의 온스, 파운드, 화씨온도를 한국식 단위(g, kg, 섭씨)로 바꾸고 싶을 때</li>
+      <li>키나 몸무게를 피트·인치, 파운드 등 다른 단위로 바꿔서 표현해야 할 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구의 환율 정보는 외부 API를 통해 실시간으로 조회되지만, 은행이나 환전소가 고시하는 실제 환율과는 소폭 차이가 있을 수 있습니다. 특히 실제 환전 시에는 환전 수수료가 별도로 부과되기 때문에, 여기서 계산된 금액과 실제로 받게 되는 금액은 다를 수 있습니다. 정확한 환전 금액은 반드시 이용하실 은행이나 환전소의 고시 환율과 수수료를 함께 확인하시기 바랍니다. 인터넷 연결이 불안정하거나 API 서버에 일시적 문제가 있으면 환율 정보를 불러오지 못할 수 있으니, 이 경우 잠시 후 다시 시도해주세요. 단위 변환은 표준 국제 단위 정의를 기준으로 정확하게 계산되므로 별도의 오차 없이 활용하실 수 있습니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 여기 나온 환율로 실제 환전할 수 있나요?</div>
+      <div class="a">아니요. 이 도구의 환율은 참고용 시장 환율이며, 실제 은행이나 환전소는 여기에 수수료를 더하거나 뺀 자체 고시 환율을 적용합니다. 실제 환전 전에는 반드시 이용 기관의 환율을 확인하세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 환율 정보가 안 불러와져요.</div>
+      <div class="a">외부 환율 API 서버에 일시적인 문제가 있거나, 네트워크 연결이 원활하지 않을 수 있습니다. 잠시 후 페이지를 새로고침해서 다시 시도해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 정보가 저장되나요?</div>
+      <div class="a">아니요. 환율 조회를 위한 통신 외에는 별도로 서버에 정보를 전송하거나 저장하지 않으며, 계산은 브라우저 안에서 이루어집니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.tab');
+  var currencyPanel = document.getElementById('currencyPanel');
+  var unitPanel = document.getElementById('unitPanel');
+  var mainLbl = document.getElementById('mainLbl');
+  var mainVal = document.getElementById('mainVal');
+  var mainSub = document.getElementById('mainSub');
+  var disclaimerBox = document.getElementById('disclaimerBox');
+
+  var mode = 'currency';
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      mode = tab.dataset.mode;
+      currencyPanel.classList.toggle('hidden', mode !== 'currency');
+      unitPanel.classList.toggle('hidden', mode !== 'unit');
+      if (mode === 'currency') { runCurrency(); } else { runUnit(); }
+    });
+  });
+
+  // ---------- 환율 변환 ----------
+  var fromCurrency = document.getElementById('fromCurrency');
+  var toCurrency = document.getElementById('toCurrency');
+  var currencyAmount = document.getElementById('currencyAmount');
+  var currencyResult = document.getElementById('currencyResult');
+  var currencySwap = document.getElementById('currencySwap');
+  var currencyStatus = document.getElementById('currencyStatus');
+
+  var rates = null;
+  var ratesBase = null;
+
+  function fetchRates(base){
+    currencyStatus.className = 'status idle';
+    currencyStatus.textContent = '환율 정보를 불러오는 중...';
+    fetch('https://open.er-api.com/v6/latest/' + base)
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        if (data && data.rates){
+          rates = data.rates;
+          ratesBase = base;
+          currencyStatus.className = 'status ok';
+          currencyStatus.textContent = '✓ 실시간 환율 기준 (' + (data.time_last_update_utc || '') + ')';
+          runCurrency();
+        } else {
+          throw new Error('no rates');
+        }
+      })
+      .catch(function(){
+        currencyStatus.className = 'status bad';
+        currencyStatus.textContent = '✗ 환율 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.';
+      });
+  }
+
+  function runCurrency(){
+    if (mode !== 'currency') return;
+    var from = fromCurrency.value;
+    var to = toCurrency.value;
+    var amt = parseFloat(currencyAmount.value) || 0;
+
+    if (!rates || ratesBase !== from){
+      fetchRates(from);
+      return;
+    }
+
+    var rate = rates[to];
+    if (rate == null){
+      mainVal.textContent = '-';
+      mainSub.textContent = '';
+      return;
+    }
+    var result = amt * rate;
+    currencyResult.value = result.toLocaleString(undefined, {maximumFractionDigits:2});
+    mainLbl.textContent = from + ' → ' + to;
+    mainVal.textContent = result.toLocaleString(undefined, {maximumFractionDigits:2}) + ' ' + to;
+    mainSub.textContent = '1 ' + from + ' = ' + rate.toLocaleString(undefined, {maximumFractionDigits:4}) + ' ' + to;
+  }
+
+  fromCurrency.addEventListener('change', function(){ rates = null; runCurrency(); });
+  toCurrency.addEventListener('change', runCurrency);
+  currencyAmount.addEventListener('input', runCurrency);
+  currencySwap.addEventListener('click', function(){
+    var tmp = fromCurrency.value;
+    fromCurrency.value = toCurrency.value;
+    toCurrency.value = tmp;
+    rates = null;
+    runCurrency();
+  });
+
+  // ---------- 단위 변환 ----------
+  var UNIT_DATA = {
+    length: {
+      label: '길이',
+      units: {
+        km:{label:'킬로미터(km)', toBase:1000},
+        m:{label:'미터(m)', toBase:1},
+        cm:{label:'센티미터(cm)', toBase:0.01},
+        mile:{label:'마일(mile)', toBase:1609.344},
+        yard:{label:'야드(yard)', toBase:0.9144},
+        feet:{label:'피트(ft)', toBase:0.3048},
+        inch:{label:'인치(in)', toBase:0.0254}
+      }
+    },
+    weight: {
+      label:'무게',
+      units:{
+        kg:{label:'킬로그램(kg)', toBase:1000},
+        g:{label:'그램(g)', toBase:1},
+        lb:{label:'파운드(lb)', toBase:453.592},
+        oz:{label:'온스(oz)', toBase:28.3495}
+      }
+    },
+    volume:{
+      label:'부피',
+      units:{
+        l:{label:'리터(L)', toBase:1000},
+        ml:{label:'밀리리터(mL)', toBase:1},
+        gal:{label:'갤런(gal, 미국)', toBase:3785.41},
+        cup:{label:'컵(cup, 미국)', toBase:236.588}
+      }
+    },
+    temp:{
+      label:'온도',
+      units:{
+        c:{label:'섭씨(°C)'},
+        f:{label:'화씨(°F)'},
+        k:{label:'켈빈(K)'}
+      }
+    }
+  };
+
+  var unitCategoryTabs = document.querySelectorAll('#unitCategoryTabs .subtab');
+  var fromUnit = document.getElementById('fromUnit');
+  var toUnit = document.getElementById('toUnit');
+  var unitAmount = document.getElementById('unitAmount');
+  var unitResult = document.getElementById('unitResult');
+  var unitSwap = document.getElementById('unitSwap');
+
+  var currentCat = 'length';
+
+  function populateUnitSelects(){
+    var units = UNIT_DATA[currentCat].units;
+    fromUnit.innerHTML = '';
+    toUnit.innerHTML = '';
+    Object.keys(units).forEach(function(key){
+      var o1 = document.createElement('option');
+      o1.value = key; o1.textContent = units[key].label;
+      fromUnit.appendChild(o1);
+      var o2 = document.createElement('option');
+      o2.value = key; o2.textContent = units[key].label;
+      toUnit.appendChild(o2);
+    });
+    var keys = Object.keys(units);
+    fromUnit.value = keys[0];
+    toUnit.value = keys[1] || keys[0];
+  }
+
+  function tempToCelsius(v, unit){
+    if (unit === 'c') return v;
+    if (unit === 'f') return (v - 32) * 5/9;
+    if (unit === 'k') return v - 273.15;
+  }
+  function celsiusToUnit(c, unit){
+    if (unit === 'c') return c;
+    if (unit === 'f') return c * 9/5 + 32;
+    if (unit === 'k') return c + 273.15;
+  }
+
+  function runUnit(){
+    if (mode !== 'unit') return;
+    var amt = parseFloat(unitAmount.value) || 0;
+    var from = fromUnit.value;
+    var to = toUnit.value;
+    var result;
+
+    if (currentCat === 'temp'){
+      var celsius = tempToCelsius(amt, from);
+      result = celsiusToUnit(celsius, to);
+    } else {
+      var units = UNIT_DATA[currentCat].units;
+      var base = amt * units[from].toBase;
+      result = base / units[to].toBase;
+    }
+
+    var displayResult = Math.round(result * 10000) / 10000;
+    unitResult.value = displayResult.toLocaleString();
+    mainLbl.textContent = UNIT_DATA[currentCat].label + ' 변환 결과';
+    mainVal.textContent = displayResult.toLocaleString() + ' ' + units_label(to);
+    mainSub.textContent = amt.toLocaleString() + ' ' + units_label(from) + ' 기준';
+  }
+
+  function units_label(key){
+    return UNIT_DATA[currentCat].units[key].label;
+  }
+
+  unitCategoryTabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      unitCategoryTabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      currentCat = tab.dataset.cat;
+      populateUnitSelects();
+      runUnit();
+    });
+  });
+
+  fromUnit.addEventListener('change', runUnit);
+  toUnit.addEventListener('change', runUnit);
+  unitAmount.addEventListener('input', runUnit);
+  unitSwap.addEventListener('click', function(){
+    var tmp = fromUnit.value;
+    fromUnit.value = toUnit.value;
+    toUnit.value = tmp;
+    runUnit();
+  });
+
+  populateUnitSelects();
+  fetchRates('USD');
+})();
+</script>
+</body>
+</html>

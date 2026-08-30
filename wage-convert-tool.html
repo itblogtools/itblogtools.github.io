@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>시급/월급/연봉 상호 변환기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .tabs{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;}
+  .tab{flex:1;text-align:center;padding:10px 4px;border-radius:7px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;}
+  .tab.active{background:var(--accent);color:var(--dark);}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  input[type=number]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px;font-size:15px;font-family:inherit;
+  }
+  input:focus{outline:none;border-color:var(--accent);}
+  .inputrow{display:flex;gap:8px;align-items:center;}
+  .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .optlabel{font-size:11px;color:var(--sub);}
+
+  .resultgrid{display:flex;flex-direction:column;gap:8px;}
+  .resultcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .resultcard.main{border-color:var(--accent);}
+  .resultcard .k{font-size:12px;color:var(--sub);}
+  .resultcard .v{font-size:18px;font-weight:700;color:var(--text);text-align:right;}
+  .resultcard.main .v{color:var(--accent);font-size:22px;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> wage-convert --run</div>
+  <h1>시급 / 월급 / 연봉 상호 변환기</h1>
+  <p class="desc">셋 중 하나만 입력하면 나머지 두 값을 표준 근로시간 기준으로 자동 계산해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>상단 탭에서 <b>알고 있는 값(시급/월급/연봉)</b>을 선택하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>해당 금액을 입력창에 넣으세요.</span></div>
+      <div class="step"><span class="num">3</span><span>주 근무시간이 40시간이 아니라면 <b>월 소정근로시간</b>을 직접 수정할 수 있어요. 기본값은 주휴시간 포함 209시간이에요.</span></div>
+      <div class="step"><span class="num">4</span><span>입력하는 즉시 나머지 두 값이 <b>자동으로 계산</b>돼요.</span></div>
+      <div class="tip">💡 월 209시간은 주 40시간(주 5일, 하루 8시간) 근무자 기준으로, 유급 주휴시간(8시간)까지 포함한 표준 소정근로시간이에요.</div>
+    </div>
+  </details>
+
+  <div class="tabs">
+    <div class="tab active" data-mode="hourly">시급 기준</div>
+    <div class="tab" data-mode="monthly">월급 기준</div>
+    <div class="tab" data-mode="annual">연봉 기준</div>
+  </div>
+
+  <div class="panel">
+    <div id="inputArea">
+      <label id="inputLabel">시급 (세전)</label>
+      <div class="inputrow">
+        <input type="number" id="mainInput" value="10030" step="10">
+        <span class="unit">원</span>
+      </div>
+    </div>
+
+    <label class="optlabel">월 소정근로시간 (기본: 주 40시간 기준 209시간)</label>
+    <div class="inputrow">
+      <input type="number" id="hoursInput" value="209" step="1">
+      <span class="unit">시간</span>
+    </div>
+  </div>
+
+  <div class="resultgrid" id="resultGrid"></div>
+
+  <div class="disclaimer">
+    ※ 이 계산은 <b style="color:var(--text);">세전(gross) 금액</b> 기준이며, 4대보험료·세금 등은 반영되지 않습니다. 실수령액이 궁금하시다면 별도의 연봉 실수령액 계산기를 함께 활용해주세요. 월 소정근로시간은 근무 형태(주 근무일수, 시간)에 따라 달라질 수 있으니 본인 근로계약서 기준으로 조정해서 사용하세요.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>시급/월급/연봉 상호 변환기는 시급, 월급, 연봉 중 알고 있는 값 하나만 입력하면 표준 소정근로시간(기본 209시간)을 기준으로 나머지 두 값을 자동으로 계산해주는 도구입니다. 아르바이트나 계약직처럼 시급으로 급여를 받는 경우 월급과 연봉 환산액이 얼마인지, 반대로 정규직 연봉을 시급으로 환산하면 얼마인지 즉시 확인할 수 있습니다. 근무시간이 표준과 다르다면 월 소정근로시간을 직접 수정해서 본인 상황에 맞게 계산할 수도 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>구인 공고를 보다 보면 어떤 곳은 시급으로, 어떤 곳은 월급으로, 또 어떤 곳은 연봉으로 조건을 제시해서 서로 비교하기가 쉽지 않습니다. "시급 12,000원짜리 알바"와 "월급 250만원짜리 계약직" 중 어느 쪽이 실제로 더 나은 조건인지 머릿속으로 바로 계산하기는 번거롭습니다. 최저임금이 매년 바뀌면서 "올해 최저시급 기준으로 월급이 얼마나 되는지" 궁금해하는 분들도 많고요. 이런 급여 단위 변환을 즉시 처리해주는 도구가 있으면 여러 일자리 조건을 훨씬 빠르고 정확하게 비교할 수 있다고 생각해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>아르바이트나 파트타임 일자리의 시급을 월급·연봉으로 환산해서 다른 조건과 비교하고 싶을 때</li>
+      <li>최저시급이 오를 때마다 내 월급이 대략 얼마로 바뀌는지 빠르게 확인하고 싶을 때</li>
+      <li>정규직 채용 공고의 연봉을 시급으로 환산해서 실제 근무 강도 대비 조건을 가늠하고 싶을 때</li>
+      <li>주 근무시간이 표준(40시간)과 다른 단시간 근로 조건에서 급여를 직접 계산해보고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 계산은 세전 금액을 기준으로 하며, 4대보험료나 세금은 반영하지 않습니다. 실제로 통장에 들어오는 실수령액이 궁금하시다면 이 도구로 나온 월급을 별도의 실수령액 계산기에 입력해서 다시 확인하시는 걸 추천합니다. 또한 기본값으로 사용된 월 209시간은 주 40시간(하루 8시간, 주 5일) 근무자가 유급 주휴시간까지 포함했을 때의 표준 소정근로시간입니다. 본인의 실제 근무시간이 이와 다르다면(예: 주 30시간 근무, 주 6일 근무 등) 반드시 월 소정근로시간 입력값을 직접 수정해서 계산하셔야 정확한 결과를 얻을 수 있습니다. 상여금이나 각종 수당이 포함된 연봉이라면, 순수 기본급만 별도로 계산하고 싶을 때는 상여금을 제외한 금액으로 입력하시는 게 더 정확합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 월 209시간은 어떻게 나온 숫자인가요?</div>
+      <div class="a">주 40시간(하루 8시간 × 5일) 근무에 유급 주휴시간 8시간을 더하면 주 48시간이 되고, 이를 4.345주(1개월 평균 주수)로 곱하면 약 209시간이 나옵니다. 근로기준법상 표준 소정근로시간 계산에 널리 쓰이는 방식입니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 실수령액도 바로 확인할 수 있나요?</div>
+      <div class="a">이 도구는 세전 금액만 계산합니다. 실수령액(세후 금액)이 궁금하시다면 이 도구로 나온 월급이나 연봉을 별도의 연봉 실수령액 계산기에 입력해서 확인해보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 급여 정보가 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.tab');
+  var mainInput = document.getElementById('mainInput');
+  var inputLabel = document.getElementById('inputLabel');
+  var hoursInput = document.getElementById('hoursInput');
+  var resultGrid = document.getElementById('resultGrid');
+
+  var mode = 'hourly';
+  var defaults = { hourly: 10030, monthly: 2100000, annual: 25200000 };
+
+  function won(n){
+    return Math.round(n).toLocaleString() + '원';
+  }
+
+  function calc(){
+    var val = parseFloat(mainInput.value) || 0;
+    var hours = parseFloat(hoursInput.value) || 209;
+    var hourly, monthly, annual;
+
+    if (mode === 'hourly'){
+      hourly = val;
+      monthly = hourly * hours;
+      annual = monthly * 12;
+    } else if (mode === 'monthly'){
+      monthly = val;
+      hourly = hours > 0 ? monthly / hours : 0;
+      annual = monthly * 12;
+    } else {
+      annual = val;
+      monthly = annual / 12;
+      hourly = hours > 0 ? monthly / hours : 0;
+    }
+
+    resultGrid.innerHTML = '';
+    var items = [
+      { key:'hourly', label:'시급', val: won(hourly) },
+      { key:'monthly', label:'월급', val: won(monthly) },
+      { key:'annual', label:'연봉', val: won(annual) }
+    ];
+    items.forEach(function(item){
+      var card = document.createElement('div');
+      card.className = 'resultcard' + (item.key === mode ? ' main' : '');
+      card.innerHTML = '<span class="k">' + item.label + (item.key === mode ? ' (입력값)' : '') + '</span><span class="v">' + item.val + '</span>';
+      resultGrid.appendChild(card);
+    });
+  }
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      mode = tab.dataset.mode;
+      inputLabel.textContent = mode === 'hourly' ? '시급 (세전)' : (mode === 'monthly' ? '월급 (세전)' : '연봉 (세전)');
+      mainInput.value = defaults[mode];
+      calc();
+    });
+  });
+
+  mainInput.addEventListener('input', calc);
+  hoursInput.addEventListener('input', calc);
+
+  calc();
+})();
+</script>
+</body>
+</html>

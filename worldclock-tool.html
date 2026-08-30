@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>세계시간 변환기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  select, input[type=date], input[type=time]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:11px 12px;font-size:14px;font-family:inherit;
+  }
+  select:focus, input:focus{outline:none;border-color:var(--accent);}
+
+  .addrow{display:flex;gap:8px;}
+  .addrow select{flex:1;}
+  button.addbtn{
+    background:var(--accent);color:var(--dark);border:none;border-radius:8px;
+    padding:0 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+
+  .citylist{display:flex;flex-direction:column;gap:8px;}
+  .citycard{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .citycard .info{display:flex;flex-direction:column;gap:2px;}
+  .citycard .name{font-size:13px;font-weight:700;color:var(--text);}
+  .citycard .date{font-size:11px;color:var(--sub);}
+  .citycard .time{font-size:22px;font-weight:700;color:var(--accent);}
+  .citycard .removebtn{
+    background:var(--bg);border:1px solid var(--line);color:var(--sub);
+    border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;
+  }
+
+  .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:460px){.fieldgrid{grid-template-columns:1fr;}}
+
+  .convertResults{display:flex;flex-direction:column;gap:6px;}
+  .convrow{display:flex;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;}
+  .convrow .k{color:var(--sub);}
+  .convrow .v{color:var(--text);font-weight:700;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> world-clock --run</div>
+  <h1>세계시간 변환기</h1>
+  <p class="desc">주요 도시의 현재 시각을 한눈에 비교하고, 특정 시각을 다른 도시 기준으로 변환해요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>도시를 선택하고 <b>'추가'</b> 버튼을 누르면 실시간 시각 카드가 생겨요.</span></div>
+      <div class="step"><span class="num">2</span><span>카드는 <b>1초마다 자동 갱신</b>돼서 각 도시의 현재 시각을 실시간으로 볼 수 있어요.</span></div>
+      <div class="step"><span class="num">3</span><span>회의 시간 등 <b>특정 시각을 변환</b>하고 싶다면 아래 '시간 변환' 영역에 날짜·시간·기준 도시를 입력하세요.</span></div>
+      <div class="step"><span class="num">4</span><span>입력하는 즉시 <b>추가해둔 다른 도시들의 해당 시각</b>이 계산돼서 표시돼요.</span></div>
+      <div class="tip">💡 화상회의나 해외 콜 일정을 잡을 때, 여러 도시를 미리 추가해두면 시차를 매번 계산할 필요 없이 한눈에 확인할 수 있어요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label>도시 추가</label>
+    <div class="addrow">
+      <select id="citySelect"></select>
+      <button class="addbtn" id="addBtn">추가</button>
+    </div>
+  </div>
+
+  <div class="citylist" id="cityList"></div>
+
+  <div class="panel">
+    <label>특정 시각 변환</label>
+    <div class="fieldgrid">
+      <div>
+        <label class="optlabel">날짜</label>
+        <input type="date" id="convDate">
+      </div>
+      <div>
+        <label class="optlabel">시각</label>
+        <input type="time" id="convTime">
+      </div>
+    </div>
+    <label class="optlabel">기준 도시</label>
+    <select id="convBaseCity"></select>
+
+    <div class="convertResults" id="convertResults"></div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 시각 정보는 브라우저 내장 시간대 데이터(IANA 타임존)를 기준으로 계산되며, 서머타임(DST) 적용 여부도 자동으로 반영됩니다. 국가별 서머타임 시행 여부는 매년 정책에 따라 바뀔 수 있으니, 중요한 국제 일정은 반드시 재확인하시길 권장합니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>세계시간 변환기는 원하는 도시들을 추가하면 각 도시의 현재 시각을 실시간으로 보여주고, 특정 날짜와 시각을 입력하면 다른 도시 기준으로는 몇 시인지 즉시 변환해주는 도구입니다. 해외 지사와의 화상회의 시간을 잡거나, 해외 친구와 통화 가능한 시간을 확인하거나, 해외 항공편 도착 시각을 현지 시간으로 파악할 때 유용하게 활용할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>해외 팀과 협업하거나 해외에 있는 가족·친구와 연락할 일이 많아지면서, "지금 그쪽은 몇 시지?"를 계산하는 일이 생각보다 자주 생깁니다. 시차만 단순히 계산하면 될 것 같지만, 서머타임(DST)을 시행하는 나라와 그렇지 않은 나라가 섞여 있어서 계절에 따라 시차가 달라지는 경우도 많아 암산으로는 실수하기 쉽습니다. 여러 도시의 시각을 한 화면에서 실시간으로 비교하고, 특정 미팅 시각을 여러 시간대로 한 번에 변환할 수 있는 도구가 있으면 이런 실수를 줄일 수 있다고 생각해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>해외 지사나 해외 거래처와 화상회의 시간을 조율할 때, 서로의 현지 시각을 한눈에 비교하고 싶을 때</li>
+      <li>해외에 있는 가족이나 친구에게 언제 연락하면 좋을지 시차를 고려해서 확인하고 싶을 때</li>
+      <li>해외 항공편의 출발·도착 시각이 현지 시간으로 몇 시인지 변환해서 일정을 계획하고 싶을 때</li>
+      <li>해외 스포츠 중계나 온라인 이벤트가 한국 시간으로 언제 시작하는지 확인하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구는 브라우저에 내장된 IANA 시간대 데이터베이스를 기준으로 서머타임(DST) 적용 여부를 자동으로 계산합니다. 다만 일부 국가는 서머타임 시행 여부나 시행 기간을 정치적 결정에 따라 변경하는 경우가 있어, 아주 최신의 정책 변경이 브라우저 데이터에 즉시 반영되지 않을 수도 있습니다. 특히 항공편 예약이나 국제 계약처럼 정확한 시각이 중요한 경우에는, 이 도구의 결과를 참고용으로 활용하시고 항공사나 관련 기관의 공식 시각 정보로 다시 한번 확인하시길 권장합니다. 또한 도시 목록과 카드에 추가한 정보는 브라우저를 새로고침하면 초기화되므로, 자주 확인하는 도시가 있다면 매번 다시 추가해야 한다는 점도 참고해주세요.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 서머타임도 자동으로 반영되나요?</div>
+      <div class="a">네, 이 도구는 각 도시의 IANA 표준 시간대 데이터를 사용하기 때문에, 서머타임을 시행하는 지역이라면 계절에 따른 시각 변화가 자동으로 반영됩니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 원하는 도시가 목록에 없어요.</div>
+      <div class="a">현재는 자주 찾는 주요 도시 위주로 목록을 구성해두었습니다. 목록에 없는 도시는 같은 시간대를 사용하는 인근 대도시를 참고해서 활용해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 추가한 도시 목록이 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저를 새로고침하면 추가했던 도시 목록이 초기화됩니다. 별도의 서버 저장 없이 매번 브라우저 안에서만 처리됩니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var CITIES = [
+    {label:'서울 (대한민국)', tz:'Asia/Seoul'},
+    {label:'도쿄 (일본)', tz:'Asia/Tokyo'},
+    {label:'베이징 (중국)', tz:'Asia/Shanghai'},
+    {label:'홍콩', tz:'Asia/Hong_Kong'},
+    {label:'싱가포르', tz:'Asia/Singapore'},
+    {label:'방콕 (태국)', tz:'Asia/Bangkok'},
+    {label:'델리 (인도)', tz:'Asia/Kolkata'},
+    {label:'두바이 (UAE)', tz:'Asia/Dubai'},
+    {label:'모스크바 (러시아)', tz:'Europe/Moscow'},
+    {label:'런던 (영국)', tz:'Europe/London'},
+    {label:'파리 (프랑스)', tz:'Europe/Paris'},
+    {label:'베를린 (독일)', tz:'Europe/Berlin'},
+    {label:'뉴욕 (미국 동부)', tz:'America/New_York'},
+    {label:'시카고 (미국 중부)', tz:'America/Chicago'},
+    {label:'로스앤젤레스 (미국 서부)', tz:'America/Los_Angeles'},
+    {label:'토론토 (캐나다)', tz:'America/Toronto'},
+    {label:'상파울루 (브라질)', tz:'America/Sao_Paulo'},
+    {label:'시드니 (호주)', tz:'Australia/Sydney'},
+    {label:'오클랜드 (뉴질랜드)', tz:'Pacific/Auckland'},
+    {label:'하와이 (미국)', tz:'Pacific/Honolulu'}
+  ];
+
+  var citySelect = document.getElementById('citySelect');
+  var addBtn = document.getElementById('addBtn');
+  var cityList = document.getElementById('cityList');
+  var convBaseCity = document.getElementById('convBaseCity');
+  var convDate = document.getElementById('convDate');
+  var convTime = document.getElementById('convTime');
+  var convertResults = document.getElementById('convertResults');
+
+  CITIES.forEach(function(c){
+    var o1 = document.createElement('option');
+    o1.value = c.tz; o1.textContent = c.label;
+    citySelect.appendChild(o1);
+    var o2 = document.createElement('option');
+    o2.value = c.tz; o2.textContent = c.label;
+    convBaseCity.appendChild(o2);
+  });
+
+  var addedCities = [];
+  var defaultAdd = ['Asia/Seoul', 'America/New_York', 'Europe/London'];
+  defaultAdd.forEach(function(tz){
+    var c = CITIES.find(function(x){ return x.tz === tz; });
+    if (c) addedCities.push(c);
+  });
+
+  function fmtTime(tz){
+    try{
+      return new Date().toLocaleTimeString('ko-KR', {timeZone:tz, hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false});
+    }catch(e){ return '-'; }
+  }
+  function fmtDate(tz){
+    try{
+      return new Date().toLocaleDateString('ko-KR', {timeZone:tz, month:'long', day:'numeric', weekday:'short'});
+    }catch(e){ return '-'; }
+  }
+
+  function renderCities(){
+    cityList.innerHTML = '';
+    addedCities.forEach(function(c, idx){
+      var card = document.createElement('div');
+      card.className = 'citycard';
+      card.innerHTML =
+        '<div class="info"><div class="name">' + c.label + '</div><div class="date" data-date="' + idx + '">' + fmtDate(c.tz) + '</div></div>' +
+        '<div class="time" data-time="' + idx + '">' + fmtTime(c.tz) + '</div>' +
+        '<button class="removebtn" data-idx="' + idx + '">삭제</button>';
+      cityList.appendChild(card);
+    });
+    cityList.querySelectorAll('.removebtn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        addedCities.splice(parseInt(btn.dataset.idx,10), 1);
+        renderCities();
+      });
+    });
+  }
+
+  function tickClocks(){
+    addedCities.forEach(function(c, idx){
+      var timeEl = cityList.querySelector('[data-time="'+idx+'"]');
+      var dateEl = cityList.querySelector('[data-date="'+idx+'"]');
+      if (timeEl) timeEl.textContent = fmtTime(c.tz);
+      if (dateEl) dateEl.textContent = fmtDate(c.tz);
+    });
+  }
+  setInterval(tickClocks, 1000);
+
+  addBtn.addEventListener('click', function(){
+    var tz = citySelect.value;
+    var c = CITIES.find(function(x){ return x.tz === tz; });
+    if (c && !addedCities.some(function(a){ return a.tz === tz; })){
+      addedCities.push(c);
+      renderCities();
+    }
+  });
+
+  renderCities();
+
+  // ---------- 시간 변환 ----------
+  function runConvert(){
+    if (!convDate.value || !convTime.value){
+      convertResults.innerHTML = '';
+      return;
+    }
+    var baseTz = convBaseCity.value;
+    // Get the offset of baseTz at the given local date/time by parsing via a trick:
+    // Build a date assuming UTC, then find offset difference for baseTz.
+    var dtStr = convDate.value + 'T' + convTime.value + ':00';
+    var naiveDate = new Date(dtStr + 'Z'); // treat input as if UTC first
+
+    // Find baseTz offset at this instant
+    function getOffsetMinutes(tz, date){
+      var dtf = new Intl.DateTimeFormat('en-US', {timeZone:tz, hour12:false, year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      var parts = dtf.formatToParts(date);
+      var map = {};
+      parts.forEach(function(p){ map[p.type] = p.value; });
+      var asUTC = Date.UTC(map.year, map.month-1, map.day, map.hour === '24' ? 0 : map.hour, map.minute, map.second);
+      return (asUTC - date.getTime()) / 60000;
+    }
+
+    var offsetAtGuess = getOffsetMinutes(baseTz, naiveDate);
+    var actualUTC = new Date(naiveDate.getTime() - offsetAtGuess * 60000);
+    // refine once more (DST edge cases)
+    var offset2 = getOffsetMinutes(baseTz, actualUTC);
+    actualUTC = new Date(naiveDate.getTime() - offset2 * 60000);
+
+    convertResults.innerHTML = '';
+    addedCities.forEach(function(c){
+      var row = document.createElement('div');
+      row.className = 'convrow';
+      var timeStr = actualUTC.toLocaleString('ko-KR', {timeZone:c.tz, month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit', hour12:false, weekday:'short'});
+      row.innerHTML = '<span class="k">' + c.label + '</span><span class="v">' + timeStr + '</span>';
+      convertResults.appendChild(row);
+    });
+  }
+
+  convDate.addEventListener('input', runConvert);
+  convTime.addEventListener('input', runConvert);
+  convBaseCity.addEventListener('change', runConvert);
+
+  // init convert fields to now (Seoul)
+  var now = new Date();
+  function pad(n){ return n<10?'0'+n:n; }
+  convDate.value = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
+  convTime.value = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  convBaseCity.value = 'Asia/Seoul';
+})();
+</script>
+</body>
+</html>
