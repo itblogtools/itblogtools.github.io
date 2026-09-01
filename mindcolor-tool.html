@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>나의 마음 색깔 심리테스트</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .progresswrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;height:10px;overflow:hidden;}
+  .progressfill{height:100%;background:var(--accent);width:0%;transition:width .25s ease;}
+  .progresslabel{font-size:11px;color:var(--sub);text-align:right;}
+
+  .startscreen, .endscreen{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:14px;
+  }
+  .startscreen p{color:var(--sub);font-size:13px;line-height:1.7;margin:0;}
+
+  button.primary{
+    background:var(--accent);color:var(--dark);border:none;border-radius:8px;
+    padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+  button.primary:active{transform:scale(0.98);}
+
+  .qcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 18px;display:flex;flex-direction:column;gap:14px;}
+  .qtext{font-size:15px;color:var(--text);line-height:1.6;font-weight:700;}
+  .optbtn{
+    background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    font-size:13px;color:var(--text);cursor:pointer;line-height:1.5;text-align:left;
+  }
+  .optbtn:active{transform:scale(0.98);}
+  .optbtn:hover{border-color:var(--accent);}
+
+  .resultcard{
+    border-radius:12px;padding:30px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;
+    border:1px solid var(--line);
+  }
+  .resultcard .emoji{font-size:44px;}
+  .resultcard .name{font-size:20px;font-weight:800;}
+  .resultcard .desc2{font-size:13px;color:var(--sub);line-height:1.75;margin-top:6px;}
+
+  .traitlist{display:flex;flex-direction:column;gap:8px;}
+  .traititem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--sub);line-height:1.6;}
+  .traititem b{color:var(--text);}
+
+  .retrybtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--accent);
+    border-radius:8px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;text-align:center;
+  }
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> mind-color-test --run</div>
+  <h1>나의 마음 색깔 심리테스트</h1>
+  <p class="desc">10개의 상황 질문에 답하면, 지금 내 마음과 가장 닮은 색깔을 알려드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>'테스트 시작'</b> 버튼을 누르면 상황 질문이 하나씩 나와요.</span></div>
+      <div class="step"><span class="num">2</span><span>깊게 고민하지 말고, <b>가장 먼저 끌리는 선택지</b>를 골라주세요.</span></div>
+      <div class="step"><span class="num">3</span><span>10개 질문이 끝나면 <b>나의 마음 색깔</b>과 그 색깔이 상징하는 성향을 확인할 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>기분에 따라 결과가 달라질 수 있으니 <b>'다시 하기'</b>로 언제든 재도전해보세요.</span></div>
+      <div class="tip">💡 이 테스트는 색채 심리학에서 영감을 받은 재미용 콘텐츠예요. 정식 심리 진단이 아니라 가볍게 즐기는 자기 성찰 놀이로 봐주세요.</div>
+    </div>
+  </details>
+
+  <div id="startscreen" class="startscreen">
+    <p>10개의 짧은 상황 질문에 답하면 지금 내 마음과 닮은 색깔을 알려드려요.<br>깊이 생각하지 말고 편하게 답해보세요!</p>
+    <button class="primary" id="startBtn">테스트 시작</button>
+  </div>
+
+  <div id="quizArea" class="hidden">
+    <div class="progresswrap"><div class="progressfill" id="progressFill"></div></div>
+    <div class="progresslabel" id="progressLabel">1 / 10</div>
+    <div class="qcard">
+      <div class="qtext" id="qText"></div>
+      <div id="optWrap"></div>
+    </div>
+  </div>
+
+  <div id="resultArea" class="hidden">
+    <div class="resultcard" id="resultCard">
+      <div class="emoji" id="resultEmoji">🎨</div>
+      <div class="name" id="resultName">-</div>
+      <div class="desc2" id="resultDesc">-</div>
+    </div>
+
+    <div class="traitlist" id="traitList" style="margin-top:14px;"></div>
+
+    <div class="retrybtn" id="retryBtn" style="margin-top:14px;">🔄 다시 하기</div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 이 테스트는 색채 심리학에서 아이디어를 얻은 <b style="color:var(--text);">재미용 콘텐츠</b>이며, 전문적인 심리 진단이나 검사 도구가 아닙니다. 결과는 응답 당시의 기분에 따라 달라질 수 있으며, 중요한 판단의 근거로 사용하지 마세요. 심리적으로 어려움을 겪고 계시다면 전문가와의 상담을 권장드립니다. 응답 내용은 저장되지 않습니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>나의 마음 색깔 심리테스트는 일상 속 다양한 상황에 대한 10개의 질문에 답하면, 파랑·빨강·노랑·초록·보라 다섯 가지 색깔 중 지금 내 마음과 가장 닮은 색깔을 알려주는 재미용 심리테스트입니다. 각 색깔은 색채 심리학에서 흔히 이야기되는 이미지(차분함, 열정, 활기, 평온, 창의성 등)에서 아이디어를 얻어 구성했습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>MBTI처럼 성격유형을 알아보는 테스트도 재미있지만, 가끔은 "지금 이 순간 내 마음 상태"를 가볍게 들여다보고 싶을 때가 있습니다. 색깔이라는 직관적이고 감성적인 소재로 짧게 답하다 보면, 스스로도 미처 몰랐던 지금의 기분이나 성향을 발견하게 되는 재미가 있습니다. 무겁지 않게, 커피 한 잔 마시는 시간 동안 가볍게 즐길 수 있는 심리테스트를 만들고 싶어서 제작했습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>친구들과 모여서 서로의 결과를 비교하며 가볍게 대화를 나누고 싶을 때</li>
+      <li>업무나 공부 중 짧게 쉬어가며 재미있는 콘텐츠로 기분 전환을 하고 싶을 때</li>
+      <li>SNS나 단체 채팅방에 결과를 공유하면서 재미있는 소재로 활용하고 싶을 때</li>
+      <li>지금 이 순간 내 기분이나 마음 상태를 색깔이라는 재미있는 방식으로 되돌아보고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 테스트는 색채 심리학이라는 대중적으로 잘 알려진 개념에서 아이디어를 얻어 제작한 재미용 콘텐츠이며, 학술적으로 검증된 심리 진단 도구가 아닙니다. 결과는 응답 당시의 기분이나 최근 경험에 따라 쉽게 달라질 수 있고, 같은 사람이 다른 날 테스트하면 다른 색깔이 나오는 것이 자연스러운 현상입니다. 이 결과를 본인이나 타인의 성격을 판단하는 근거로 사용하시거나, 중요한 의사결결정에 참고하시는 것은 적절하지 않습니다. 만약 마음이 힘들거나 심리적으로 어려움을 겪고 계신 상황이라면, 이런 가벼운 테스트보다는 정신건강의학과 전문의나 상담 전문가와 이야기를 나눠보시길 권장드립니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 이 테스트가 실제 성격을 정확히 알려주나요?</div>
+      <div class="a">아니요. 이 테스트는 재미를 위한 콘텐츠로, 검증된 심리 진단 도구가 아닙니다. 지금 이 순간의 기분을 가볍게 살펴보는 놀이로 즐겨주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 결과가 매번 다르게 나와요.</div>
+      <div class="a">정상적인 현상입니다. 이 테스트는 응답 당시의 기분이나 상황에 영향을 받도록 설계된 재미용 콘텐츠라, 시점에 따라 결과가 달라질 수 있습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 응답 내용이 저장되거나 전송되나요?</div>
+      <div class="a">아니요. 이 테스트는 브라우저 안에서만 처리되며, 응답 내용은 어디로도 전송되거나 저장되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var COLORS = {
+    blue:{name:'차분한 블루', emoji:'💙', hex:'#4ea1ff', desc:'지금 당신의 마음은 잔잔한 바다처럼 차분하고 안정적이에요. 서두르지 않고 신중하게 생각하는 여유가 느껴집니다.'},
+    red:{name:'열정적인 레드', emoji:'❤️', hex:'#ff5c5c', desc:'지금 당신의 마음은 뜨거운 열정으로 가득해요. 하고 싶은 일에 온 힘을 다해 몰입하고 싶은 에너지가 느껴집니다.'},
+    yellow:{name:'활기찬 옐로우', emoji:'💛', hex:'#ffe066', desc:'지금 당신의 마음은 밝고 경쾌해요. 주변 사람들에게 즐거움을 전하고, 새로운 걸 시도해보고 싶은 기운이 가득합니다.'},
+    green:{name:'평온한 그린', emoji:'💚', hex:'#39ff88', desc:'지금 당신의 마음은 편안하고 조화로워요. 균형을 중요하게 여기고, 주변과 잘 어우러지고 싶은 마음이 느껴집니다.'},
+    purple:{name:'창의적인 퍼플', emoji:'💜', hex:'#b18cff', desc:'지금 당신의 마음은 상상력으로 반짝여요. 남들과는 다른 시선으로 세상을 바라보고, 새로운 아이디어를 떠올리고 싶어합니다.'}
+  };
+
+  var QUESTIONS = [
+    {q:'주말 아침, 눈을 뜨자마자 드는 생각은?', opts:[
+      {t:'오늘은 뭘 하고 놀까 신난다!', c:'yellow'},
+      {t:'조용히 침대에서 좀 더 뒹굴고 싶다', c:'blue'},
+      {t:'뭔가 새로운 걸 만들어보고 싶다', c:'purple'},
+      {t:'느긋하게 산책이나 하러 갈까', c:'green'}
+    ]},
+    {q:'갑자기 하루의 자유시간이 생겼다면?', opts:[
+      {t:'평소 하고 싶었던 일에 몰입한다', c:'red'},
+      {t:'친구들을 불러 모아 함께 논다', c:'yellow'},
+      {t:'그림을 그리거나 글을 쓴다', c:'purple'},
+      {t:'혼자 조용히 책을 읽는다', c:'blue'}
+    ]},
+    {q:'스트레스를 받으면 나는?', opts:[
+      {t:'활동적으로 움직이며 푼다', c:'red'},
+      {t:'명상하듯 마음을 가라앉힌다', c:'blue'},
+      {t:'친구와 수다를 떨며 푼다', c:'yellow'},
+      {t:'자연 속을 걸으며 정리한다', c:'green'}
+    ]},
+    {q:'새로운 프로젝트를 시작할 때 나는?', opts:[
+      {t:'일단 부딪혀보며 배운다', c:'red'},
+      {t:'차근차근 계획부터 세운다', c:'blue'},
+      {t:'독특한 아이디어부터 떠올린다', c:'purple'},
+      {t:'팀원들과 조율하며 진행한다', c:'green'}
+    ]},
+    {q:'친구가 고민을 털어놓으면 나는?', opts:[
+      {t:'적극적으로 해결책을 제시한다', c:'red'},
+      {t:'차분히 듣고 공감해준다', c:'blue'},
+      {t:'분위기를 밝게 바꿔주려 한다', c:'yellow'},
+      {t:'함께 있어주며 편을 들어준다', c:'green'}
+    ]},
+    {q:'가장 끌리는 여행 스타일은?', opts:[
+      {t:'액티비티 가득한 모험 여행', c:'red'},
+      {t:'한적한 곳에서의 힐링 여행', c:'blue'},
+      {t:'예술과 영감을 찾는 여행', c:'purple'},
+      {t:'맛집과 사람들이 붐비는 여행', c:'yellow'}
+    ]},
+    {q:'요즘 나의 방 상태는?', opts:[
+      {t:'각종 아이디어 메모로 가득하다', c:'purple'},
+      {t:'깔끔하고 정돈되어 있다', c:'green'},
+      {t:'활기찬 소품들로 꾸며져 있다', c:'yellow'},
+      {t:'조용하고 심플한 편이다', c:'blue'}
+    ]},
+    {q:'선택해야 할 때 나의 기준은?', opts:[
+      {t:'가슴이 시키는 대로', c:'red'},
+      {t:'논리적으로 차분히 따져본다', c:'blue'},
+      {t:'주변 사람들과의 조화', c:'green'},
+      {t:'남들과 다른 재미있는 선택', c:'purple'}
+    ]},
+    {q:'오늘 저녁, 가장 하고 싶은 건?', opts:[
+      {t:'신나는 음악 들으며 춤추기', c:'yellow'},
+      {t:'조용히 음악 들으며 쉬기', c:'blue'},
+      {t:'좋아하는 사람들과 어울리기', c:'green'},
+      {t:'뭔가 창작 활동 하기', c:'purple'}
+    ]},
+    {q:'나를 색깔로 표현한다면?', opts:[
+      {t:'타오르는 듯한 강렬한 색', c:'red'},
+      {t:'맑고 넓은 하늘 같은 색', c:'blue'},
+      {t:'싱그러운 자연 같은 색', c:'green'},
+      {t:'신비롭고 몽환적인 색', c:'purple'}
+    ]}
+  ];
+
+  var startscreen = document.getElementById('startscreen');
+  var quizArea = document.getElementById('quizArea');
+  var resultArea = document.getElementById('resultArea');
+  var startBtn = document.getElementById('startBtn');
+  var progressFill = document.getElementById('progressFill');
+  var progressLabel = document.getElementById('progressLabel');
+  var qText = document.getElementById('qText');
+  var optWrap = document.getElementById('optWrap');
+  var retryBtn = document.getElementById('retryBtn');
+
+  var current = 0;
+  var scores = {blue:0, red:0, yellow:0, green:0, purple:0};
+  var shuffledQuestions = [];
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=a[i];a[i]=a[j];a[j]=t;
+    }
+    return a;
+  }
+
+  function startQuiz(){
+    current = 0;
+    scores = {blue:0, red:0, yellow:0, green:0, purple:0};
+    shuffledQuestions = QUESTIONS;
+    startscreen.classList.add('hidden');
+    resultArea.classList.add('hidden');
+    quizArea.classList.remove('hidden');
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    var q = shuffledQuestions[current];
+    qText.textContent = 'Q' + (current+1) + '. ' + q.q;
+    optWrap.innerHTML = '';
+    shuffle(q.opts).forEach(function(opt){
+      var btn = document.createElement('div');
+      btn.className = 'optbtn';
+      btn.textContent = opt.t;
+      btn.addEventListener('click', function(){ answer(opt.c); });
+      optWrap.appendChild(btn);
+    });
+    progressFill.style.width = (current/shuffledQuestions.length*100) + '%';
+    progressLabel.textContent = (current+1) + ' / ' + shuffledQuestions.length;
+  }
+
+  function answer(color){
+    scores[color]++;
+    current++;
+    if (current >= shuffledQuestions.length){
+      showResult();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function showResult(){
+    quizArea.classList.add('hidden');
+    resultArea.classList.remove('hidden');
+
+    var topColor = 'blue';
+    var topScore = -1;
+    Object.keys(scores).forEach(function(c){
+      if (scores[c] > topScore){ topScore = scores[c]; topColor = c; }
+    });
+
+    var info = COLORS[topColor];
+    var card = document.getElementById('resultCard');
+    card.style.borderColor = info.hex;
+    document.getElementById('resultEmoji').textContent = info.emoji;
+    document.getElementById('resultName').textContent = info.name;
+    document.getElementById('resultName').style.color = info.hex;
+    document.getElementById('resultDesc').textContent = info.desc;
+
+    var traitList = document.getElementById('traitList');
+    traitList.innerHTML = '';
+    var sorted = Object.keys(scores).sort(function(a,b){ return scores[b]-scores[a]; });
+    sorted.forEach(function(c){
+      var row = document.createElement('div');
+      row.className = 'traititem';
+      row.innerHTML = '<b>' + COLORS[c].emoji + ' ' + COLORS[c].name + '</b> — ' + scores[c] + '개 선택';
+      traitList.appendChild(row);
+    });
+  }
+
+  startBtn.addEventListener('click', startQuiz);
+  retryBtn.addEventListener('click', function(){
+    resultArea.classList.add('hidden');
+    startscreen.classList.remove('hidden');
+  });
+})();
+</script>
+</body>
+</html>

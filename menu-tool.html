@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>오늘의 메뉴 추천</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  .catlabel{font-size:12px;color:var(--sub);}
+  .chipgrid{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{
+    background:var(--bg);border:1px solid var(--line);color:var(--sub);
+    border-radius:20px;padding:8px 14px;font-size:12px;cursor:pointer;
+  }
+  .chip.active{border-color:var(--accent);color:var(--accent);background:rgba(57,255,136,0.08);}
+
+  button.primary{
+    background:var(--accent);color:var(--dark);border:none;border-radius:8px;
+    padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+  button.primary:active{transform:scale(0.98);}
+
+  .resultbox{
+    background:var(--panel);border:1px solid var(--accent);border-radius:14px;
+    padding:36px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;
+    min-height:120px;justify-content:center;
+  }
+  .resultbox .emoji{font-size:40px;}
+  .resultbox .menu{font-size:26px;font-weight:800;color:var(--accent);}
+  .resultbox .cat{font-size:12px;color:var(--sub);}
+  .resultbox.spinning .menu{opacity:0.4;}
+
+  .altlist{display:flex;flex-direction:column;gap:6px;}
+  .altrow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-size:12px;color:var(--sub);}
+  .altrow b{color:var(--text);}
+
+  .retrybtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--accent);
+    border-radius:8px;padding:12px;font-size:13px;font-family:inherit;cursor:pointer;text-align:center;
+  }
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> menu-picker --run</div>
+  <h1>오늘의 메뉴 추천</h1>
+  <p class="desc">"뭐 먹지?" 고민될 때, 카테고리만 고르면 랜덤으로 메뉴를 정해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>원하는 <b>음식 카테고리</b>를 하나 이상 선택하세요. 아무것도 선택 안 하면 전체 메뉴에서 뽑아요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>'메뉴 뽑기'</b> 버튼을 누르면 슬롯머신처럼 메뉴가 돌다가 하나로 멈춰요.</span></div>
+      <div class="step"><span class="num">3</span><span>마음에 안 들면 <b>다시 뽑기</b>로 얼마든지 재도전할 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>아래 <b>다른 후보 3가지</b>도 함께 보여드려요. 뽑힌 메뉴가 별로면 후보 중에서 골라도 좋아요.</span></div>
+      <div class="tip">💡 여러 명이 같이 밥 먹을 때 의견이 갈리면, 다 같이 화면 보면서 뽑아보세요. 다수결보다 훨씬 빠르게 정해져요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label class="catlabel">음식 카테고리 (여러 개 선택 가능, 미선택 시 전체)</label>
+    <div class="chipgrid" id="categoryChips">
+      <div class="chip" data-cat="한식">한식</div>
+      <div class="chip" data-cat="중식">중식</div>
+      <div class="chip" data-cat="일식">일식</div>
+      <div class="chip" data-cat="양식">양식</div>
+      <div class="chip" data-cat="분식">분식</div>
+      <div class="chip" data-cat="아시안">아시안</div>
+      <div class="chip" data-cat="야식">야식/치킨</div>
+      <div class="chip" data-cat="카페">카페/디저트</div>
+    </div>
+    <button class="primary" id="pickBtn">🎲 메뉴 뽑기</button>
+  </div>
+
+  <div class="resultbox" id="resultBox">
+    <div class="emoji" id="resultEmoji">🍽️</div>
+    <div class="menu" id="resultMenu">버튼을 눌러보세요</div>
+    <div class="cat" id="resultCat"></div>
+  </div>
+
+  <div class="altlist" id="altList"></div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 <b style="color:var(--text);">순수 무작위 추천 도구</b>이며, 영양학적 균형이나 개인의 알레르기, 건강 상태를 고려하지 않습니다. 특정 식이 제한이 있으시다면 추천된 메뉴를 그대로 따르지 마시고 본인 상황에 맞게 조정해서 활용해주세요.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>오늘의 메뉴 추천은 "오늘 뭐 먹지?"라는 고민이 들 때, 원하는 음식 카테고리만 선택하면 무작위로 메뉴 하나를 뽑아주는 도구입니다. 한식, 중식, 일식, 양식, 분식, 아시안, 야식, 카페·디저트까지 다양한 카테고리를 지원하며, 뽑힌 메뉴가 마음에 안 들면 다른 후보 메뉴도 함께 보여줘서 선택의 폭을 넓혀줍니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>매일 점심, 저녁마다 "뭐 먹지?"를 고민하는 시간이 생각보다 깁니다. 특히 여러 명이 함께 식사할 때는 각자 의견이 갈려서 정하는 데만 한참 걸리기도 하고요. 이럴 때 그냥 무작위로 정해주는 도구가 있으면, 고민하는 시간을 줄이고 "이번엔 운명에 맡겨보자"는 재미있는 마음으로 빠르게 결정할 수 있겠다고 생각해서 만들었습니다. 카테고리를 선택할 수 있게 해서, 그날의 기분(매운 게 당긴다, 가볍게 먹고 싶다 등)에 맞춰 좁혀서 뽑을 수 있도록 했습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>혼자 밥 먹을 때 매번 비슷한 메뉴만 고르게 되어 새로운 선택지가 필요할 때</li>
+      <li>친구나 동료들과 점심 메뉴를 정하는데 의견이 갈려서 시간이 오래 걸릴 때</li>
+      <li>오늘은 어떤 카테고리(한식, 중식 등)를 먹을지는 정했지만 세부 메뉴를 못 정했을 때</li>
+      <li>매일 반복되는 식사 결정 피로(decision fatigue)를 줄이고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구는 순수하게 무작위로 메뉴를 뽑아주는 재미용 도구이며, 영양 균형이나 개인의 건강 상태, 알레르기 여부는 전혀 고려하지 않습니다. 특정 음식에 알레르기가 있으시거나 식이 제한(당뇨, 고혈압 관리 등)이 있으신 분들은 추천된 메뉴를 그대로 따르지 마시고, 본인 상황에 맞게 다시 뽑거나 다른 메뉴로 조정해서 활용해주세요. 또한 이 도구에 등록된 메뉴는 대중적으로 널리 알려진 음식 위주로 구성되어 있어, 특정 지역의 로컬 맛집이나 특수한 메뉴까지 모두 반영하지는 못합니다. 어디까지나 메뉴 선택의 고민을 줄여주는 참고용 도구로 활용해주시기 바랍니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 카테고리를 하나도 선택하지 않으면 어떻게 되나요?</div>
+      <div class="a">전체 메뉴 목록에서 무작위로 뽑힙니다. 특별히 원하는 카테고리가 없다면 그냥 전체에서 뽑아보시는 것도 재미있어요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 같은 메뉴가 계속 나와요.</div>
+      <div class="a">완전 무작위 방식이라 우연히 같은 메뉴가 연속으로 나올 수 있습니다. 다시 뽑기를 눌러 재도전해보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 원하는 메뉴가 목록에 없어요.</div>
+      <div class="a">현재는 대중적으로 널리 알려진 메뉴 위주로 구성되어 있습니다. 특정 메뉴가 꼭 먹고 싶으시다면 이 도구보다는 직접 선택하시는 게 좋습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var MENUS = [
+    {name:'김치찌개', cat:'한식', emoji:'🍲'}, {name:'된장찌개', cat:'한식', emoji:'🍲'},
+    {name:'제육볶음', cat:'한식', emoji:'🍖'}, {name:'불고기', cat:'한식', emoji:'🥩'},
+    {name:'비빔밥', cat:'한식', emoji:'🍚'}, {name:'삼겹살', cat:'한식', emoji:'🥓'},
+    {name:'냉면', cat:'한식', emoji:'🍜'}, {name:'갈비탕', cat:'한식', emoji:'🍲'},
+    {name:'순두부찌개', cat:'한식', emoji:'🍲'}, {name:'김밥', cat:'한식', emoji:'🍙'},
+    {name:'삼계탕', cat:'한식', emoji:'🍗'}, {name:'육개장', cat:'한식', emoji:'🍲'},
+    {name:'짜장면', cat:'중식', emoji:'🍜'}, {name:'짬뽕', cat:'중식', emoji:'🍜'},
+    {name:'탕수육', cat:'중식', emoji:'🍖'}, {name:'마파두부', cat:'중식', emoji:'🍛'},
+    {name:'양꼬치', cat:'중식', emoji:'🍢'}, {name:'볶음밥', cat:'중식', emoji:'🍚'},
+    {name:'초밥', cat:'일식', emoji:'🍣'}, {name:'라멘', cat:'일식', emoji:'🍜'},
+    {name:'우동', cat:'일식', emoji:'🍜'}, {name:'돈카츠', cat:'일식', emoji:'🍱'},
+    {name:'규동', cat:'일식', emoji:'🍚'}, {name:'가라아게', cat:'일식', emoji:'🍗'},
+    {name:'오코노미야키', cat:'일식', emoji:'🥞'}, {name:'덮밥', cat:'일식', emoji:'🍚'},
+    {name:'파스타', cat:'양식', emoji:'🍝'}, {name:'피자', cat:'양식', emoji:'🍕'},
+    {name:'스테이크', cat:'양식', emoji:'🥩'}, {name:'햄버거', cat:'양식', emoji:'🍔'},
+    {name:'리조또', cat:'양식', emoji:'🍚'}, {name:'샐러드', cat:'양식', emoji:'🥗'},
+    {name:'오므라이스', cat:'양식', emoji:'🍳'}, {name:'그라탱', cat:'양식', emoji:'🧀'},
+    {name:'떡볶이', cat:'분식', emoji:'🌶️'}, {name:'순대', cat:'분식', emoji:'🍢'},
+    {name:'튀김', cat:'분식', emoji:'🍤'}, {name:'라볶이', cat:'분식', emoji:'🍜'},
+    {name:'김치볶음밥', cat:'분식', emoji:'🍚'}, {name:'만두', cat:'분식', emoji:'🥟'},
+    {name:'쌀국수', cat:'아시안', emoji:'🍜'}, {name:'팟타이', cat:'아시안', emoji:'🍜'},
+    {name:'나시고랭', cat:'아시안', emoji:'🍛'}, {name:'월남쌈', cat:'아시안', emoji:'🥗'},
+    {name:'똠얌꿍', cat:'아시안', emoji:'🍲'}, {name:'분짜', cat:'아시안', emoji:'🍜'},
+    {name:'치킨', cat:'야식', emoji:'🍗'}, {name:'족발', cat:'야식', emoji:'🍖'},
+    {name:'보쌈', cat:'야식', emoji:'🥬'}, {name:'곱창', cat:'야식', emoji:'🍢'},
+    {name:'피자(야식용)', cat:'야식', emoji:'🍕'}, {name:'매운탕', cat:'야식', emoji:'🍲'},
+    {name:'케이크', cat:'카페', emoji:'🍰'}, {name:'와플', cat:'카페', emoji:'🧇'},
+    {name:'샌드위치', cat:'카페', emoji:'🥪'}, {name:'베이글', cat:'카페', emoji:'🥯'},
+    {name:'크로플', cat:'카페', emoji:'🥞'}, {name:'마카롱', cat:'카페', emoji:'🍬'}
+  ];
+
+  var chips = document.querySelectorAll('.chip');
+  var pickBtn = document.getElementById('pickBtn');
+  var resultBox = document.getElementById('resultBox');
+  var resultEmoji = document.getElementById('resultEmoji');
+  var resultMenu = document.getElementById('resultMenu');
+  var resultCat = document.getElementById('resultCat');
+  var altList = document.getElementById('altList');
+
+  var selectedCats = [];
+
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      chip.classList.toggle('active');
+      var cat = chip.dataset.cat;
+      var idx = selectedCats.indexOf(cat);
+      if (chip.classList.contains('active') && idx === -1) selectedCats.push(cat);
+      else if (!chip.classList.contains('active') && idx > -1) selectedCats.splice(idx, 1);
+    });
+  });
+
+  function getPool(){
+    if (selectedCats.length === 0) return MENUS;
+    return MENUS.filter(function(m){ return selectedCats.indexOf(m.cat) > -1; });
+  }
+
+  function pick(){
+    var pool = getPool();
+    if (pool.length === 0){
+      resultMenu.textContent = '해당 카테고리에 메뉴가 없어요';
+      resultCat.textContent = '';
+      altList.innerHTML = '';
+      return;
+    }
+
+    resultBox.classList.add('spinning');
+    var spins = 12;
+    var i = 0;
+    var interval = setInterval(function(){
+      var randomItem = pool[Math.floor(Math.random()*pool.length)];
+      resultEmoji.textContent = randomItem.emoji;
+      resultMenu.textContent = randomItem.name;
+      resultCat.textContent = randomItem.cat;
+      i++;
+      if (i >= spins){
+        clearInterval(interval);
+        resultBox.classList.remove('spinning');
+        finalizePick(pool, randomItem);
+      }
+    }, 80);
+  }
+
+  function finalizePick(pool, finalItem){
+    resultEmoji.textContent = finalItem.emoji;
+    resultMenu.textContent = finalItem.name;
+    resultCat.textContent = finalItem.cat;
+
+    // 다른 후보 3개
+    var others = pool.filter(function(m){ return m.name !== finalItem.name; });
+    var shuffled = others.slice();
+    for (var i=shuffled.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=shuffled[i];shuffled[i]=shuffled[j];shuffled[j]=t;
+    }
+    var picks = shuffled.slice(0, 3);
+    altList.innerHTML = '';
+    if (picks.length > 0){
+      var titleRow = document.createElement('div');
+      titleRow.style.fontSize = '11px';
+      titleRow.style.color = 'var(--sub)';
+      titleRow.textContent = '다른 후보는 어떠세요?';
+      altList.appendChild(titleRow);
+    }
+    picks.forEach(function(m){
+      var row = document.createElement('div');
+      row.className = 'altrow';
+      row.innerHTML = '<span>' + m.emoji + ' <b>' + m.name + '</b></span><span>' + m.cat + '</span>';
+      altList.appendChild(row);
+    });
+  }
+
+  pickBtn.addEventListener('click', pick);
+})();
+</script>
+</body>
+</html>
