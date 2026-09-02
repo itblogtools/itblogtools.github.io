@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>초성퀴즈 게임</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .hud{display:flex;justify-content:space-between;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;}
+  .hud .stat{color:var(--sub);}
+  .hud .val{color:var(--accent);font-weight:700;margin-left:4px;}
+
+  .startscreen, .endscreen{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:28px 20px;text-align:center;display:flex;flex-direction:column;gap:14px;
+  }
+  .startscreen p{color:var(--sub);font-size:13px;line-height:1.7;margin:0;}
+
+  button.primary{
+    background:var(--accent);color:var(--dark);border:none;border-radius:8px;
+    padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+  button.primary:active{transform:scale(0.98);}
+
+  .qcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:30px 20px;display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;}
+  .qcard .catbadge{font-size:11px;color:var(--amber);background:rgba(255,180,84,0.1);border:1px solid var(--amber);padding:3px 10px;border-radius:12px;}
+  .qcard .cho{font-size:40px;font-weight:800;letter-spacing:0.1em;color:var(--accent);}
+  .qcard .hintbox{font-size:12px;color:var(--sub);min-height:18px;}
+
+  .inputrow{display:flex;gap:8px;}
+  .inputrow input{
+    flex:1;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px;font-size:15px;font-family:inherit;text-align:center;
+  }
+  .inputrow input:focus{outline:none;border-color:var(--accent);}
+  .inputrow input.wrong{border-color:var(--bad);animation:shake .25s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
+
+  .actionrow{display:flex;gap:8px;}
+  .actionrow button{
+    flex:1;background:var(--panel);border:1px solid var(--line);color:var(--sub);
+    border-radius:8px;padding:10px;font-size:12px;font-family:inherit;cursor:pointer;
+  }
+  .actionrow button.submit{background:var(--accent);color:var(--dark);border:none;font-weight:700;}
+
+  .feedback{font-size:13px;text-align:center;min-height:18px;}
+  .feedback.correct{color:var(--accent);}
+  .feedback.wrong{color:var(--bad);}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> chosung-quiz --run</div>
+  <h1>초성퀴즈 게임</h1>
+  <p class="desc">초성만 보고 단어를 맞혀보세요. 총 10문제, 힌트도 볼 수 있어요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>'게임 시작'</b> 버튼을 누르면 초성 문제가 나와요.</span></div>
+      <div class="step"><span class="num">2</span><span>초성을 보고 떠오르는 단어를 <b>입력창에 입력</b>한 뒤 정답 확인을 누르세요.</span></div>
+      <div class="step"><span class="num">3</span><span>모르겠으면 <b>'힌트 보기'</b>로 카테고리 힌트를 볼 수 있고, <b>'다음 문제'</b>로 건너뛸 수도 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>10문제가 끝나면 <b>정답 개수</b>와 <b>최고기록</b>을 확인할 수 있어요.</span></div>
+      <div class="tip">💡 띄어쓰기 없이 붙여서 입력해주세요. 예: 'ㅅㄱㅁㅊ' → '스크린타임'이 아니라 실제 답은 붙여쓴 단어예요.</div>
+    </div>
+  </details>
+
+  <div class="hud">
+    <span class="stat">문제<span class="val" id="qNumVal">0/10</span></span>
+    <span class="stat">정답<span class="val" id="correctVal">0</span></span>
+    <span class="stat">최고기록<span class="val" id="bestVal">--</span></span>
+  </div>
+
+  <div id="startscreen" class="startscreen">
+    <p>동물, 음식, 나라, 직업 등 다양한 카테고리의 초성 문제 10개가 무작위로 나와요.</p>
+    <button class="primary" id="startBtn">게임 시작</button>
+  </div>
+
+  <div id="quizArea" class="hidden">
+    <div class="qcard">
+      <div class="catbadge" id="catBadge">카테고리</div>
+      <div class="cho" id="choText">ㄱㅅㅎ</div>
+      <div class="hintbox" id="hintBox"></div>
+    </div>
+    <div class="inputrow">
+      <input type="text" id="answerInput" placeholder="정답을 입력하세요" autocomplete="off">
+    </div>
+    <div class="actionrow">
+      <button id="hintBtn">💡 힌트 보기</button>
+      <button id="skipBtn">⏭️ 다음 문제</button>
+      <button class="submit" id="submitBtn">정답 확인</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div id="endscreen" class="endscreen hidden">
+    <div style="font-size:15px;color:var(--text);">게임 종료!</div>
+    <div style="font-size:34px;font-weight:700;color:var(--accent);" id="finalScore">0 / 10</div>
+    <div style="font-size:12px;color:var(--amber);" id="bestLabel"></div>
+    <button class="primary" id="retryBtn">다시 하기</button>
+  </div>
+
+  <div class="disclaimer">
+    ※ 최고기록은 이 브라우저에만 저장됩니다. 문제는 무작위로 출제되며, 같은 단어가 다시 나올 수 있습니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>초성퀴즈 게임은 단어의 초성(첫 자음)만 보고 원래 단어가 무엇인지 맞히는 게임입니다. 동물, 음식, 나라, 직업, 물건 등 다양한 카테고리의 단어 중 10문제가 무작위로 출제되며, 모르겠으면 카테고리 힌트를 보거나 다음 문제로 건너뛸 수 있습니다. 게임이 끝나면 몇 개를 맞혔는지 점수로 확인할 수 있고, 최고기록은 브라우저에 저장됩니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>초성퀴즈는 단체 채팅방이나 카카오톡 오픈채팅에서도 자주 즐기는 국민 게임인데, 막상 문제를 낼 사람이 없거나 혼자 심심할 때 즐길 수 있는 곳은 마땅치 않았습니다. 짧은 시간에 두뇌를 자극하면서 재미있게 즐길 수 있는 게임을 별도 설치나 앱 다운로드 없이 바로 웹에서 즐길 수 있도록 만들면 좋겠다고 생각해 제작했습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>업무나 공부 중 잠깐 쉬면서 두뇌를 자극하는 게임을 즐기고 싶을 때</li>
+      <li>친구들과 함께 모여서 누가 더 빨리, 많이 맞히는지 겨뤄보고 싶을 때</li>
+      <li>이동 중이나 대기 시간에 가볍게 시간을 보내고 싶을 때</li>
+      <li>어휘력이나 순발력을 재미있게 훈련하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 게임은 표준 국어의 초성 표기 방식을 기준으로 정답을 판별합니다. 띄어쓰기가 있는 단어는 붙여서 입력해야 정답으로 인식되며, 방언이나 줄임말, 신조어는 정답으로 등록되어 있지 않아 표준어로 입력하셔야 합니다. 최고기록은 이 브라우저(이 기기)에만 저장되며, 다른 기기나 브라우저에서는 별도로 기록됩니다. 브라우저의 사이트 데이터를 삭제하면 저장된 최고기록도 함께 사라질 수 있습니다. 문제는 무작위로 출제되기 때문에 한 게임 안에서 같은 단어가 중복으로 나오지 않도록 설계했지만, 다시 플레이할 때는 이전과 같은 단어가 다시 나올 수 있습니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 정답을 입력했는데 오답으로 처리돼요.</div>
+      <div class="a">띄어쓰기나 특수문자가 포함되어 있지 않은지 확인해주세요. 이 게임은 붙여쓰기 기준으로 정답을 판별합니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 힌트를 보면 점수에 불이익이 있나요?</div>
+      <div class="a">아니요. 힌트를 봐도 정답을 맞히면 정상적으로 정답 처리됩니다. 부담 없이 힌트를 활용해보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 최고기록이 갑자기 사라졌어요.</div>
+      <div class="a">브라우저의 캐시나 사이트 데이터를 삭제하면 저장된 기록도 함께 초기화됩니다. 시크릿 모드에서는 창을 닫으면 기록이 저장되지 않으니 참고해주세요.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var WORDS = [
+    {word:'호랑이', cat:'동물'}, {word:'코끼리', cat:'동물'}, {word:'기린', cat:'동물'},
+    {word:'고양이', cat:'동물'}, {word:'강아지', cat:'동물'}, {word:'토끼', cat:'동물'},
+    {word:'다람쥐', cat:'동물'}, {word:'하마', cat:'동물'}, {word:'사자', cat:'동물'},
+    {word:'펭귄', cat:'동물'}, {word:'부엉이', cat:'동물'}, {word:'고슴도치', cat:'동물'},
+    {word:'김치찌개', cat:'음식'}, {word:'된장찌개', cat:'음식'}, {word:'비빔밥', cat:'음식'},
+    {word:'삼겹살', cat:'음식'}, {word:'떡볶이', cat:'음식'}, {word:'짜장면', cat:'음식'},
+    {word:'초밥', cat:'음식'}, {word:'라면', cat:'음식'}, {word:'김밥', cat:'음식'},
+    {word:'치킨', cat:'음식'}, {word:'피자', cat:'음식'}, {word:'냉면', cat:'음식'},
+    {word:'대한민국', cat:'나라'}, {word:'일본', cat:'나라'}, {word:'중국', cat:'나라'},
+    {word:'미국', cat:'나라'}, {word:'프랑스', cat:'나라'}, {word:'독일', cat:'나라'},
+    {word:'이탈리아', cat:'나라'}, {word:'베트남', cat:'나라'}, {word:'태국', cat:'나라'},
+    {word:'캐나다', cat:'나라'}, {word:'호주', cat:'나라'}, {word:'스페인', cat:'나라'},
+    {word:'선생님', cat:'직업'}, {word:'의사', cat:'직업'}, {word:'간호사', cat:'직업'},
+    {word:'경찰관', cat:'직업'}, {word:'소방관', cat:'직업'}, {word:'요리사', cat:'직업'},
+    {word:'디자이너', cat:'직업'}, {word:'프로그래머', cat:'직업'}, {word:'변호사', cat:'직업'},
+    {word:'가수', cat:'직업'}, {word:'배우', cat:'직업'}, {word:'농부', cat:'직업'},
+    {word:'컴퓨터', cat:'물건'}, {word:'스마트폰', cat:'물건'}, {word:'냉장고', cat:'물건'},
+    {word:'세탁기', cat:'물건'}, {word:'우산', cat:'물건'}, {word:'자전거', cat:'물건'},
+    {word:'배낭', cat:'물건'}, {word:'안경', cat:'물건'}, {word:'시계', cat:'물건'},
+    {word:'키보드', cat:'물건'}, {word:'헤드폰', cat:'물건'}, {word:'선풍기', cat:'물건'},
+    {word:'설날', cat:'명절'}, {word:'추석', cat:'명절'}, {word:'크리스마스', cat:'명절'},
+    {word:'어린이날', cat:'명절'}, {word:'광복절', cat:'명절'}, {word:'현충일', cat:'명절'},
+    {word:'서울', cat:'도시'}, {word:'부산', cat:'도시'}, {word:'제주도', cat:'도시'},
+    {word:'인천', cat:'도시'}, {word:'대구', cat:'도시'}, {word:'경주', cat:'도시'},
+    {word:'축구', cat:'운동'}, {word:'농구', cat:'운동'}, {word:'야구', cat:'운동'},
+    {word:'수영', cat:'운동'}, {word:'배드민턴', cat:'운동'}, {word:'탁구', cat:'운동'}
+  ];
+
+  var CHO_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+  function getChosung(str){
+    var result = '';
+    for (var i=0;i<str.length;i++){
+      var code = str.charCodeAt(i) - 0xAC00;
+      if (code < 0 || code > 11171){
+        result += str[i];
+        continue;
+      }
+      var choIdx = Math.floor(code / 588);
+      result += CHO_LIST[choIdx];
+    }
+    return result;
+  }
+
+  function normalize(str){
+    return str.replace(/\s/g, '').trim();
+  }
+
+  var hud_qnum = document.getElementById('qNumVal');
+  var hud_correct = document.getElementById('correctVal');
+  var hud_best = document.getElementById('bestVal');
+  var startscreen = document.getElementById('startscreen');
+  var quizArea = document.getElementById('quizArea');
+  var endscreen = document.getElementById('endscreen');
+  var startBtn = document.getElementById('startBtn');
+  var catBadge = document.getElementById('catBadge');
+  var choText = document.getElementById('choText');
+  var hintBox = document.getElementById('hintBox');
+  var answerInput = document.getElementById('answerInput');
+  var hintBtn = document.getElementById('hintBtn');
+  var skipBtn = document.getElementById('skipBtn');
+  var submitBtn = document.getElementById('submitBtn');
+  var feedback = document.getElementById('feedback');
+  var finalScore = document.getElementById('finalScore');
+  var bestLabel = document.getElementById('bestLabel');
+  var retryBtn = document.getElementById('retryBtn');
+
+  var TOTAL_Q = 10;
+  var gameWords = [];
+  var current = 0;
+  var correctCount = 0;
+  var hintUsed = false;
+
+  function shuffle(arr){
+    var a = arr.slice();
+    for (var i=a.length-1;i>0;i--){
+      var j = Math.floor(Math.random()*(i+1));
+      var t=a[i];a[i]=a[j];a[j]=t;
+    }
+    return a;
+  }
+
+  function loadBest(){
+    var b = parseInt(localStorage.getItem('chosung_best'), 10);
+    return isNaN(b) ? null : b;
+  }
+  function renderBest(){
+    var b = loadBest();
+    hud_best.textContent = b !== null ? (b + '/10') : '--';
+  }
+
+  function startGame(){
+    gameWords = shuffle(WORDS).slice(0, TOTAL_Q);
+    current = 0;
+    correctCount = 0;
+    startscreen.classList.add('hidden');
+    endscreen.classList.add('hidden');
+    quizArea.classList.remove('hidden');
+    renderBest();
+    renderQuestion();
+  }
+
+  function renderQuestion(){
+    hintUsed = false;
+    var w = gameWords[current];
+    catBadge.textContent = w.cat;
+    choText.textContent = getChosung(w.word);
+    hintBox.textContent = '';
+    answerInput.value = '';
+    answerInput.classList.remove('wrong');
+    feedback.textContent = '';
+    feedback.className = 'feedback';
+    hud_qnum.textContent = (current+1) + '/' + TOTAL_Q;
+    hud_correct.textContent = correctCount;
+    answerInput.focus();
+  }
+
+  function showHint(){
+    var w = gameWords[current];
+    hintBox.textContent = '글자 수: ' + w.word.length + '자 · 카테고리: ' + w.cat;
+    hintUsed = true;
+  }
+
+  function checkAnswer(){
+    var val = normalize(answerInput.value);
+    var w = gameWords[current];
+    if (val === w.word){
+      correctCount++;
+      feedback.textContent = '✓ 정답이에요! (' + w.word + ')';
+      feedback.className = 'feedback correct';
+      setTimeout(nextQuestion, 700);
+    } else {
+      feedback.textContent = '✗ 다시 시도해보세요';
+      feedback.className = 'feedback wrong';
+      answerInput.classList.add('wrong');
+      setTimeout(function(){ answerInput.classList.remove('wrong'); }, 250);
+    }
+  }
+
+  function nextQuestion(){
+    current++;
+    if (current >= TOTAL_Q){
+      endGame();
+    } else {
+      renderQuestion();
+    }
+  }
+
+  function skipQuestion(){
+    var w = gameWords[current];
+    feedback.textContent = '정답은 "' + w.word + '"였어요';
+    feedback.className = 'feedback';
+    setTimeout(nextQuestion, 900);
+  }
+
+  function endGame(){
+    quizArea.classList.add('hidden');
+    endscreen.classList.remove('hidden');
+    finalScore.textContent = correctCount + ' / ' + TOTAL_Q;
+
+    var best = loadBest();
+    if (best === null || correctCount > best){
+      localStorage.setItem('chosung_best', correctCount);
+      bestLabel.textContent = '🎉 신기록 달성!';
+    } else {
+      bestLabel.textContent = '최고기록: ' + best + '/10';
+    }
+    renderBest();
+  }
+
+  startBtn.addEventListener('click', startGame);
+  retryBtn.addEventListener('click', startGame);
+  submitBtn.addEventListener('click', checkAnswer);
+  skipBtn.addEventListener('click', skipQuestion);
+  hintBtn.addEventListener('click', showHint);
+  answerInput.addEventListener('keydown', function(e){
+    if (e.key === 'Enter') checkAnswer();
+  });
+
+  renderBest();
+})();
+</script>
+</body>
+</html>
