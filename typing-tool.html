@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>타자연습기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .setrow{display:flex;gap:8px;flex-wrap:wrap;}
+  .setbtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--sub);
+    border-radius:20px;padding:8px 14px;font-size:12px;cursor:pointer;
+  }
+  .setbtn.active{border-color:var(--accent);color:var(--accent);}
+
+  .hud{display:flex;justify-content:space-between;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;flex-wrap:wrap;gap:6px;}
+  .hud .stat{color:var(--sub);}
+  .hud .val{color:var(--accent);font-weight:700;margin-left:4px;}
+
+  .targetbox{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:20px;font-size:16px;line-height:2;letter-spacing:0.02em;word-break:break-all;
+  }
+  .targetbox .correct{color:var(--accent);}
+  .targetbox .incorrect{color:var(--bad);background:rgba(255,92,92,0.15);border-radius:2px;}
+  .targetbox .pending{color:var(--sub);}
+  .targetbox .cursor{border-left:2px solid var(--amber);animation:blink 1s step-end infinite;}
+  @keyframes blink{50%{border-color:transparent;}}
+
+  .typeinput{
+    width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:16px;font-size:16px;font-family:inherit;resize:none;
+  }
+  .typeinput:focus{outline:none;border-color:var(--accent);}
+
+  button.primary{
+    background:var(--accent);color:var(--dark);border:none;border-radius:8px;
+    padding:14px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;
+  }
+  button.primary:active{transform:scale(0.98);}
+
+  .resultbox{
+    background:var(--panel);border:1px solid var(--accent);border-radius:12px;
+    padding:26px 20px;text-align:center;display:flex;flex-direction:column;gap:10px;
+  }
+  .resultbox .big{font-size:38px;font-weight:800;color:var(--accent);}
+  .resultbox .sub2{font-size:12px;color:var(--sub);}
+
+  .statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .statcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;text-align:center;}
+  .statcard .k{font-size:11px;color:var(--sub);}
+  .statcard .v{font-size:20px;font-weight:700;color:var(--text);margin-top:4px;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> typing-practice --run</div>
+  <h1>타자연습기</h1>
+  <p class="desc">주어진 문장을 그대로 입력하면 타자 속도(분당 타수)와 정확도를 측정해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>연습할 <b>문장 종류</b>(짧은 문장, 긴 문장, 명언, 프로그래밍)를 선택하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>화면에 표시된 문장을 <b>아래 입력창에 그대로</b> 입력하세요. 첫 글자를 입력하는 순간 타이머가 시작돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>맞게 입력한 글자는 초록색, 틀린 글자는 빨간색으로 실시간 표시돼요.</span></div>
+      <div class="step"><span class="num">4</span><span>문장을 다 입력하면 <b>분당 타수(CPM)와 정확도</b>가 자동으로 계산돼요.</span></div>
+      <div class="tip">💡 오타가 나도 지우지 말고 그대로 진행하시는 게 실전 타자 속도 측정에는 더 정확해요. 정확도 점수에서 감점될 뿐이에요.</div>
+    </div>
+  </details>
+
+  <div class="setrow" id="setRow">
+    <div class="setbtn active" data-set="short">짧은 문장</div>
+    <div class="setbtn" data-set="long">긴 문장</div>
+    <div class="setbtn" data-set="quote">명언</div>
+    <div class="setbtn" data-set="code">프로그래밍</div>
+  </div>
+
+  <div class="hud">
+    <span class="stat">경과시간<span class="val" id="timeVal">0.0초</span></span>
+    <span class="stat">분당타수<span class="val" id="cpmVal">0</span></span>
+    <span class="stat">정확도<span class="val" id="accVal">100%</span></span>
+    <span class="stat">최고기록<span class="val" id="bestVal">--</span></span>
+  </div>
+
+  <div class="targetbox" id="targetBox"></div>
+
+  <textarea class="typeinput" id="typeInput" rows="3" placeholder="여기에 입력하세요..." autocomplete="off" autocapitalize="off" spellcheck="false"></textarea>
+
+  <button class="primary" id="resetBtn">🔄 새 문장으로 다시 시작</button>
+
+  <div id="resultArea" class="hidden">
+    <div class="resultbox">
+      <div class="sub2">기록 완료!</div>
+      <div class="big" id="finalCpm">0 타/분</div>
+      <div class="sub2" id="finalNote"></div>
+    </div>
+    <div class="statgrid" style="margin-top:10px;">
+      <div class="statcard"><div class="k">정확도</div><div class="v" id="finalAcc">100%</div></div>
+      <div class="statcard"><div class="k">소요시간</div><div class="v" id="finalTime">0초</div></div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 분당 타수(CPM)는 <b style="color:var(--text);">입력한 전체 글자 수 ÷ 소요 시간(분)</b>으로 계산됩니다. 한글 자모 단위(키보드 실제 타건 수)가 아닌 완성된 글자 수 기준이라, 일부 한글 타자 연습 프로그램의 '타수'와는 계산 방식이 다를 수 있습니다. 최고기록은 이 브라우저에만 저장됩니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>타자연습기는 화면에 제시된 문장을 그대로 입력하면, 입력 속도(분당 타수)와 정확도를 실시간으로 측정해주는 도구입니다. 짧은 문장, 긴 문장, 명언, 프로그래밍 코드까지 네 가지 카테고리를 지원하며, 맞게 입력한 글자와 틀리게 입력한 글자를 실시간으로 색깔 구분해서 보여줍니다. 최고기록은 브라우저에 저장되어 이전 기록과 비교하며 연습할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>업무나 학업에서 타이핑 속도는 은근히 중요한 능력인데, 막상 체계적으로 연습할 기회는 많지 않습니다. 기존 타자연습 사이트들은 광고가 많거나 회원가입을 요구하는 경우가 흔해서, 그냥 가볍게 실력을 점검하고 싶을 때 부담스러운 경우가 많았습니다. 문장뿐 아니라 실제 코드를 입력하는 연습까지 할 수 있으면 개발자분들에게도 유용하겠다고 생각해서, 카테고리를 다양하게 구성했습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>본인의 타자 속도가 대략 어느 정도인지 궁금해서 측정해보고 싶을 때</li>
+      <li>업무나 문서 작성 속도를 높이기 위해 꾸준히 타자 연습을 하고 싶을 때</li>
+      <li>개발자로서 코드를 빠르고 정확하게 입력하는 연습을 하고 싶을 때</li>
+      <li>키보드를 새로 바꾼 뒤 적응 연습이 필요할 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 도구가 측정하는 분당 타수(CPM)는 완성된 글자 수를 기준으로 계산됩니다. 한글은 초성·중성·종성을 조합해서 한 글자를 완성하기 때문에, 실제 키보드를 누른 횟수(자모 단위 타수)를 기준으로 하는 일부 전통적인 한글 타자연습 프로그램과는 계산 방식이 다를 수 있습니다. 그래서 이 도구의 수치를 다른 타자연습 사이트의 기록과 직접 비교하시면 차이가 있을 수 있다는 점을 참고해주세요. 또한 최고기록은 이 브라우저(이 기기)에만 저장되므로, 다른 기기나 브라우저에서는 별도로 기록이 시작됩니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 오타가 나면 어떻게 해야 하나요?</div>
+      <div class="a">지우고 다시 입력하셔도 되고, 그냥 이어서 입력하셔도 됩니다. 다만 실제 타자 실력을 정확히 측정하고 싶으시다면 오타를 지우지 않고 그대로 진행하시는 걸 추천드려요. 정확도 점수에는 반영됩니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 왜 다른 사이트보다 타수가 낮게 나오나요?</div>
+      <div class="a">계산 방식의 차이일 가능성이 높습니다. 이 도구는 완성된 글자 수 기준으로 계산하는데, 자모(키보드 타건) 단위로 계산하는 사이트는 보통 더 높은 수치가 나옵니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 내용이 저장되나요?</div>
+      <div class="a">아니요. 최고기록(숫자)만 브라우저에 저장되며, 실제로 입력하신 텍스트 내용은 어디로도 전송되거나 저장되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var TEXT_SETS = {
+    short: [
+      '오늘 하루도 힘차게 시작해봅시다.',
+      '커피 한 잔의 여유가 필요한 시간입니다.',
+      '작은 습관이 큰 변화를 만듭니다.',
+      '천천히 가도 괜찮으니 포기하지 마세요.',
+      '오늘의 노력이 내일의 나를 만듭니다.',
+      '가끔은 쉬어가는 것도 필요합니다.',
+      '꾸준함이 재능을 이긴다고 합니다.',
+      '지금 이 순간에 집중해보세요.'
+    ],
+    long: [
+      '타자 연습을 꾸준히 하면 문서 작성 속도가 눈에 띄게 빨라지고, 업무 효율도 함께 높아집니다.',
+      '비가 오는 날에는 창밖을 보며 따뜻한 차 한 잔과 함께 조용히 책을 읽는 것도 좋은 방법입니다.',
+      '새로운 것을 배울 때는 처음부터 완벽하게 하려 하기보다, 꾸준히 반복하며 익숙해지는 과정이 중요합니다.',
+      '여행을 떠나기 전에는 목적지의 날씨와 문화를 미리 조사해두면 훨씬 여유롭게 즐길 수 있습니다.',
+      '컴퓨터 자판을 보지 않고 입력하는 연습을 꾸준히 하면, 어느새 손이 자연스럽게 움직이게 됩니다.'
+    ],
+    quote: [
+      '성공은 매일 반복되는 작은 노력의 합이다.',
+      '시작이 반이라는 말은 틀리지 않았다.',
+      '어제보다 오늘 더 나은 사람이 되면 충분하다.',
+      '실패는 성공으로 가는 과정의 일부일 뿐이다.',
+      '가장 큰 위험은 위험을 전혀 감수하지 않는 것이다.',
+      '천 리 길도 한 걸음부터 시작된다.'
+    ],
+    code: [
+      'function addNumbers(a, b) { return a + b; }',
+      'const list = [1, 2, 3].map(n => n * 2);',
+      'if (isValid === true) { console.log("ok"); }',
+      'for (let i = 0; i < 10; i++) { total += i; }',
+      'const user = { name: "Kim", age: 28 };',
+      'let result = array.filter(x => x > 0).length;'
+    ]
+  };
+
+  var setBtns = document.querySelectorAll('.setbtn');
+  var targetBox = document.getElementById('targetBox');
+  var typeInput = document.getElementById('typeInput');
+  var timeVal = document.getElementById('timeVal');
+  var cpmVal = document.getElementById('cpmVal');
+  var accVal = document.getElementById('accVal');
+  var bestVal = document.getElementById('bestVal');
+  var resetBtn = document.getElementById('resetBtn');
+  var resultArea = document.getElementById('resultArea');
+  var finalCpm = document.getElementById('finalCpm');
+  var finalAcc = document.getElementById('finalAcc');
+  var finalTime = document.getElementById('finalTime');
+  var finalNote = document.getElementById('finalNote');
+
+  var currentSet = 'short';
+  var targetText = '';
+  var startTime = null;
+  var timerId = null;
+  var finished = false;
+
+  function pickText(){
+    var list = TEXT_SETS[currentSet];
+    return list[Math.floor(Math.random()*list.length)];
+  }
+
+  function loadBest(){
+    var key = 'typing_best_' + currentSet;
+    var b = parseFloat(localStorage.getItem(key));
+    return isNaN(b) ? null : b;
+  }
+  function saveBestIfHigher(cpm){
+    var key = 'typing_best_' + currentSet;
+    var best = loadBest();
+    if (best === null || cpm > best){
+      localStorage.setItem(key, cpm.toFixed(1));
+      return true;
+    }
+    return false;
+  }
+  function renderBest(){
+    var b = loadBest();
+    bestVal.textContent = b !== null ? (b + '타/분') : '--';
+  }
+
+  function escapeHtml(str){
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderTarget(){
+    var typed = typeInput.value;
+    var html = '';
+    for (var i=0;i<targetText.length;i++){
+      var ch = targetText[i];
+      var cls;
+      if (i < typed.length){
+        cls = typed[i] === ch ? 'correct' : 'incorrect';
+      } else if (i === typed.length){
+        cls = 'pending cursor';
+      } else {
+        cls = 'pending';
+      }
+      var displayCh = ch === ' ' ? '&nbsp;' : escapeHtml(ch);
+      html += '<span class="' + cls + '">' + displayCh + '</span>';
+    }
+    targetBox.innerHTML = html;
+  }
+
+  function startNew(){
+    targetText = pickText();
+    typeInput.value = '';
+    startTime = null;
+    finished = false;
+    clearInterval(timerId);
+    timeVal.textContent = '0.0초';
+    cpmVal.textContent = '0';
+    accVal.textContent = '100%';
+    resultArea.classList.add('hidden');
+    renderBest();
+    renderTarget();
+    typeInput.disabled = false;
+    typeInput.focus();
+  }
+
+  function tick(){
+    if (!startTime) return;
+    var elapsed = (Date.now() - startTime) / 1000;
+    timeVal.textContent = elapsed.toFixed(1) + '초';
+    var typed = typeInput.value;
+    var cpm = elapsed > 0 ? Math.round((typed.length / elapsed) * 60) : 0;
+    cpmVal.textContent = cpm;
+  }
+
+  typeInput.addEventListener('input', function(){
+    if (finished) return;
+    if (!startTime){
+      startTime = Date.now();
+      timerId = setInterval(tick, 100);
+    }
+    renderTarget();
+
+    var typed = typeInput.value;
+    var correctCount = 0;
+    for (var i=0;i<typed.length && i<targetText.length;i++){
+      if (typed[i] === targetText[i]) correctCount++;
+    }
+    var acc = typed.length > 0 ? Math.round((correctCount/typed.length)*100) : 100;
+    accVal.textContent = acc + '%';
+
+    if (typed.length >= targetText.length){
+      finishTyping(correctCount, typed.length);
+    }
+  });
+
+  function finishTyping(correctCount, typedLength){
+    finished = true;
+    clearInterval(timerId);
+    typeInput.disabled = true;
+    var elapsed = (Date.now() - startTime) / 1000;
+    var elapsedMin = elapsed / 60;
+    var cpm = elapsedMin > 0 ? (typedLength / elapsedMin) : 0;
+    var acc = typedLength > 0 ? Math.round((correctCount/typedLength)*100) : 100;
+
+    finalCpm.textContent = Math.round(cpm) + ' 타/분';
+    finalAcc.textContent = acc + '%';
+    finalTime.textContent = elapsed.toFixed(1) + '초';
+
+    var isNewBest = saveBestIfHigher(cpm);
+    finalNote.textContent = isNewBest ? '🎉 이 카테고리 신기록이에요!' : '';
+    renderBest();
+    resultArea.classList.remove('hidden');
+  }
+
+  setBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      setBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentSet = btn.dataset.set;
+      startNew();
+    });
+  });
+
+  resetBtn.addEventListener('click', startNew);
+
+  startNew();
+})();
+</script>
+</body>
+</html>
