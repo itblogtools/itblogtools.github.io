@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>텍스트 대소문자 변환기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#4da3ff; --accent-dim:#1e4a7a; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  textarea{
+    width:100%;min-height:130px;background:var(--panel);color:var(--text);
+    border:1px solid var(--line);border-radius:8px;padding:14px;font-size:13px;
+    font-family:inherit;line-height:1.6;resize:vertical;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+
+  .btngrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  @media (max-width:460px){.btngrid{grid-template-columns:1fr;}}
+  .convbtn{
+    background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px 10px;font-size:12px;font-family:inherit;cursor:pointer;
+    display:flex;flex-direction:column;gap:2px;align-items:flex-start;
+  }
+  .convbtn:hover{border-color:var(--accent);}
+  .convbtn b{font-size:13px;color:var(--accent);}
+  .convbtn span{color:var(--sub);font-size:11px;}
+
+  .outputwrap{position:relative;}
+  .copybtn{
+    position:absolute;top:10px;right:10px;background:var(--panel);border:1px solid var(--line);
+    color:var(--sub);border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;
+  }
+  .copybtn.copied{color:var(--accent);border-color:var(--accent);}
+
+  .stats{display:flex;gap:16px;font-size:12px;color:var(--sub);flex-wrap:wrap;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> case-convert --run</div>
+  <h1>텍스트 대소문자 변환기</h1>
+  <p class="desc">영문 텍스트를 대문자·소문자부터 camelCase, snake_case까지 원하는 표기법으로 즉시 변환해요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>입력창에 <b>변환할 텍스트</b>를 붙여넣으세요.</span></div>
+      <div class="step"><span class="num">2</span><span>원하는 <b>변환 버튼</b>을 누르면 즉시 결과창에 반영돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>결과창 우측 상단의 <b>'복사'</b> 버튼으로 바로 가져다 쓰세요.</span></div>
+      <div class="tip">💡 camelCase, PascalCase, snake_case, kebab-case는 프로그래밍에서 변수명이나 파일명을 지을 때 자주 쓰이는 표기법이에요.</div>
+    </div>
+  </details>
+
+  <label style="font-size:12px;color:var(--sub);">입력 텍스트</label>
+  <textarea id="input" placeholder="변환할 텍스트를 입력하세요">The Quick Brown Fox Jumps Over The Lazy Dog</textarea>
+
+  <div class="btngrid" id="btnGrid">
+    <button class="convbtn" data-mode="upper"><b>UPPERCASE</b><span>전체 대문자로</span></button>
+    <button class="convbtn" data-mode="lower"><b>lowercase</b><span>전체 소문자로</span></button>
+    <button class="convbtn" data-mode="title"><b>Title Case</b><span>단어마다 첫 글자 대문자</span></button>
+    <button class="convbtn" data-mode="sentence"><b>Sentence case</b><span>문장 첫 글자만 대문자</span></button>
+    <button class="convbtn" data-mode="toggle"><b>tOGGLE cASE</b><span>대소문자 반전</span></button>
+    <button class="convbtn" data-mode="camel"><b>camelCase</b><span>변수명 표기법</span></button>
+    <button class="convbtn" data-mode="pascal"><b>PascalCase</b><span>클래스명 표기법</span></button>
+    <button class="convbtn" data-mode="snake"><b>snake_case</b><span>언더스코어 표기법</span></button>
+    <button class="convbtn" data-mode="kebab"><b>kebab-case</b><span>하이픈 표기법</span></button>
+  </div>
+
+  <label style="font-size:12px;color:var(--sub);">결과</label>
+  <div class="outputwrap">
+    <textarea id="output" readonly placeholder="여기에 결과가 표시됩니다"></textarea>
+    <button class="copybtn" id="copyBtn">복사</button>
+  </div>
+
+  <div class="stats" id="statsBox"></div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 브라우저 안에서만 텍스트를 변환하며, 입력한 내용은 서버로 전송되거나 저장되지 않습니다. camelCase, snake_case 등은 공백과 특수문자를 자동으로 정리해서 표기법에 맞게 변환합니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>텍스트 대소문자 변환기는 영문 텍스트를 대문자, 소문자, 각 단어 첫 글자 대문자(Title Case), 문장 첫 글자만 대문자(Sentence case), 대소문자 반전은 물론, 프로그래밍에서 자주 쓰이는 camelCase, PascalCase, snake_case, kebab-case 표기법까지 한 번에 변환해주는 도구입니다. 버튼 하나만 누르면 원하는 표기법으로 즉시 바뀐 결과를 확인하고 복사할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>문서를 작성하다 보면 실수로 캡스락이 켜진 채 입력해서 전체가 대문자로 써진 경우, 일일이 다시 타이핑하기보다 변환기로 빠르게 고치고 싶은 순간이 있습니다. 개발 작업을 할 때도 변수명이나 파일명을 camelCase에서 snake_case로, 혹은 그 반대로 바꿔야 하는 경우가 자주 생기는데, 매번 손으로 바꾸다 보면 실수가 생기기 쉽습니다. 이런 다양한 대소문자·표기법 변환 요구를 한 도구에서 빠르게 처리할 수 있도록 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>실수로 캡스락이 켜진 채 작성한 문서나 메일 제목을 빠르게 수정하고 싶을 때</li>
+      <li>영문 제목이나 이력서의 항목을 Title Case로 깔끔하게 정리하고 싶을 때</li>
+      <li>프로그래밍에서 변수명·함수명 표기법(camelCase, snake_case 등)을 서로 변환해야 할 때</li>
+      <li>URL 슬러그나 파일명을 kebab-case로 통일하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>Title Case 변환은 영어의 관사나 전치사(a, the, of 등)를 예외 처리하지 않고 모든 단어의 첫 글자를 대문자로 바꾸는 단순한 규칙을 사용합니다. 출판이나 학술 문서에서 요구하는 정교한 Title Case 규칙(짧은 전치사는 소문자 유지 등)과는 차이가 있을 수 있으니, 정확한 스타일 가이드가 필요한 문서에는 최종 확인이 필요합니다. camelCase, snake_case 등으로 변환할 때는 공백과 일부 특수문자를 구분자로 처리해서 단어를 나누는데, 특수한 형식의 원본 텍스트(이미 부분적으로 변환된 텍스트 등)에서는 예상과 다른 결과가 나올 수 있습니다. 한글 텍스트에는 대소문자 개념이 없기 때문에 이 도구의 변환 기능이 적용되지 않으며, 영문 텍스트에만 유효합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. camelCase와 PascalCase는 무엇이 다른가요?</div>
+      <div class="a">camelCase는 첫 단어의 첫 글자를 소문자로 시작하고(예: myVariableName), PascalCase는 모든 단어의 첫 글자를 대문자로 시작합니다(예: MyClassName). 주로 camelCase는 변수명에, PascalCase는 클래스명에 사용됩니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 한글도 변환할 수 있나요?</div>
+      <div class="a">한글은 대소문자 구분이 없는 문자 체계라 이 도구의 변환이 적용되지 않습니다. 영문 텍스트에만 사용해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 텍스트가 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 변환하며, 입력한 내용은 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var input = document.getElementById('input');
+  var output = document.getElementById('output');
+  var statsBox = document.getElementById('statsBox');
+  var btnGrid = document.getElementById('btnGrid');
+  var copyBtn = document.getElementById('copyBtn');
+
+  function splitWords(str){
+    return str
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/[_\-]+/g, ' ')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+  }
+
+  function convert(mode){
+    var text = input.value;
+    var result = '';
+    switch(mode){
+      case 'upper':
+        result = text.toUpperCase();
+        break;
+      case 'lower':
+        result = text.toLowerCase();
+        break;
+      case 'title':
+        result = text.replace(/\w\S*/g, function(w){
+          return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+        });
+        break;
+      case 'sentence':
+        result = text.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, function(c){
+          return c.toUpperCase();
+        });
+        break;
+      case 'toggle':
+        result = text.split('').map(function(ch){
+          return ch === ch.toUpperCase() ? ch.toLowerCase() : ch.toUpperCase();
+        }).join('');
+        break;
+      case 'camel':
+        var wc = splitWords(text);
+        result = wc.map(function(w,i){
+          w = w.toLowerCase();
+          return i === 0 ? w : w.charAt(0).toUpperCase() + w.slice(1);
+        }).join('');
+        break;
+      case 'pascal':
+        var wp = splitWords(text);
+        result = wp.map(function(w){
+          w = w.toLowerCase();
+          return w.charAt(0).toUpperCase() + w.slice(1);
+        }).join('');
+        break;
+      case 'snake':
+        result = splitWords(text).map(function(w){ return w.toLowerCase(); }).join('_');
+        break;
+      case 'kebab':
+        result = splitWords(text).map(function(w){ return w.toLowerCase(); }).join('-');
+        break;
+    }
+    output.value = result;
+    statsBox.innerHTML = '글자 수: <b style="color:var(--text);">' + result.length + '</b>';
+  }
+
+  btnGrid.querySelectorAll('.convbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      convert(btn.dataset.mode);
+    });
+  });
+
+  copyBtn.addEventListener('click', function(){
+    if (!output.value) return;
+    if (navigator.clipboard){
+      navigator.clipboard.writeText(output.value).then(function(){
+        copyBtn.textContent = '복사됨!';
+        copyBtn.classList.add('copied');
+        setTimeout(function(){ copyBtn.textContent = '복사'; copyBtn.classList.remove('copied'); }, 1500);
+      });
+    }
+  });
+})();
+</script>
+</body>
+</html>

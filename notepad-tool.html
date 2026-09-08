@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>메모장</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:620px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .toolbar{display:flex;gap:8px;}
+  .toolbar input{
+    flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;
+  }
+  .toolbar input:focus{outline:none;border-color:var(--accent);}
+  .newbtn{
+    background:var(--accent);color:var(--dark);border:none;border-radius:8px;
+    padding:0 16px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;
+  }
+
+  .notelist{display:flex;flex-direction:column;gap:8px;}
+  .notecard{
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;cursor:pointer;display:flex;flex-direction:column;gap:4px;
+  }
+  .notecard:hover{border-color:var(--accent);}
+  .notecard .title{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .notecard .preview{font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .notecard .meta{font-size:10px;color:var(--sub);}
+  .emptystate{text-align:center;color:var(--sub);font-size:13px;padding:40px 20px;background:var(--panel);border:1px dashed var(--line);border-radius:10px;}
+
+  .editorwrap{display:none;flex-direction:column;gap:10px;}
+  .editorwrap.active{display:flex;}
+  .editortop{display:flex;gap:8px;align-items:center;}
+  .backbtn{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;cursor:pointer;}
+  .titleinput{
+    flex:1;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:10px 12px;font-size:14px;font-weight:700;font-family:inherit;
+  }
+  .titleinput:focus{outline:none;border-color:var(--accent);}
+  .deletebtn{background:var(--panel);border:1px solid var(--bad);color:var(--bad);border-radius:8px;padding:10px 14px;font-size:12px;cursor:pointer;}
+
+  .bodytextarea{
+    width:100%;min-height:320px;background:var(--panel);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:16px;font-size:14px;font-family:inherit;line-height:1.7;resize:vertical;
+  }
+  .bodytextarea:focus{outline:none;border-color:var(--accent);}
+
+  .editorfooter{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);}
+  .savestatus{color:var(--accent);}
+
+  .listview{display:flex;flex-direction:column;gap:14px;}
+  .listview.hidden{display:none;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> notepad --run</div>
+  <h1>메모장</h1>
+  <p class="desc">회원가입 없이 브라우저에 바로 저장되는 간단한 메모장이에요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>'+ 새 메모'</b> 버튼을 누르면 메모 작성 화면이 열려요.</span></div>
+      <div class="step"><span class="num">2</span><span>제목과 내용을 입력하면 <b>자동으로 저장</b>돼요. 별도의 저장 버튼이 없어요.</span></div>
+      <div class="step"><span class="num">3</span><span>목록에서 메모를 눌러 다시 열거나, 검색창으로 <b>제목·내용을 검색</b>할 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>메모 안에서 <b>'삭제'</b> 버튼으로 필요 없는 메모를 지울 수 있어요.</span></div>
+      <div class="tip">💡 이 메모는 지금 사용 중인 브라우저에만 저장돼요. 다른 기기나 브라우저에서는 보이지 않으니, 중요한 내용은 별도로 백업해두세요.</div>
+    </div>
+  </details>
+
+  <div class="listview" id="listView">
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="제목이나 내용으로 검색...">
+      <button class="newbtn" id="newBtn">+ 새 메모</button>
+    </div>
+    <div class="notelist" id="noteList"></div>
+  </div>
+
+  <div class="editorwrap" id="editorView">
+    <div class="editortop">
+      <button class="backbtn" id="backBtn">← 목록으로</button>
+      <input type="text" class="titleinput" id="titleInput" placeholder="제목 없음">
+      <button class="deletebtn" id="deleteBtn">삭제</button>
+    </div>
+    <textarea class="bodytextarea" id="bodyInput" placeholder="내용을 입력하세요..."></textarea>
+    <div class="editorfooter">
+      <span id="charCount">0자</span>
+      <span class="savestatus" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ※ 메모는 <b style="color:var(--text);">이 브라우저의 로컬 저장소(localStorage)</b>에만 저장되며, 서버로 전송되지 않습니다. 브라우저 데이터(캐시, 쿠키 등)를 삭제하면 저장된 메모도 함께 사라질 수 있으니, 중요한 내용은 별도로 복사해서 백업해두시길 권장합니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>메모장은 회원가입이나 로그인 없이, 브라우저에 바로 메모를 작성하고 저장할 수 있는 간단한 도구입니다. 여러 개의 메모를 만들어 목록으로 관리할 수 있고, 제목이나 내용으로 검색해서 원하는 메모를 빠르게 찾을 수 있습니다. 작성한 내용은 자동으로 저장되기 때문에 별도로 저장 버튼을 누를 필요가 없습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>짧게 메모할 게 있을 때마다 메모 앱을 설치하거나 로그인하는 과정이 번거롭게 느껴질 때가 많습니다. 특히 다른 사람의 컴퓨터를 잠깐 빌려 쓰거나, 새로 산 기기에서 임시로 메모를 남겨야 할 때는 무거운 메모 앱보다 브라우저에서 바로 열어 쓸 수 있는 가벼운 메모장이 훨씬 편리합니다. 이런 상황에 부담 없이 활용할 수 있는 도구가 있으면 좋겠다고 생각해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>회원가입 없이 빠르게 아이디어나 할 일을 메모하고 싶을 때</li>
+      <li>여러 개의 메모를 만들어두고 필요할 때 검색해서 찾고 싶을 때</li>
+      <li>다른 사람의 컴퓨터나 공용 PC에서 잠깐 메모가 필요할 때</li>
+      <li>가벼운 메모 앱 없이 브라우저만으로 간단히 기록을 남기고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 메모장은 브라우저의 로컬 저장소(localStorage)에 메모를 저장하는 방식이라, 다른 기기나 다른 브라우저에서는 작성한 메모를 볼 수 없습니다. 예를 들어 크롬에서 작성한 메모는 같은 컴퓨터의 사파리나 다른 브라우저에서는 보이지 않습니다. 또한 브라우저의 캐시나 사이트 데이터를 삭제하면 저장된 메모도 함께 사라질 수 있으므로, 중요한 내용은 반드시 별도의 문서나 다른 저장 수단에 백업해두시길 권장합니다. 시크릿 모드(비공개 브라우징)에서 작성한 메모는 창을 닫으면 저장되지 않고 사라집니다. 여러 기기 간 동기화가 필요하시다면, 이 도구보다는 클라우드 기반의 메모 앱을 이용하시는 것이 더 적합합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 다른 컴퓨터에서도 내 메모가 보이나요?</div>
+      <div class="a">아니요. 이 메모장은 지금 사용 중인 브라우저에만 저장되기 때문에, 다른 컴퓨터나 다른 브라우저에서는 보이지 않습니다. 여러 기기에서 동기화가 필요하시다면 클라우드 기반 메모 앱을 이용해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 메모가 갑자기 사라졌어요.</div>
+      <div class="a">브라우저의 캐시나 사이트 데이터를 삭제하면 저장된 메모도 함께 사라집니다. 시크릿 모드에서 작성한 메모는 창을 닫으면 저장되지 않으니 참고해주세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 메모 개수에 제한이 있나요?</div>
+      <div class="a">브라우저 로컬 저장소의 용량 한도(보통 5~10MB) 내에서는 자유롭게 메모를 만들 수 있습니다. 일반적인 텍스트 메모 용도로는 충분한 용량입니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'simple_notepad_notes';
+  var listView = document.getElementById('listView');
+  var editorView = document.getElementById('editorView');
+  var noteList = document.getElementById('noteList');
+  var searchInput = document.getElementById('searchInput');
+  var newBtn = document.getElementById('newBtn');
+  var backBtn = document.getElementById('backBtn');
+  var titleInput = document.getElementById('titleInput');
+  var bodyInput = document.getElementById('bodyInput');
+  var deleteBtn = document.getElementById('deleteBtn');
+  var charCount = document.getElementById('charCount');
+  var saveStatus = document.getElementById('saveStatus');
+
+  var notes = [];
+  var currentId = null;
+  var saveTimeout = null;
+
+  function loadNotes(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      notes = raw ? JSON.parse(raw) : [];
+    } catch(e){
+      notes = [];
+    }
+  }
+  function persistNotes(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+  }
+
+  function formatDate(ts){
+    var d = new Date(ts);
+    return d.getFullYear() + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+  }
+
+  function renderList(){
+    var query = searchInput.value.trim().toLowerCase();
+    var filtered = notes.filter(function(n){
+      if (!query) return true;
+      return (n.title||'').toLowerCase().indexOf(query) > -1 || (n.body||'').toLowerCase().indexOf(query) > -1;
+    }).sort(function(a,b){ return b.updatedAt - a.updatedAt; });
+
+    noteList.innerHTML = '';
+    if (filtered.length === 0){
+      var empty = document.createElement('div');
+      empty.className = 'emptystate';
+      empty.textContent = notes.length === 0 ? '아직 메모가 없어요. 위 버튼으로 첫 메모를 만들어보세요.' : '검색 결과가 없어요.';
+      noteList.appendChild(empty);
+      return;
+    }
+    filtered.forEach(function(n){
+      var card = document.createElement('div');
+      card.className = 'notecard';
+      var previewText = (n.body || '').replace(/\n/g,' ').slice(0,80);
+      card.innerHTML =
+        '<div class="title">' + escapeHtml(n.title || '제목 없음') + '</div>' +
+        '<div class="preview">' + escapeHtml(previewText || '내용 없음') + '</div>' +
+        '<div class="meta">' + formatDate(n.updatedAt) + '</div>';
+      card.addEventListener('click', function(){ openNote(n.id); });
+      noteList.appendChild(card);
+    });
+  }
+
+  function escapeHtml(str){
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function openNote(id){
+    var note = notes.find(function(n){ return n.id === id; });
+    if (!note) return;
+    currentId = id;
+    titleInput.value = note.title || '';
+    bodyInput.value = note.body || '';
+    charCount.textContent = (note.body||'').length + '자';
+    saveStatus.textContent = '';
+    listView.classList.add('hidden');
+    editorView.classList.add('active');
+    bodyInput.focus();
+  }
+
+  function createNote(){
+    var note = { id: 'n' + Date.now(), title:'', body:'', updatedAt: Date.now() };
+    notes.push(note);
+    persistNotes();
+    openNote(note.id);
+  }
+
+  function saveCurrentNote(){
+    var note = notes.find(function(n){ return n.id === currentId; });
+    if (!note) return;
+    note.title = titleInput.value;
+    note.body = bodyInput.value;
+    note.updatedAt = Date.now();
+    persistNotes();
+    charCount.textContent = note.body.length + '자';
+    saveStatus.textContent = '✓ 저장됨';
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(function(){ saveStatus.textContent = ''; }, 1500);
+  }
+
+  function deleteCurrentNote(){
+    notes = notes.filter(function(n){ return n.id !== currentId; });
+    persistNotes();
+    backToList();
+  }
+
+  function backToList(){
+    currentId = null;
+    editorView.classList.remove('active');
+    listView.classList.remove('hidden');
+    renderList();
+  }
+
+  newBtn.addEventListener('click', createNote);
+  backBtn.addEventListener('click', backToList);
+  deleteBtn.addEventListener('click', function(){
+    if (confirm('이 메모를 삭제할까요? 삭제하면 되돌릴 수 없어요.')){
+      deleteCurrentNote();
+    }
+  });
+  titleInput.addEventListener('input', saveCurrentNote);
+  bodyInput.addEventListener('input', saveCurrentNote);
+  searchInput.addEventListener('input', renderList);
+
+  loadNotes();
+  renderList();
+})();
+</script>
+</body>
+</html>
