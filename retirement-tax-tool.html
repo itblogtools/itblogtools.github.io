@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>퇴직소득세 계산기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  input[type=number]{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
+  }
+  input:focus{outline:none;border-color:var(--accent);}
+  .inputrow{display:flex;gap:8px;align-items:center;}
+  .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
+
+  .bigresult{
+    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:24px;text-align:center;
+  }
+  .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .bigresult .val{font-size:28px;font-weight:700;color:var(--accent);word-break:break-all;}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+
+  .detailtable{display:flex;flex-direction:column;gap:6px;}
+  .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
+  .drow .k{color:var(--sub);}
+  .drow .v{color:var(--text);font-weight:700;text-align:right;}
+  .drow.total{border-color:var(--accent);}
+  .drow.total .v{color:var(--accent);}
+  .stepgroup{font-size:11px;color:var(--amber);font-weight:700;margin-top:6px;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> retirement-tax-calc --run</div>
+  <h1>퇴직소득세 계산기</h1>
+  <p class="desc">퇴직금과 근속연수를 입력하면 근속연수공제·환산급여공제를 반영한 예상 퇴직소득세를 계산해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>세전 퇴직금(퇴직소득금액)</b>을 입력하세요. 퇴직금 계산기에서 나온 예상 퇴직금을 그대로 활용하셔도 좋아요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>근속연수</b>를 입력하세요. 1년 미만은 1년으로 계산돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>결과에서 <b>근속연수공제, 환산급여공제, 과세표준</b>까지 단계별로 확인할 수 있어요.</span></div>
+      <div class="step"><span class="num">4</span><span>최종 <b>예상 퇴직소득세(지방소득세 포함)</b>와 실수령 예상액을 확인하세요.</span></div>
+      <div class="tip">💡 퇴직소득세는 근속연수가 길수록, 그리고 환산급여가 낮을수록(즉 근속연수 대비 퇴직금이 적을수록) 세율이 낮아지는 구조예요. 장기근속자에게 유리하게 설계되어 있어요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label>세전 퇴직금 (퇴직소득금액)</label>
+    <div class="inputrow">
+      <input type="number" id="severanceInput" value="50000000" step="1000000">
+      <span class="unit">원</span>
+    </div>
+
+    <label>근속연수</label>
+    <div class="inputrow">
+      <input type="number" id="yearsInput" value="5" step="1" min="1">
+      <span class="unit">년</span>
+    </div>
+  </div>
+
+  <div class="bigresult">
+    <div class="lbl">예상 퇴직소득세 (지방소득세 포함)</div>
+    <div class="val" id="taxVal">-</div>
+    <div class="sub2" id="taxSub"></div>
+  </div>
+
+  <div class="detailtable" id="detailTable"></div>
+
+  <div class="disclaimer">
+    ※ 이 계산은 2023년 개정된 소득세법상 퇴직소득세 산정 공식을 단순화한 <b style="color:var(--text);">추정치</b>입니다. 실제로는 퇴직소득에 포함되는 항목(비과세 여부 등)이나 세법 개정에 따라 결과가 달라질 수 있습니다. 정확한 세액은 국세청 홈택스의 퇴직소득세 자동계산 서비스나 회사 원천징수 내역을 통해 확인하시기 바랍니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>퇴직소득세 계산기는 퇴직금(퇴직소득금액)과 근속연수를 입력하면, 소득세법상 근속연수공제와 환산급여공제를 반영해 예상 퇴직소득세를 계산해주는 도구입니다. 근속연수공제, 환산급여, 환산급여공제, 과세표준, 산출세액까지 계산 단계를 하나하나 보여주기 때문에, 퇴직금에서 세금이 어떤 과정을 거쳐 얼마나 빠지는지 직접 확인할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>퇴직금을 받게 되면 "세전 금액은 아는데, 실제로 손에 쥐는 금액은 얼마일까"라는 궁금증이 자연스럽게 생깁니다. 하지만 퇴직소득세는 일반적인 소득세와 계산 방식이 크게 달라서, 근속연수공제와 환산급여공제라는 두 단계의 공제를 거쳐야 하는 복잡한 구조입니다. 특히 근속연수가 길수록 세부담이 크게 줄어드는 구조라, 이를 직접 계산해보지 않으면 실제 세후 수령액을 가늠하기 어렵습니다. 퇴직을 앞두고 미리 세후 실수령액을 계산해볼 수 있는 도구가 필요하다고 생각해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>퇴직을 앞두고 세전 퇴직금에서 세금을 제외한 실제 수령액이 얼마인지 미리 확인하고 싶을 때</li>
+      <li>이직 시점을 조율하면서 근속연수에 따른 퇴직소득세 차이를 비교해보고 싶을 때</li>
+      <li>회사에서 안내받은 퇴직소득세 원천징수 금액이 대략 맞는지 검산해보고 싶을 때</li>
+      <li>은퇴 자금 계획을 세우면서 퇴직금의 실질 수령액을 정확히 파악하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>퇴직소득세는 근속연수가 길수록 근속연수공제와 세부담 완화 효과가 커지는 누진 구조입니다. 이 계산기는 표준적인 산정 공식을 그대로 적용하지만, 실제로는 퇴직소득에 포함되는 항목의 범위(명예퇴직금, 임원 퇴직금의 한도 규정 등)나 세법 개정에 따라 실제 세액과 차이가 발생할 수 있습니다. 특히 임원의 퇴직소득 중 일정 배수를 초과하는 금액은 근로소득으로 간주되어 별도로 과세되는 등 특수한 경우도 있어, 이 도구의 일반적인 계산과는 다르게 적용될 수 있습니다. 정확한 세액은 반드시 국세청 홈택스의 퇴직소득세 자동계산 서비스나 회사의 원천징수 내역을 통해 확인하시길 권장합니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 근속연수가 길수록 세금이 유리한가요?</div>
+      <div class="a">네, 맞습니다. 근속연수공제 금액이 커지고, 환산급여를 계산할 때도 근속연수로 나누기 때문에 연평균 급여가 낮게 산정되어 낮은 세율 구간이 적용됩니다. 장기근속자에게 유리하게 설계된 구조입니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 퇴직소득세는 회사가 알아서 떼고 주나요?</div>
+      <div class="a">네, 회사가 퇴직금을 지급할 때 퇴직소득세를 원천징수한 뒤 나머지 금액을 지급하는 것이 원칙입니다. 이 계산기로 미리 예상 금액을 확인해두시면 실제 지급액과 비교해보실 수 있습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 정보가 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var severanceInput = document.getElementById('severanceInput');
+  var yearsInput = document.getElementById('yearsInput');
+  var taxVal = document.getElementById('taxVal');
+  var taxSub = document.getElementById('taxSub');
+  var detailTable = document.getElementById('detailTable');
+
+  function won(n){
+    return Math.round(n).toLocaleString() + '원';
+  }
+
+  function serviceYearDeduction(years){
+    if (years <= 5) return Math.max(1000000, 1000000 * years);
+    if (years <= 10) return 5000000 + 2000000 * (years - 5);
+    if (years <= 20) return 15000000 + 2500000 * (years - 10);
+    return 40000000 + 3000000 * (years - 20);
+  }
+
+  function convertedSalaryDeduction(cs){
+    if (cs <= 8000000) return cs;
+    if (cs <= 70000000) return 8000000 + (cs - 8000000) * 0.6;
+    if (cs <= 100000000) return 45200000 + (cs - 70000000) * 0.55;
+    if (cs <= 300000000) return 61700000 + (cs - 100000000) * 0.45;
+    return 151700000 + (cs - 300000000) * 0.35;
+  }
+
+  function basicIncomeTax(base){
+    if (base <= 0) return 0;
+    if (base <= 14000000) return base * 0.06;
+    if (base <= 50000000) return 840000 + (base - 14000000) * 0.15;
+    if (base <= 88000000) return 6240000 + (base - 50000000) * 0.24;
+    if (base <= 150000000) return 15360000 + (base - 88000000) * 0.35;
+    if (base <= 300000000) return 37060000 + (base - 150000000) * 0.38;
+    if (base <= 500000000) return 94060000 + (base - 300000000) * 0.40;
+    if (base <= 1000000000) return 174060000 + (base - 500000000) * 0.42;
+    return 384060000 + (base - 1000000000) * 0.45;
+  }
+
+  function calc(){
+    var severance = parseFloat(severanceInput.value) || 0;
+    var years = Math.max(1, Math.round(parseFloat(yearsInput.value) || 1));
+
+    if (severance <= 0){
+      taxVal.textContent = '-';
+      taxSub.textContent = '퇴직금을 입력해주세요';
+      detailTable.innerHTML = '';
+      return;
+    }
+
+    var syDeduction = serviceYearDeduction(years);
+    var afterSy = Math.max(0, severance - syDeduction);
+    var convertedSalary = (afterSy / years) * 12;
+    var csDeduction = convertedSalaryDeduction(convertedSalary);
+    var taxBase = Math.max(0, convertedSalary - csDeduction);
+    var taxOnBase = basicIncomeTax(taxBase);
+    var calculatedTax = (taxOnBase / 12) * years;
+    var localTax = calculatedTax * 0.1;
+    var totalTax = calculatedTax + localTax;
+    var netAmount = severance - totalTax;
+
+    taxVal.textContent = won(totalTax);
+    taxSub.textContent = '실수령 예상액: ' + won(netAmount);
+
+    detailTable.innerHTML = '';
+    var rows = [
+      ['① 근속연수공제', won(syDeduction)],
+      ['② 근속연수공제 후 금액', won(afterSy)],
+      ['③ 환산급여 (②÷근속연수×12)', won(convertedSalary)],
+      ['④ 환산급여공제', won(csDeduction)],
+      ['⑤ 과세표준 (③-④)', won(taxBase)],
+      ['⑥ 종합소득세 기본세율 적용액', won(taxOnBase)],
+      ['⑦ 산출세액 (⑥÷12×근속연수)', won(calculatedTax)],
+      ['⑧ 지방소득세 (⑦×10%)', won(localTax)],
+    ];
+    rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'drow';
+      row.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
+      detailTable.appendChild(row);
+    });
+    var totalRow = document.createElement('div');
+    totalRow.className = 'drow total';
+    totalRow.innerHTML = '<span class="k">총 퇴직소득세 (⑦+⑧)</span><span class="v">' + won(totalTax) + '</span>';
+    detailTable.appendChild(totalRow);
+  }
+
+  [severanceInput, yearsInput].forEach(function(el){
+    el.addEventListener('input', calc);
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
