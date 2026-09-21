@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>자동차 취득세 계산기</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
+  label{font-size:12px;color:var(--sub);}
+  input[type=number], select{
+    width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
+    border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
+  }
+  input:focus, select:focus{outline:none;border-color:var(--accent);}
+  .inputrow{display:flex;gap:8px;align-items:center;}
+  .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .checkrow{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+
+  .bigresult{
+    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
+    padding:24px;text-align:center;
+  }
+  .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .bigresult .val{font-size:28px;font-weight:700;color:var(--accent);word-break:break-all;}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+
+  .detailtable{display:flex;flex-direction:column;gap:6px;}
+  .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
+  .drow .k{color:var(--sub);}
+  .drow .v{color:var(--text);font-weight:700;text-align:right;}
+  .drow.total{border-color:var(--accent);}
+  .drow.total .v{color:var(--accent);}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> car-tax-calc --run</div>
+  <h1>자동차 취득세 계산기</h1>
+  <p class="desc">차량가격과 차종을 선택하면 법정 세율 기준 예상 취득세를 계산해드려요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>차량 취득가액</b>(차량 가격, 부가세 제외 기준)을 입력하세요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>차종</b>을 선택하세요. 비영업용/영업용 승용·승합·화물·특수차, 이륜차까지 11종류로 세분화되어 있어요.</span></div>
+      <div class="step"><span class="num">3</span><span>전기차·수소차 등 <b>친환경차 감면 대상</b>이라면 체크박스를 선택하세요.</span></div>
+      <div class="step"><span class="num">4</span><span>결과에서 <b>적용 세율</b>과 <b>예상 취득세</b>를 확인하세요.</span></div>
+      <div class="tip">💡 신차는 보통 차량 가격이 곧 취득가액이지만, 중고차는 실제 거래가와 시가표준액 중 더 높은 금액이 과세표준이 될 수 있어요.</div>
+    </div>
+  </details>
+
+  <div class="panel">
+    <label>차량 취득가액 (부가세 제외)</label>
+    <div class="inputrow">
+      <input type="number" id="priceInput" value="30000000" step="1000000">
+      <span class="unit">원</span>
+    </div>
+
+    <label>차종</label>
+    <select id="carType">
+      <optgroup label="비영업용 (개인 소유)">
+        <option value="0.07">비영업용 승용차 (일반)</option>
+        <option value="0.04">경형자동차 (배기량 1,000cc 미만)</option>
+        <option value="0.07">비영업용 승합자동차</option>
+        <option value="0.05">비영업용 화물자동차</option>
+        <option value="0.05">비영업용 특수자동차</option>
+      </optgroup>
+      <optgroup label="영업용 (사업자 등록)">
+        <option value="0.04">영업용 승용자동차 (택시 등)</option>
+        <option value="0.04">영업용 승합자동차</option>
+        <option value="0.04">영업용 화물자동차</option>
+        <option value="0.04">영업용 특수자동차</option>
+      </optgroup>
+      <optgroup label="이륜자동차">
+        <option value="0.02">이륜자동차 (125cc 초과, 비영업용)</option>
+        <option value="0.02">이륜자동차 (125cc 초과, 영업용)</option>
+      </optgroup>
+    </select>
+
+    <div class="checkrow">
+      <input type="checkbox" id="ecoCheck">
+      <label style="margin:0;">전기차·수소차 등 친환경차 감면 대상이에요 (최대 140만원 한도 감면)</label>
+    </div>
+  </div>
+
+  <div class="bigresult">
+    <div class="lbl">예상 자동차 취득세</div>
+    <div class="val" id="taxVal">-</div>
+    <div class="sub2" id="taxSub"></div>
+  </div>
+
+  <div class="detailtable" id="detailTable"></div>
+
+  <div class="disclaimer">
+    ※ 이 계산은 지방세법상 <b style="color:var(--text);">표준 취득세율</b>을 기준으로 한 <b style="color:var(--text);">추정치</b>입니다. 실제 과세표준은 차량 실거래가와 시가표준액 중 더 높은 금액을 기준으로 하며, 지역개발채권(공채) 매입 비용은 취득세와 별도로 발생합니다. 경차·다자녀·국가유공자 등 각종 감면 제도나 지자체별 조례에 따라 실제 세액은 달라질 수 있으니, 정확한 금액은 차량 등록 시 관할 구청·차량등록사업소에서 확인하시기 바랍니다.
+  </div>
+
+  <div class="infosection">
+    <h2>이 도구는 무엇을 하나요?</h2>
+    <p>자동차 취득세 계산기는 차량 취득가액과 차종을 입력하면, 지방세법상 표준 세율을 기준으로 예상 자동차 취득세를 계산해주는 도구입니다. 비영업용·영업용 승용·승합·화물·특수자동차부터 이륜자동차까지 11가지 차종별로 다른 세율을 자동으로 적용하며, 전기차·수소차 등 친환경차 감면 혜택도 반영해서 계산할 수 있습니다.</p>
+
+    <h2>왜 만들었나요?</h2>
+    <p>새 차나 중고차를 구매하기로 결정한 뒤, "이 가격에 세금까지 더하면 실제로 얼마가 드는 거지?"라는 궁금증이 자연스럽게 생깁니다. 자동차 취득세는 차종에 따라 세율이 4%에서 7%까지 다르게 적용되고, 최근에는 친환경차 감면 혜택까지 더해지면서 계산이 더 복잡해졌습니다. 차량 구매 예산을 세우기 전에 미리 취득세까지 포함한 총 비용을 가늠해볼 수 있는 도구가 필요하다고 생각해 만들었습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>새 차나 중고차 구매를 앞두고, 차량 가격 외에 추가로 드는 취득세를 미리 계산해서 예산을 세우고 싶을 때</li>
+      <li>일반 차량과 경차, 혹은 친환경차 중 어떤 차를 살지 고민할 때 세금 차이까지 비교하고 싶을 때</li>
+      <li>영업용으로 등록할지 비영업용으로 등록할지에 따른 세금 차이를 확인하고 싶을 때</li>
+      <li>딜러가 안내한 취득세 견적이 대략적으로 맞는지 스스로 검산해보고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>이 계산기가 산출하는 금액은 표준 세율을 적용한 추정치입니다. 실제 과세표준은 차량의 실제 거래가격과 지방자치단체가 고시하는 시가표준액 중 더 높은 금액을 기준으로 삼는 경우가 있어, 특히 중고차나 할인 폭이 큰 신차의 경우 이 도구의 단순 계산과 실제 부과 금액이 다를 수 있습니다. 또한 자동차를 신규 등록할 때는 취득세와 별도로 지역개발채권(공채)을 의무적으로 매입해야 하는데, 이 채권은 즉시 할인 매도하는 경우가 많아 실질적인 추가 비용이 발생합니다. 이 도구의 계산에는 이 채권 매입 비용이 포함되어 있지 않습니다. 다자녀 가구, 국가유공자, 장애인 등 각종 감면 대상에 해당하시는 경우 별도의 감면 혜택이 적용될 수 있으니, 정확한 금액은 반드시 차량 등록 시 관할 구청이나 차량등록사업소를 통해 확인하시기 바랍니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 경차는 취득세가 완전히 면제되나요?</div>
+      <div class="a">경차는 세율 자체가 4%로 낮게 적용되며, 추가로 취득세 감면 제도(한도 내 면제)가 적용되어 실제 부담이 더 낮아지는 경우가 많습니다. 정확한 감면 한도는 관할 구청에서 확인하시는 것이 좋습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 지역개발채권은 무엇인가요?</div>
+      <div class="a">차량을 신규 등록할 때 지방자치단체가 발행하는 채권을 의무적으로 매입해야 하는 제도입니다. 대부분의 구매자는 이 채권을 즉시 할인된 가격에 매도하기 때문에, 채권 액면가와 매도가의 차액만큼 실질적인 추가 비용이 발생합니다. 이 도구의 계산에는 포함되어 있지 않습니다.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 입력한 정보가 저장되나요?</div>
+      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var priceInput = document.getElementById('priceInput');
+  var carType = document.getElementById('carType');
+  var ecoCheck = document.getElementById('ecoCheck');
+  var taxVal = document.getElementById('taxVal');
+  var taxSub = document.getElementById('taxSub');
+  var detailTable = document.getElementById('detailTable');
+
+  var ECO_DISCOUNT_CAP = 1400000;
+
+  function won(n){
+    return Math.round(n).toLocaleString() + '원';
+  }
+
+  function calc(){
+    var price = parseFloat(priceInput.value) || 0;
+    var rate = parseFloat(carType.value);
+
+    if (price <= 0){
+      taxVal.textContent = '-';
+      taxSub.textContent = '차량 취득가액을 입력해주세요';
+      detailTable.innerHTML = '';
+      return;
+    }
+
+    var rawTax = price * rate;
+    var discount = 0;
+    if (ecoCheck.checked){
+      discount = Math.min(rawTax, ECO_DISCOUNT_CAP);
+    }
+    var finalTax = Math.max(0, rawTax - discount);
+
+    taxVal.textContent = won(finalTax);
+    taxSub.textContent = '적용 세율 ' + (rate*100).toFixed(0) + '%' + (ecoCheck.checked ? ' (친환경차 감면 적용)' : '');
+
+    detailTable.innerHTML = '';
+    var rows = [
+      ['차량 취득가액', won(price)],
+      ['적용 세율', (rate*100).toFixed(0) + '%'],
+      ['산출 취득세', won(rawTax)],
+    ];
+    if (ecoCheck.checked){
+      rows.push(['친환경차 감면액', '-' + won(discount)]);
+    }
+    rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'drow';
+      row.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
+      detailTable.appendChild(row);
+    });
+    var totalRow = document.createElement('div');
+    totalRow.className = 'drow total';
+    totalRow.innerHTML = '<span class="k">예상 취득세</span><span class="v">' + won(finalTax) + '</span>';
+    detailTable.appendChild(totalRow);
+  }
+
+  [priceInput, carType, ecoCheck].forEach(function(el){
+    el.addEventListener('input', calc);
+    el.addEventListener('change', calc);
+  });
+
+  calc();
+})();
+</script>
+</body>
+</html>
