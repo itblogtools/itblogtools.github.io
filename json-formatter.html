@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>JSON 포맷터 &amp; 유효성 검사기</title>
@@ -144,13 +142,13 @@
   <div class="stats" id="statsBox"></div>
 
   <div class="infosection">
-    <h2>이 도구는 무엇을 하나요?</h2>
+    <h2>JSON 포맷터·검증기 기능 소개</h2>
     <p>JSON 포맷터 & 유효성 검사기는 압축되거나 정리되지 않은 JSON 코드를 붙여넣으면 들여쓰기가 적용된 보기 좋은 형태로 정렬해주고, 문법 오류가 있는지 실시간으로 검증해주는 도구입니다. 반대로 정렬된 JSON을 공백 없는 한 줄 형태로 압축(Minify)할 수도 있습니다. 회원가입이나 설치 없이 브라우저에서 바로 사용할 수 있습니다.</p>
 
-    <h2>왜 만들었나요?</h2>
+    <h2>한 줄로 뭉친 JSON이 읽기 힘들어서</h2>
     <p>API 응답이나 설정 파일 형태로 JSON을 접하는 일이 개발자가 아니어도 흔해졌지만, 이런 데이터는 대부분 용량을 줄이기 위해 압축된 상태로 제공됩니다. 압축된 JSON은 중괄호와 대괄호가 뒤섞여 있어 구조를 파악하기 어렵고, 문법 오류를 직접 찾아내는 것도 시간이 오래 걸립니다. 코드 에디터를 켜지 않고도 빠르게 확인하고 정리할 수 있는 가벼운 도구가 필요하다고 생각해 만들게 되었습니다.</p>
 
-    <h2>이런 상황에 유용해요</h2>
+    <h2>JSON을 정리해야 하는 개발 상황</h2>
     <ul>
       <li>API 응답이 제대로 왔는지 구조를 눈으로 확인하고 싶을 때</li>
       <li>package.json 같은 설정 파일을 수정하거나 정리해야 할 때</li>
@@ -159,10 +157,10 @@
       <li>정리된 JSON을 실제 전송·저장용으로 압축해서 용량을 줄이고 싶을 때</li>
     </ul>
 
-    <h2>사용할 때 주의할 점</h2>
+    <h2>JSON 오류가 나는 흔한 원인</h2>
     <p>이 도구는 브라우저 안에서만 동작하며, 입력한 JSON 데이터는 서버로 전송되지 않습니다. 다만 회사 업무 관련 민감한 데이터를 다루실 때는 사내 정책상 외부 웹사이트에 데이터를 붙여넣는 것 자체가 제한되는 경우가 있으니 미리 확인하시는 것이 안전합니다. 또한 매우 큰 용량의 JSON(수 MB 이상)을 붙여넣으면 브라우저 성능에 따라 처리 속도가 느려질 수 있습니다. JSON5나 JSONC처럼 주석이 포함된 확장 문법은 표준 JSON 파서로 처리할 수 없어 오류로 인식되니 참고해주세요.</p>
 
-    <h2>자주 묻는 질문</h2>
+    <h2>JSON 포맷팅 Q&A</h2>
     <div class="faqitem">
       <div class="q">Q. "Unexpected token" 오류가 발생해요.</div>
       <div class="a">대부분 문자열에 작은따옴표(')를 사용했거나, 배열·객체의 마지막 항목 뒤에 불필요한 쉼표가 남아있는 경우입니다. JSON은 큰따옴표만 허용하며 마지막 쉼표를 허용하지 않습니다.</div>
