@@ -3,7 +3,6 @@
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
      crossorigin="anonymous"></script>
-  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>개인정보처리방침 | IT 도구모음</title>
@@ -37,7 +36,13 @@
   th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;color:var(--text);}
   th{background:var(--panel);color:var(--sub);font-weight:700;}
 
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
   footer{margin-top:40px;padding-top:16px;border-top:1px dashed var(--line);color:var(--sub);font-size:12px;text-align:center;}
+  footer a{color:var(--sub);}
+  footer a:hover{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -45,18 +50,21 @@
   <a class="back" href="index.html">← 도구모음으로 돌아가기</a>
   <div class="titlebar"><span class="prompt">$</span> cat privacy-policy.md</div>
   <h1>개인정보처리방침</h1>
-  <p class="updated">최종 수정일: 2026년 8월 23일</p>
+  <p class="updated">최종 수정일: 2026년 10월 7일</p>
 
-  <p>본 사이트(이하 "IT 도구모음")는 이용자의 개인정보를 소중히 여기며, 관련 법령을 준수하기 위해 다음과 같이 개인정보처리방침을 안내합니다.</p>
+  <p>IT 도구모음(이하 "사이트")은 이용자의 개인정보를 소중히 여기며, 관련 법령을 준수하기 위해 다음과 같이 개인정보처리방침을 안내합니다. 본 방침은 사이트 내 모든 도구 페이지에 공통으로 적용되며, 일부 도구에 한해 적용되는 예외사항은 아래 "예외적으로 외부로 전송되는 정보" 항목에 별도로 명시합니다.</p>
 
-  <h2>1. 수집하는 정보</h2>
-  <p>IT 도구모음은 회원가입이나 로그인 기능이 없으며, 이용자가 도구 사용을 위해 입력하는 값(비밀번호 생성 조건, JSON 텍스트 등)은 <b>모두 이용자의 브라우저 안에서만 처리</b>되고, 별도의 서버로 전송되거나 저장되지 않습니다.</p>
+  <h2>1. 수집하는 정보와 처리 방식</h2>
+  <p>이 사이트는 회원가입이나 로그인 기능이 없으며, 이용자가 도구 사용을 위해 입력하는 값(비밀번호 생성 조건, 연봉·재산 정보, JSON 텍스트, 메모 내용 등)은 원칙적으로 <b>이용자의 브라우저 안에서만 처리</b>되고, 별도의 서버로 전송되거나 저장되지 않습니다. 메모장처럼 로컬 저장소(localStorage)를 사용하는 일부 도구의 경우에도, 저장된 데이터는 이용자의 브라우저 안에만 남아있을 뿐 사이트 운영자나 제3자가 열람할 수 없습니다.</p>
+
   <div class="box">
     <p class="sub" style="margin:0;">예외적으로 아래 도구는 서비스 제공을 위해 외부 API에 요청을 보냅니다.</p>
     <table>
-      <tr><th>도구</th><th>전송되는 정보</th><th>목적</th></tr>
-      <tr><td>내 IP / 브라우저 정보 확인</td><td>접속 IP 주소 (자동)</td><td>IP 및 대략적 위치 조회</td></tr>
+      <tr><th>도구</th><th>전송되는 정보</th><th>목적</th><th>처리 주체</th></tr>
+      <tr><td>내 IP / 브라우저 정보 확인</td><td>접속 IP 주소 (자동)</td><td>IP 및 대략적 위치 조회</td><td>ipapi.co</td></tr>
+      <tr><td>환율 / 단위 변환기</td><td>없음 (환율 데이터만 수신)</td><td>실시간 환율 정보 조회</td><td>open.er-api.com</td></tr>
     </table>
+    <p class="sub" style="margin:10px 0 0;font-size:12px;">위 도구들은 이용자가 개인적으로 식별 가능한 정보를 직접 입력하지 않으며, 접속 시 자동으로 전달되는 IP 주소나 환율 조회 요청만 외부 서비스로 전달됩니다. 각 서비스의 개인정보 처리 방식은 해당 서비스 제공업체의 정책을 따릅니다.</p>
   </div>
 
   <h2>2. 쿠키 및 광고 (Google AdSense)</h2>
@@ -65,33 +73,49 @@
     <li>Google의 광고 쿠키 사용으로 이용자는 본 사이트 및 인터넷상의 다른 사이트 방문 기록을 기반으로 한 광고를 볼 수 있습니다.</li>
     <li>이용자는 <a href="https://adssettings.google.com" style="color:var(--accent);" target="_blank" rel="noopener">Google 광고 설정</a>에서 맞춤 광고를 비활성화할 수 있습니다.</li>
     <li>제3자 공급업체 및 게시자는 자체 쿠키를 사용하여 광고를 게재하고 데이터를 수집합니다. 이와 관련한 자세한 내용은 <a href="https://policies.google.com/technologies/partner-sites" style="color:var(--accent);" target="_blank" rel="noopener">Google 광고 정책</a>을 참고하시기 바랍니다.</li>
+    <li>Google을 비롯한 제3자 공급업체가 쿠키(예: Google 광고 쿠키) 또는 기타 제3자 식별자를 사용하여 광고를 게재한다는 사실에 대해 본 방침을 통해 고지합니다.</li>
   </ul>
 
   <h2>3. 제3자 서비스</h2>
   <p>본 사이트는 서비스 운영을 위해 아래와 같은 외부 서비스를 이용할 수 있습니다.</p>
   <ul>
-    <li><b>GitHub Pages</b> — 웹사이트 호스팅</li>
+    <li><b>GitHub Pages</b> — 웹사이트 호스팅. 접속 시 GitHub 측에 표준 서버 로그(접속 IP, 요청 시각 등)가 자동으로 기록될 수 있습니다.</li>
     <li><b>Google AdSense</b> — 광고 게재</li>
     <li><b>ipapi.co</b> — IP 정보 확인 도구의 위치 조회</li>
+    <li><b>open.er-api.com</b> — 환율 변환기의 실시간 환율 데이터 조회</li>
   </ul>
-  <p class="sub">각 서비스의 개인정보 처리 방식은 해당 서비스 제공업체의 정책을 따릅니다.</p>
+  <p class="sub">각 서비스의 개인정보 처리 방식은 해당 서비스 제공업체의 정책을 따르며, 사이트 운영자는 이 외부 서비스들이 수집하는 정보를 직접 열람하거나 통제하지 않습니다.</p>
 
   <h2>4. 개인정보의 보유 및 파기</h2>
-  <p>본 사이트는 이용자의 개인정보를 별도로 수집·저장하지 않으므로, 보유 및 파기 절차가 발생하지 않습니다. 도구 사용 중 입력한 값은 브라우저를 닫거나 페이지를 새로고침하면 즉시 소멸됩니다.</p>
+  <p>본 사이트는 이용자의 개인정보를 별도로 수집·저장하지 않으므로, 대부분의 도구에서는 보유 및 파기 절차가 발생하지 않습니다. 도구 사용 중 입력한 값은 브라우저를 닫거나 페이지를 새로고침하면 즉시 소멸됩니다. 메모장과 같이 로컬 저장소를 사용하는 도구는 이용자가 직접 삭제하거나 브라우저의 사이트 데이터를 삭제할 때까지 해당 기기에만 보관되며, 사이트 운영자의 서버에는 어떤 형태로도 보관되지 않습니다.</p>
 
   <h2>5. 이용자의 권리</h2>
-  <p>이용자는 언제든지 브라우저 설정을 통해 쿠키 저장을 거부하거나 삭제할 수 있으며, 이 경우 광고 개인화 등 일부 기능이 제한될 수 있습니다.</p>
+  <p>이용자는 언제든지 브라우저 설정을 통해 쿠키 저장을 거부하거나 삭제할 수 있으며, 이 경우 광고 개인화 등 일부 기능이 제한될 수 있습니다. 로컬 저장소에 저장된 데이터(예: 메모장 내용) 역시 브라우저 설정에서 직접 삭제할 수 있습니다. 본 사이트가 개인정보를 별도로 수집·보관하지 않는 구조이기 때문에, 열람·정정·삭제 요구가 필요한 개인정보 자체가 원칙적으로 존재하지 않습니다.</p>
 
   <h2>6. 문의처</h2>
-  <p>개인정보처리방침과 관련한 문의사항은 아래 채널로 연락해주시기 바랍니다.</p>
+  <p>개인정보처리방침과 관련한 문의사항이나, 특정 도구의 데이터 처리 방식에 대해 궁금하신 점이 있다면 아래 채널로 연락해주시기 바랍니다.</p>
   <div class="box">
-    <p style="margin:0;">이메일: (rlawldyd7@naver.com)</p>
+    <p style="margin:0;">문의 페이지: <a href="contact.html" style="color:var(--accent);">contact.html</a> 또는 운영 중인 블로그(<a href="https://blog.naver.com/songasis" style="color:var(--accent);" target="_blank" rel="noopener">blog.naver.com/songasis</a>) 댓글을 통해 연락 주실 수 있습니다.</p>
   </div>
 
   <h2>7. 방침의 변경</h2>
-  <p>본 개인정보처리방침은 법령, 정책 또는 서비스 변경에 따라 수정될 수 있으며, 변경 시 본 페이지를 통해 공지합니다.</p>
+  <p>본 개인정보처리방침은 법령, 정책 또는 서비스 변경에 따라 수정될 수 있으며, 변경 시 본 페이지 상단의 최종 수정일을 갱신하고 변경 사항을 공지합니다. 중요한 변경이 있을 경우 메인 페이지를 통해서도 별도로 안내하겠습니다.</p>
 
-  <footer>IT 도구모음 · 본 사이트의 모든 도구는 무료로 제공되며 회원가입이 필요하지 않습니다</footer>
+  <h2>자주 묻는 질문</h2>
+  <div class="faqitem">
+    <div class="q">Q. 제가 입력한 연봉이나 재산 정보를 운영자가 볼 수 있나요?</div>
+    <div class="a">아니요. 세금·연금 계산기를 포함한 대부분의 도구는 입력값을 브라우저 안에서만 계산하고 서버로 전송하지 않으므로, 운영자를 포함해 누구도 이용자가 입력한 구체적인 수치를 확인할 수 없습니다.</div>
+  </div>
+  <div class="faqitem">
+    <div class="q">Q. 광고 때문에 제 검색 기록이 추적되나요?</div>
+    <div class="a">Google AdSense가 광고 개인화를 위해 쿠키를 사용할 수 있으며, 이는 Google의 정책에 따라 운영됩니다. 원치 않으실 경우 Google 광고 설정 페이지에서 맞춤 광고를 끄실 수 있습니다.</div>
+  </div>
+  <div class="faqitem">
+    <div class="q">Q. 메모장에 저장한 내용은 안전한가요?</div>
+    <div class="a">메모장은 브라우저의 로컬 저장소에만 데이터를 보관하며 서버로 전송되지 않습니다. 다만 같은 기기를 다른 사람과 공유하신다면 그 사람도 브라우저에서 메모를 열람할 수 있으니, 공용 기기에서는 민감한 내용을 저장하지 않으시길 권장합니다.</div>
+  </div>
+
+  <footer>IT 도구모음 · 본 사이트의 모든 도구는 무료로 제공되며 회원가입이 필요하지 않습니다 · <a href="about.html">사이트 소개</a> · <a href="contact.html">문의하기</a></footer>
 </div>
 </body>
 </html>
