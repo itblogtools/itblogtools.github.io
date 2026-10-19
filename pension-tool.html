@@ -92,6 +92,8 @@
   <div class="titlebar"><span class="prompt">$</span> pension-estimate --run</div>
   <h1>국민연금 예상수령액 계산기</h1>
   <p class="desc">가입기간과 평균소득을 입력하면 소득대체율 기준 예상 월 연금액을 대략적으로 계산해드려요.</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="" data-next-note="" data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">2026년 연금개혁 반영: 소득대체율 43%, 보험료율 9.5%(매년 0.5%p 인상, 2033년 13%). 2025년 이전 가입기간은 당시 기준이 적용돼 실제와 차이가 날 수 있어요.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
+
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
@@ -99,7 +101,7 @@
       <div class="step"><span class="num">1</span><span><b>국민연금 가입 예정 기간(년)</b>을 입력하세요. 이미 납부한 기간과 앞으로 납부할 예정 기간을 더한 총 기간이에요.</span></div>
       <div class="step"><span class="num">2</span><span><b>가입기간 동안의 평균 월소득</b>을 현재가치 기준으로 입력하세요. 대략적인 평균 급여로 입력하시면 돼요.</span></div>
       <div class="step"><span class="num">3</span><span>결과에서 <b>예상 월 수령액</b>과 <b>연간 수령액</b>을 확인하세요.</span></div>
-      <div class="tip">💡 이 계산은 '40년 가입 시 평균소득의 40%를 받는다'는 국민연금의 공식 소득대체율 목표치를 기준으로 한 단순 비례 계산이에요. 실제 급여 산식은 훨씬 복잡해서, 정확한 금액은 국민연금공단의 공식 조회 서비스로 확인하셔야 해요.</div>
+      <div class="tip">💡 이 계산은 '40년 가입 시 평균소득의 43%를 받는다'는 2026년 연금개혁 소득대체율을 기준으로 한 단순 비례 계산이에요. 2025년 이전 가입기간에는 그 시기의 소득대체율이 적용돼서 실제와 차이가 있을 수 있어요. 실제 급여 산식은 훨씬 복잡해서, 정확한 금액은 국민연금공단의 공식 조회 서비스로 확인하셔야 해요.</div>
     </div>
   </details>
 
@@ -126,12 +128,12 @@
   <div class="detailtable" id="detailTable"></div>
 
   <div class="disclaimer">
-    ※ 이 계산은 국민연금의 <b style="color:var(--text);">목표 소득대체율(40년 가입 기준 40%)</b>을 가입기간에 비례해 단순화한 <b style="color:var(--text);">대략적인 추정치</b>입니다. 실제 국민연금 급여 산식은 전체 가입자 평균소득(A값)과 개인 평균소득(B값)을 함께 반영하는 훨씬 복잡한 공식을 사용하며, 저소득자에게 상대적으로 유리하게 설계되어 있어 이 도구의 단순 비례 계산과 차이가 클 수 있습니다. 정확한 예상 수령액은 반드시 국민연금공단의 '내 연금 알아보기' 공식 서비스(nps.or.kr)를 통해 확인하시기 바랍니다.
+    ※ 이 계산은 국민연금의 <b style="color:var(--text);">목표 소득대체율(40년 가입 기준 43%)</b>을 가입기간에 비례해 단순화한 <b style="color:var(--text);">대략적인 추정치</b>입니다. 실제 국민연금 급여 산식은 전체 가입자 평균소득(A값)과 개인 평균소득(B값)을 함께 반영하는 훨씬 복잡한 공식을 사용하며, 저소득자에게 상대적으로 유리하게 설계되어 있어 이 도구의 단순 비례 계산과 차이가 클 수 있습니다. 정확한 예상 수령액은 반드시 국민연금공단의 '내 연금 알아보기' 공식 서비스(nps.or.kr)를 통해 확인하시기 바랍니다.
   </div>
 
   <div class="infosection">
     <h2>국민연금 예상수령액 계산 방식</h2>
-    <p>국민연금 예상수령액 계산기는 국민연금 가입기간과 가입기간 동안의 평균 월소득을 입력하면, 국민연금 제도의 목표 소득대체율(40년 가입 기준 40%)을 기준으로 대략적인 예상 월 연금 수령액을 계산해주는 도구입니다. 정확한 급여 산식을 대신하는 것이 아니라, "내가 낸 만큼, 낸 기간만큼 대략 얼마를 받게 될까"를 빠르게 가늠해볼 수 있는 참고용 도구입니다.</p>
+    <p>국민연금 예상수령액 계산기는 국민연금 가입기간과 가입기간 동안의 평균 월소득을 입력하면, 국민연금 제도의 목표 소득대체율(40년 가입 기준 43%)을 기준으로 대략적인 예상 월 연금 수령액을 계산해주는 도구입니다. 정확한 급여 산식을 대신하는 것이 아니라, "내가 낸 만큼, 낸 기간만큼 대략 얼마를 받게 될까"를 빠르게 가늠해볼 수 있는 참고용 도구입니다.</p>
 
     <h2>내가 받을 연금 규모를 가늠해보려고</h2>
     <p>국민연금은 거의 모든 직장인과 자영업자가 의무적으로 가입하는 제도이지만, 정작 "내가 나중에 얼마를 받게 될지" 감을 잡고 계신 분들은 많지 않습니다. 국민연금공단의 공식 조회 서비스를 이용하려면 로그인과 본인인증이 필요해서, 그냥 대략적인 규모라도 빠르게 가늠해보고 싶을 때는 다소 번거롭습니다. 노후 자금 계획을 세우려면 국민연금으로 어느 정도가 채워지고, 개인연금이나 저축으로 얼마를 더 준비해야 하는지 파악하는 게 첫걸음인데, 이 대략적인 감을 잡는 데 도움이 되는 도구가 있으면 좋겠다고 생각해 만들었습니다.</p>
@@ -145,12 +147,12 @@
     </ul>
 
     <h2>간이 계산과 공식 조회 결과의 차이</h2>
-    <p>이 도구는 국민연금의 실제 급여 산식을 정확히 반영하지 않습니다. 실제 국민연금 기본연금액은 전체 가입자의 평균소득(A값)과 가입자 개인의 평균소득(B값)을 함께 반영하는 소득재분배 구조로 설계되어 있어서, 소득이 낮은 가입자는 이 도구가 계산하는 단순 비례 금액보다 실제로 더 많이 받고, 소득이 높은 가입자는 상대적으로 적게 받는 경향이 있습니다. 또한 실제 소득대체율은 수급 개시 연도에 따라 40%에서 42.5% 사이로 달라지며, 물가상승률에 따른 연금액 재평가, 국민연금 개혁 논의에 따른 제도 변경 가능성도 이 계산에는 반영되어 있지 않습니다. 이 도구는 어디까지나 대략적인 규모를 가늠하는 참고용이며, 정확한 예상 수령액은 반드시 국민연금공단 홈페이지의 공식 서비스를 통해 확인하시기 바랍니다.</p>
+    <p>이 도구는 국민연금의 실제 급여 산식을 정확히 반영하지 않습니다. 실제 국민연금 기본연금액은 전체 가입자의 평균소득(A값)과 가입자 개인의 평균소득(B값)을 함께 반영하는 소득재분배 구조로 설계되어 있어서, 소득이 낮은 가입자는 이 도구가 계산하는 단순 비례 금액보다 실제로 더 많이 받고, 소득이 높은 가입자는 상대적으로 적게 받는 경향이 있습니다. 또한 소득대체율 43%는 2026년 1월 1일 이후 가입기간부터 적용되고, 그 이전 가입기간에는 각 시기의 소득대체율이 따로 적용되는 구조라서 실제 수령액은 이 도구의 단순 계산과 다를 수 있습니다. 물가상승률에 따른 연금액 재평가도 반영되어 있지 않습니다. 이 도구는 어디까지나 대략적인 규모를 가늠하는 참고용이며, 정확한 예상 수령액은 반드시 국민연금공단 홈페이지의 공식 서비스를 통해 확인하시기 바랍니다.</p>
 
     <h2>국민연금 계산 관련 질문</h2>
     <div class="faqitem">
-      <div class="q">Q. 소득대체율 40%는 무슨 뜻인가요?</div>
-      <div class="a">평생(40년) 국민연금에 가입해서 평균소득만큼 계속 소득을 올렸다고 가정할 때, 은퇴 후 받는 연금이 그 평균소득의 40% 수준이 되도록 설계되었다는 뜻입니다. 이는 2028년부터 적용되는 목표치이며, 그 이전 수급자는 이보다 조금 높은 비율(40.5~42.5%)이 적용됩니다.</div>
+      <div class="q">Q. 소득대체율 43%는 무슨 뜻인가요?</div>
+      <div class="a">평생(40년) 국민연금에 가입해서 평균소득만큼 계속 소득을 올렸다고 가정할 때, 은퇴 후 받는 연금이 그 평균소득의 43% 수준이 되도록 설계되었다는 뜻입니다. 2025년 3월 연금개혁에 따라 2026년 1월 1일부터 적용되며(기존에는 매년 0.5%포인트씩 낮아져 2028년 40%가 목표였습니다), 이 비율은 2026년 이후 가입기간에 적용됩니다. 같은 개혁으로 보험료율도 2026년 9.5%에서 시작해 매년 0.5%포인트씩 올라 2033년 13%가 됩니다.</div>
     </div>
     <div class="faqitem">
       <div class="q">Q. 소득이 낮으면 실제로 더 유리하다는 게 무슨 뜻인가요?</div>
@@ -171,7 +173,7 @@
   var pensionSub = document.getElementById('pensionSub');
   var detailTable = document.getElementById('detailTable');
 
-  var TARGET_REPLACEMENT_RATE = 0.40; // 40년 가입 기준 목표 소득대체율
+  var TARGET_REPLACEMENT_RATE = 0.43; // 40년 가입 기준 소득대체율 (2026년 연금개혁 반영)
   var FULL_YEARS = 40;
 
   function won(n){
@@ -231,5 +233,32 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
+
+<script>
+(function(){
+  var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
+  function evalStatus(a, today){
+    var y = today.getFullYear(), by = parseInt(a.year,10);
+    if (by && y > by) return {s:'red', label:'재확인 필요', detail: y + '년이 되어 ' + by + '년 기준 자료가 현재와 다를 수 있어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+    if (a.nextChange){
+      var diff = Math.ceil((new Date(a.nextChange + 'T00:00:00') - today) / 86400000);
+      if (diff <= 0) return {s:'red', label:'재확인 필요', detail: '예정된 변경 시점(' + a.nextChange + ')이 지났어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+      if (diff <= 120) return {s:'yellow', label:'곧 바뀔 예정', detail: (a.nextNote ? a.nextNote + ' ' : '') + '(약 ' + diff + '일 후, ' + a.nextChange + ')'};
+    }
+    if (a.watch) return {s:'yellow', label:'변경 가능성 있음', detail: a.watch};
+    return {s:'green', label:'최신 기준', detail: ''};
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  document.querySelectorAll('.baseline-note').forEach(function(el){
+    var st = evalStatus({year: el.getAttribute('data-baseline-year'), nextChange: el.getAttribute('data-next-change'), nextNote: el.getAttribute('data-next-note'), watch: el.getAttribute('data-watch')}, today);
+    var c = COLORS[st.s];
+    el.style.borderLeftColor = c;
+    el.querySelector('.bn-dot').style.background = c;
+    var lab = el.querySelector('.bn-label'); lab.textContent = st.label; lab.style.color = c;
+    el.querySelector('.bn-extra').textContent = st.detail;
+    el.setAttribute('data-status', st.s);
+  });
+})();
+</script>
 </body>
 </html>

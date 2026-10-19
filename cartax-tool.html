@@ -96,6 +96,8 @@
   <div class="titlebar"><span class="prompt">$</span> car-tax-calc --run</div>
   <h1>자동차 취득세 계산기</h1>
   <p class="desc">차량가격과 차종을 선택하면 법정 세율 기준 예상 취득세를 계산해드려요.</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2026-12-31" data-next-note="친환경차 감면 적용 기한이 연말로 안내되는 자료가 많아, 연장 여부에 따라 달라질 수 있습니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">친환경차 취득세 감면 한도 140만원 기준입니다.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
+
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
@@ -263,5 +265,32 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
+
+<script>
+(function(){
+  var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
+  function evalStatus(a, today){
+    var y = today.getFullYear(), by = parseInt(a.year,10);
+    if (by && y > by) return {s:'red', label:'재확인 필요', detail: y + '년이 되어 ' + by + '년 기준 자료가 현재와 다를 수 있어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+    if (a.nextChange){
+      var diff = Math.ceil((new Date(a.nextChange + 'T00:00:00') - today) / 86400000);
+      if (diff <= 0) return {s:'red', label:'재확인 필요', detail: '예정된 변경 시점(' + a.nextChange + ')이 지났어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+      if (diff <= 120) return {s:'yellow', label:'곧 바뀔 예정', detail: (a.nextNote ? a.nextNote + ' ' : '') + '(약 ' + diff + '일 후, ' + a.nextChange + ')'};
+    }
+    if (a.watch) return {s:'yellow', label:'변경 가능성 있음', detail: a.watch};
+    return {s:'green', label:'최신 기준', detail: ''};
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  document.querySelectorAll('.baseline-note').forEach(function(el){
+    var st = evalStatus({year: el.getAttribute('data-baseline-year'), nextChange: el.getAttribute('data-next-change'), nextNote: el.getAttribute('data-next-note'), watch: el.getAttribute('data-watch')}, today);
+    var c = COLORS[st.s];
+    el.style.borderLeftColor = c;
+    el.querySelector('.bn-dot').style.background = c;
+    var lab = el.querySelector('.bn-label'); lab.textContent = st.label; lab.style.color = c;
+    el.querySelector('.bn-extra').textContent = st.detail;
+    el.setAttribute('data-status', st.s);
+  });
+})();
+</script>
 </body>
 </html>

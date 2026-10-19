@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>연봉 실수령액 계산기</title>
@@ -92,6 +90,8 @@
   <div class="titlebar"><span class="prompt">$</span> salary-calc --run</div>
   <h1>연봉 실수령액 계산기</h1>
   <p class="desc">세전 연봉을 입력하면 4대보험과 세금을 제외한 대략적인 월 실수령액을 계산해드려요.</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년에는 국민연금 보험료율 인상(근로자 5.0% 예정) 등 4대보험 요율이 바뀝니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">국민연금 4.75% · 건강보험 3.595% · 장기요양 13.14% · 고용보험 0.9% / 국민연금 기준소득월액 상한 659만원(2026.7~). 근로소득세는 간이 추정치입니다.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
+
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
@@ -100,7 +100,7 @@
       <div class="step"><span class="num">2</span><span><b>부양가족 수</b>를 입력하면 소득세 계산에 반영돼요 (본인 포함).</span></div>
       <div class="step"><span class="num">3</span><span>비과세액(식대 등)이 있다면 <b>비과세액</b>에 입력하세요. 보통 월 20만원이 일반적이에요.</span></div>
       <div class="step"><span class="num">4</span><span>아래에서 <b>4대보험료, 세금 내역, 월 실수령액</b>을 한눈에 확인하세요.</span></div>
-      <div class="tip">💡 이 계산은 2024년 기준 요율을 적용한 대략적인 추정치예요. 정확한 금액은 회사 급여명세서를 참고해주세요.</div>
+      <div class="tip">💡 이 계산은 2026년 기준 요율을 적용한 대략적인 추정치예요. 정확한 금액은 회사 급여명세서를 참고해주세요.</div>
     </div>
   </details>
 
@@ -146,9 +146,9 @@
     return Math.round(n).toLocaleString() + '원';
   }
 
-  var NP_RATE = 0.045;
-  var HI_RATE = 0.03545;
-  var LTC_RATE = 0.1281;
+  var NP_RATE = 0.0475;
+  var HI_RATE = 0.03595;
+  var LTC_RATE = 0.1314;
   var EI_RATE = 0.009;
 
   function estimateIncomeTax(monthlyTaxable, dependents){
@@ -172,7 +172,7 @@
     var grossMonthly = annual / 12;
     var taxableMonthly = Math.max(0, grossMonthly - nontaxMonthly);
 
-    var np = Math.min(taxableMonthly, 5900000) * NP_RATE;
+    var np = Math.min(taxableMonthly, 6590000) * NP_RATE;
     var hi = taxableMonthly * HI_RATE;
     var ltc = hi * LTC_RATE;
     var ei = taxableMonthly * EI_RATE;
@@ -189,8 +189,8 @@
     detailTable.innerHTML = '';
     var rows = [
       ['세전 월급여', grossMonthly],
-      ['국민연금 (4.5%)', -np],
-      ['건강보험 (3.545%)', -hi],
+      ['국민연금 (4.75%)', -np],
+      ['건강보험 (3.595%)', -hi],
       ['장기요양보험', -ltc],
       ['고용보험 (0.9%)', -ei],
       ['근로소득세 (추정)', -incomeTax],
@@ -233,7 +233,7 @@
     </ul>
 
     <h2>4대보험·세금 계산의 한계</h2>
-    <p>이 계산기는 2024년 기준 대략적인 요율을 적용한 추정치이며, 실제 급여명세서의 정확한 금액과는 차이가 있을 수 있습니다. 특히 근로소득세는 국세청의 간이세액표를 단순화하여 근사 계산한 값이라, 개인의 정확한 공제 항목(추가 부양가족 공제, 각종 소득공제 등)에 따라 실제 세액과 차이가 발생할 수 있습니다. 정확한 금액은 반드시 회사의 급여명세서나 국세청 홈택스의 근로소득 간이세액표를 통해 확인하시기 바랍니다.</p>
+    <p>이 계산기는 2026년 기준 요율을 적용한 추정치이며, 실제 급여명세서의 정확한 금액과는 차이가 있을 수 있습니다. 특히 근로소득세는 국세청의 간이세액표를 단순화하여 근사 계산한 값이라, 개인의 정확한 공제 항목(추가 부양가족 공제, 각종 소득공제 등)에 따라 실제 세액과 차이가 발생할 수 있습니다. 정확한 금액은 반드시 회사의 급여명세서나 국세청 홈택스의 근로소득 간이세액표를 통해 확인하시기 바랍니다.</p>
 
     <h2>연봉 실수령액 FAQ</h2>
     <div class="faqitem">
@@ -260,5 +260,32 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
+
+<script>
+(function(){
+  var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
+  function evalStatus(a, today){
+    var y = today.getFullYear(), by = parseInt(a.year,10);
+    if (by && y > by) return {s:'red', label:'재확인 필요', detail: y + '년이 되어 ' + by + '년 기준 자료가 현재와 다를 수 있어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+    if (a.nextChange){
+      var diff = Math.ceil((new Date(a.nextChange + 'T00:00:00') - today) / 86400000);
+      if (diff <= 0) return {s:'red', label:'재확인 필요', detail: '예정된 변경 시점(' + a.nextChange + ')이 지났어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+      if (diff <= 120) return {s:'yellow', label:'곧 바뀔 예정', detail: (a.nextNote ? a.nextNote + ' ' : '') + '(약 ' + diff + '일 후, ' + a.nextChange + ')'};
+    }
+    if (a.watch) return {s:'yellow', label:'변경 가능성 있음', detail: a.watch};
+    return {s:'green', label:'최신 기준', detail: ''};
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  document.querySelectorAll('.baseline-note').forEach(function(el){
+    var st = evalStatus({year: el.getAttribute('data-baseline-year'), nextChange: el.getAttribute('data-next-change'), nextNote: el.getAttribute('data-next-note'), watch: el.getAttribute('data-watch')}, today);
+    var c = COLORS[st.s];
+    el.style.borderLeftColor = c;
+    el.querySelector('.bn-dot').style.background = c;
+    var lab = el.querySelector('.bn-label'); lab.textContent = st.label; lab.style.color = c;
+    el.querySelector('.bn-extra').textContent = st.detail;
+    el.setAttribute('data-status', st.s);
+  });
+})();
+</script>
 </body>
 </html>
