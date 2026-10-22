@@ -5,6 +5,8 @@
      crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="거래금액을 입력하면 주택 매매·전세·월세 중개수수료의 법정 상한요율과 한도액을 계산합니다. 구간별 요율과 환산보증금 기준을 설명합니다.">
+<link rel="canonical" href="https://itblogtools.github.io/broker-fee-tool.html">
 <title>부동산 중개수수료 계산기</title>
 <style>
   :root{
@@ -85,7 +87,6 @@
   <div class="sitenav-inner">
     <a href="index.html" class="brand">$ IT 도구모음</a>
     <div class="navlinks">
-      <a href="index.html#cat-fun">심심할 때</a>
       <a href="index.html#cat-pc">PC&amp;게임</a>
       <a href="index.html#cat-security">보안</a>
       <a href="index.html#cat-dev">개발도구</a>
@@ -97,6 +98,8 @@
   <div class="titlebar"><span class="prompt">$</span> broker-fee-calc --run</div>
   <h1>부동산 중개수수료 계산기</h1>
   <p class="desc">거래 종류와 금액을 입력하면 법정 상한요율 기준 중개수수료를 계산해드려요.</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="" data-next-note="" data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">2021년 개정된 공인중개사법 시행규칙의 <b>주택</b> 상한요율표 기준이며, 2026년 현재 같은 표가 유지되고 있어요. 오피스텔·상가는 요율이 달라요.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
+
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
@@ -301,5 +304,31 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
+<script>
+(function(){
+  var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
+  function evalStatus(a, today){
+    var y = today.getFullYear(), by = parseInt(a.year,10);
+    if (by && y > by) return {s:'red', label:'재확인 필요', detail: y + '년이 되어 ' + by + '년 기준 자료가 현재와 다를 수 있어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+    if (a.nextChange){
+      var diff = Math.ceil((new Date(a.nextChange + 'T00:00:00') - today) / 86400000);
+      if (diff <= 0) return {s:'red', label:'재확인 필요', detail: '예정된 변경 시점(' + a.nextChange + ')이 지났어요. 아래 결과는 참고용으로만 보시고 최신 공식 기준을 함께 확인해주세요.'};
+      if (diff <= 120) return {s:'yellow', label:'곧 바뀔 예정', detail: (a.nextNote ? a.nextNote + ' ' : '') + '(약 ' + diff + '일 후, ' + a.nextChange + ')'};
+    }
+    if (a.watch) return {s:'yellow', label:'변경 가능성 있음', detail: a.watch};
+    return {s:'green', label:'최신 기준', detail: ''};
+  }
+  var today = new Date(); today.setHours(0,0,0,0);
+  document.querySelectorAll('.baseline-note').forEach(function(el){
+    var st = evalStatus({year: el.getAttribute('data-baseline-year'), nextChange: el.getAttribute('data-next-change'), nextNote: el.getAttribute('data-next-note'), watch: el.getAttribute('data-watch')}, today);
+    var c = COLORS[st.s];
+    el.style.borderLeftColor = c;
+    el.querySelector('.bn-dot').style.background = c;
+    var lab = el.querySelector('.bn-label'); lab.textContent = st.label; lab.style.color = c;
+    el.querySelector('.bn-extra').textContent = st.detail;
+    el.setAttribute('data-status', st.s);
+  });
+})();
+</script>
 </body>
 </html>

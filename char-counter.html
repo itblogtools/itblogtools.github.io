@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="공백 포함·제외 글자 수, 단어 수, 문단 수를 실시간으로 세고 글자 수 제한까지 남은 분량을 표시합니다. 자소서·에세이 작성용 글자 수 세기.">
+<link rel="canonical" href="https://itblogtools.github.io/char-counter.html">
 <title>글자 수 세기</title>
 <style>
   :root{
@@ -82,6 +82,7 @@
   .barfill.warn{background:var(--amber);}
   .barfill.over{background:var(--bad);}
 
+  .hidden{display:none !important;}
   .clearbtn{
     background:var(--panel);border:1px solid var(--line);color:var(--sub);
     border-radius:8px;padding:10px 16px;font-size:12px;font-family:inherit;cursor:pointer;
@@ -95,7 +96,6 @@
   <div class="sitenav-inner">
     <a href="index.html" class="brand">$ IT 도구모음</a>
     <div class="navlinks">
-      <a href="index.html#cat-fun">심심할 때</a>
       <a href="index.html#cat-pc">PC&amp;게임</a>
       <a href="index.html#cat-security">보안</a>
       <a href="index.html#cat-dev">개발도구</a>
@@ -202,8 +202,8 @@
 
   function update(){
     var text = textInput.value;
-    var chars = text.length;
-    var charsNoSpace = text.replace(/\s/g, '').length;
+    var chars = Array.from(text).length;
+    var charsNoSpace = Array.from(text.replace(/\s/g, '')).length;
     var words = text.trim().length === 0 ? 0 : text.trim().split(/\s+/).length;
     var paras = text.trim().length === 0 ? 0 : text.split(/\n+/).filter(function(p){ return p.trim().length > 0; }).length;
 
