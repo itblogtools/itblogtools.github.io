@@ -5,9 +5,13 @@
      crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="가입기간과 평균 월소득으로 국민연금 예상 월 수령액을 간이 추정합니다. 2026년 소득대체율 43% 개편 내용을 설명하며 실제 수령액과 차이가 있을 수 있습니다.">
+<meta name="description" content="가입 시작·종료 연도와 평균 월소득으로 국민연금 예상 월 수령액을 계산합니다. 가입 시기별 비례상수, 2026년 A값(3,193,511원), 소득대체율 43%, 조기·연기 수령과 손익분기 나이까지 반영한 간이 계산기입니다.">
 <link rel="canonical" href="https://itblogtools.github.io/pension-tool.html">
-<title>국민연금 예상수령액 계산기</title>
+<meta property="og:title" content="국민연금 예상수령액 계산기 (2026년 연금개혁 반영)">
+<meta property="og:description" content="A값·본인 소득·가입 시기별 비례상수로 계산하는 예상 월 연금액과 조기·연기 수령 비교">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://itblogtools.github.io/pension-tool.html">
+<title>국민연금 예상수령액 계산기 – 2026년 연금개혁·A값 반영, 조기·연기 수령 비교</title>
 <style>
   :root{
     --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
@@ -16,7 +20,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
   body{display:flex;flex-direction:column;align-items:center;}
-  .wrap{width:100%;max-width:600px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .wrap{width:100%;max-width:640px;padding:16px;display:flex;flex-direction:column;gap:14px;}
 
   .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
   .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
@@ -29,6 +33,7 @@
   .titlebar .prompt{color:var(--accent);}
   h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
   .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .meta{color:var(--sub);font-size:11px;line-height:1.6;margin:0;}
 
   .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
   .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
@@ -43,38 +48,61 @@
 
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
   label{font-size:12px;color:var(--sub);}
-  input[type=number]{
+  input[type=date], input[type=number]{
     width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
     border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
   }
   input:focus{outline:none;border-color:var(--accent);}
   .inputrow{display:flex;gap:8px;align-items:center;}
   .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:460px){.fieldgrid{grid-template-columns:1fr;}}
+  .optlabel{font-size:11px;color:var(--sub);}
 
-  .bigresult{
-    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
-    padding:24px;text-align:center;
-  }
+  .bigresult{background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:26px;text-align:center;}
   .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
-  .bigresult .val{font-size:28px;font-weight:700;color:var(--accent);word-break:break-all;}
-  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+  .bigresult .val{font-size:30px;font-weight:700;color:var(--accent);word-break:break-all;}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6;}
 
   .detailtable{display:flex;flex-direction:column;gap:6px;}
   .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
   .drow .k{color:var(--sub);}
   .drow .v{color:var(--text);font-weight:700;text-align:right;}
+  .drow.total{border-color:var(--accent);}
+  .drow.total .v{color:var(--accent);}
 
   .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
 
-  .infosection{margin-top:8px;}
-  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
-  .infosection h2:first-child{margin-top:0;}
-  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
-  .infosection ul{padding-left:20px;margin:0 0 10px;}
-  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  /* article */
+  .article{margin-top:10px;}
+  .article h2{font-size:15px;color:var(--accent);margin:28px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .article h2:first-child{margin-top:0;}
+  .article h3{font-size:13px;color:var(--amber);margin:16px 0 6px;}
+  .article p{font-size:13px;line-height:1.9;color:var(--text);margin:0 0 10px;}
+  .article ul, .article ol{padding-left:20px;margin:0 0 10px;}
+  .article li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .article b{color:#fff;}
+  .formula{background:var(--panel);border:1px solid var(--accent-dim);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.9;color:var(--accent);margin:0 0 12px;}
+  .callout{background:var(--panel);border-left:3px solid var(--amber);border-radius:6px;padding:10px 14px;font-size:12px;line-height:1.8;color:var(--text);margin:0 0 12px;}
+  .tblwrap{overflow-x:auto;margin:0 0 12px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;color:var(--text);white-space:nowrap;}
+  th{background:var(--panel);color:var(--sub);font-weight:700;}
+  td:first-child, th:first-child{text-align:left;}
   .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
   .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
-  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.8;}
+  .related{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px;}
+  @media (max-width:460px){.related{grid-template-columns:1fr;}}
+  .related a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);text-decoration:none;line-height:1.6;}
+  .related a:hover{border-color:var(--accent);}
+  .related a span{display:block;color:var(--sub);font-size:11px;}
+  .refs li{font-size:12px;color:var(--sub);}
+
+  .chkrow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+  .margline{font-size:12px;color:var(--sub);line-height:1.7;background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;}
+  .margline b{color:var(--accent);}
 </style>
 </head>
 <body>
@@ -90,142 +118,239 @@
   </div>
 </nav>
 <div class="wrap">
-  <div class="titlebar"><span class="prompt">$</span> pension-estimate --run</div>
+  <div class="titlebar"><span class="prompt">$</span> pension-calc --run</div>
   <h1>국민연금 예상수령액 계산기</h1>
-  <p class="desc">가입기간과 평균소득을 입력하면 소득대체율 기준 예상 월 연금액을 대략적으로 계산해드려요.</p>
-  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="" data-next-note="" data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">2026년 연금개혁 반영: 소득대체율 43%, 보험료율 9.5%(매년 0.5%p 인상, 2033년 13%). 2025년 이전 가입기간은 당시 기준이 적용돼 실제와 차이가 날 수 있어요.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
-
+  <p class="desc">출생연도, 가입 기간, 평균 월소득을 입력하면 국민연금 노령연금의 예상 월 수령액을 계산해드려요. 가입 시기별 비례상수와 전체 가입자 평균소득(A값)을 반영합니다.</p>
+  <p class="meta">최종 업데이트 2026-10-22 · 국민연금법 기준 · 작성/관리: IT 도구모음 운영자</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년 1월에 A값이 갱신되고 보험료율이 10%로 오릅니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">2026년 A값 3,193,511원 · 소득대체율 43%(2026.1.1 이후 가입기간에만 적용, 이전 기간은 당시 비례상수) · 기준소득월액 상한 659만원·하한 41만원(2026.7~). 현재가치 기준 간이 추정이며 물가·A값 변동은 반영하지 않습니다.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
     <div class="body">
-      <div class="step"><span class="num">1</span><span><b>국민연금 가입 예정 기간(년)</b>을 입력하세요. 이미 납부한 기간과 앞으로 납부할 예정 기간을 더한 총 기간이에요.</span></div>
-      <div class="step"><span class="num">2</span><span><b>가입기간 동안의 평균 월소득</b>을 현재가치 기준으로 입력하세요. 대략적인 평균 급여로 입력하시면 돼요.</span></div>
-      <div class="step"><span class="num">3</span><span>결과에서 <b>예상 월 수령액</b>과 <b>연간 수령액</b>을 확인하세요.</span></div>
-      <div class="tip">💡 이 계산은 '40년 가입 시 평균소득의 43%를 받는다'는 2026년 연금개혁 소득대체율을 기준으로 한 단순 비례 계산이에요. 2025년 이전 가입기간에는 그 시기의 소득대체율이 적용돼서 실제와 차이가 있을 수 있어요. 실제 급여 산식은 훨씬 복잡해서, 정확한 금액은 국민연금공단의 공식 조회 서비스로 확인하셔야 해요.</div>
+      <div class="step"><span class="num">1</span><span><b>출생연도</b>를 입력하면 법정 수급 개시 나이(보통 65세)가 정해져요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>가입 시작 연도</b>와 <b>가입 종료 연도</b>(보험료를 마지막으로 내는 해, 보통 만 59세가 되는 해)를 입력하세요. 중간에 못 낸 기간은 <b>공백 기간</b>에 넣어요.</span></div>
+      <div class="step"><span class="num">3</span><span><b>평균 월소득</b>은 가입 기간 동안 받은 월 소득의 평균을 <b>현재 가치로 환산해서</b> 넣어주세요. 잘 모르겠다면 지금 월급을 넣어보세요.</span></div>
+      <div class="step"><span class="num">4</span><span><b>수급 시작 나이</b>를 바꿔서 조기·연기 수령 시 월 연금과 손익분기 나이를 비교해보세요.</span></div>
+      <div class="tip">💡 이 결과는 간이 추정이에요. 정확한 금액은 국민연금공단 "내 곁에 국민연금"에서 내 가입 이력 기준으로 확인할 수 있어요.</div>
     </div>
   </details>
 
   <div class="panel">
-    <label>국민연금 가입기간 (예정 포함)</label>
-    <div class="inputrow">
-      <input type="number" id="yearsInput" value="30" step="1" min="1" max="45">
-      <span class="unit">년</span>
+    <div class="fieldgrid">
+      <div><label>출생연도</label><div class="inputrow"><input type="number" id="birthInput" value="1985" min="1940" max="2010"><span class="unit">년생</span></div></div>
+      <div><label>평균 월소득 (세전, 현재 가치)</label><div class="inputrow"><input type="number" id="incomeInput" value="3500000" step="100000" min="0"><span class="unit">원</span></div></div>
     </div>
-
-    <label>가입기간 중 평균 월소득 (현재가치 기준)</label>
-    <div class="inputrow">
-      <input type="number" id="incomeInput" value="3500000" step="100000">
-      <span class="unit">원</span>
+    <div class="fieldgrid">
+      <div><label>가입 시작 연도</label><div class="inputrow"><input type="number" id="startInput" value="2010" min="1988" max="2060"><span class="unit">년</span></div></div>
+      <div><label>가입 종료 연도 (마지막으로 내는 해)</label><div class="inputrow"><input type="number" id="endInput" value="2044" min="1988" max="2070"><span class="unit">년</span></div></div>
+    </div>
+    <div class="fieldgrid">
+      <div><label>가입 공백 기간 (못 낸 기간 합계)</label><div class="inputrow"><input type="number" id="gapInput" value="0" min="0" step="0.5"><span class="unit">년</span></div></div>
+      <div><label>수급 시작 나이</label><div class="inputrow"><select id="claimSelect" style="width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:12px;font-size:14px;font-family:inherit;"></select></div></div>
     </div>
   </div>
 
   <div class="bigresult">
-    <div class="lbl">예상 월 연금 수령액</div>
-    <div class="val" id="pensionVal">-</div>
-    <div class="sub2" id="pensionSub"></div>
+    <div class="lbl">예상 월 국민연금 (현재 가치 기준)</div>
+    <div class="val" id="monthlyVal">-</div>
+    <div class="sub2" id="monthlySub">-</div>
   </div>
 
   <div class="detailtable" id="detailTable"></div>
 
+  <div class="tblwrap"><table id="ageTable"></table></div>
+
   <div class="disclaimer">
-    ※ 이 계산은 국민연금의 <b style="color:var(--text);">목표 소득대체율(40년 가입 기준 43%)</b>을 가입기간에 비례해 단순화한 <b style="color:var(--text);">대략적인 추정치</b>입니다. 실제 국민연금 급여 산식은 전체 가입자 평균소득(A값)과 개인 평균소득(B값)을 함께 반영하는 훨씬 복잡한 공식을 사용하며, 저소득자에게 상대적으로 유리하게 설계되어 있어 이 도구의 단순 비례 계산과 차이가 클 수 있습니다. 정확한 예상 수령액은 반드시 국민연금공단의 '내 연금 알아보기' 공식 서비스(nps.or.kr)를 통해 확인하시기 바랍니다.
+    ※ 현재의 A값(2026년 3,193,511원)과 현재 가치 소득을 기준으로 한 <b style="color:var(--text);">간이 추정</b>입니다. 실제 연금은 수급 시점의 A값·재평가율, 크레딧(군복무·출산), 추후납부·반납, 부양가족연금, 소득활동에 따른 감액 등에 따라 달라집니다. 법률·노후설계 자문이 아닙니다.
   </div>
 
-  <div class="infosection">
-    <h2>국민연금 예상수령액 계산 방식</h2>
-    <p>국민연금 예상수령액 계산기는 국민연금 가입기간과 가입기간 동안의 평균 월소득을 입력하면, 국민연금 제도의 목표 소득대체율(40년 가입 기준 43%)을 기준으로 대략적인 예상 월 연금 수령액을 계산해주는 도구입니다. 정확한 급여 산식을 대신하는 것이 아니라, "내가 낸 만큼, 낸 기간만큼 대략 얼마를 받게 될까"를 빠르게 가늠해볼 수 있는 참고용 도구입니다.</p>
+  <article class="article">
+    <h2>국민연금 월 수령액은 이렇게 계산됩니다</h2>
+    <div class="formula">기본연금액(월) = Σ [각 가입 연도의 비례상수 ÷ 20] × (A값 + 내 평균소득 B값) ÷ 12</div>
+    <p>국민연금은 내가 낸 만큼만 받는 구조가 아닙니다. 전체 가입자의 평균소득(<b>A값</b>)과 내 평균소득(<b>B값</b>)을 절반씩 섞어 계산하기 때문에, 소득이 낮을수록 낸 돈 대비 받는 비율이 높고 소득이 높을수록 낮아집니다. 여기에 가입 연수가 곱해져서 20년 가입하면 한 번의 기본연금액을, 40년 가입하면 그 두 배를 받는 식으로 늘어납니다. 2026년 A값은 3,193,511원이며 매년 1월에 바뀝니다.</p>
 
-    <h2>내가 받을 연금 규모를 가늠해보려고</h2>
-    <p>국민연금은 거의 모든 직장인과 자영업자가 의무적으로 가입하는 제도이지만, 정작 "내가 나중에 얼마를 받게 될지" 감을 잡고 계신 분들은 많지 않습니다. 국민연금공단의 공식 조회 서비스를 이용하려면 로그인과 본인인증이 필요해서, 그냥 대략적인 규모라도 빠르게 가늠해보고 싶을 때는 다소 번거롭습니다. 노후 자금 계획을 세우려면 국민연금으로 어느 정도가 채워지고, 개인연금이나 저축으로 얼마를 더 준비해야 하는지 파악하는 게 첫걸음인데, 이 대략적인 감을 잡는 데 도움이 되는 도구가 있으면 좋겠다고 생각해 만들었습니다.</p>
+    <h2>가입 시기별 비례상수 (소득대체율)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>가입 시기</th><th>비례상수</th><th>40년 가입 시 소득대체율</th></tr>
+      <tr><td>1988~1998년</td><td>2.4</td><td>70%</td></tr>
+      <tr><td>1999~2007년</td><td>1.8</td><td>60%</td></tr>
+      <tr><td>2008년</td><td>1.5</td><td>50%</td></tr>
+      <tr><td>2009~2025년</td><td>매년 0.015씩 감소 (2025년 1.245)</td><td>매년 0.5%p 감소 (2025년 41.5%)</td></tr>
+      <tr><td>2026년 이후</td><td>1.29</td><td>43%</td></tr>
+    </table></div>
+    <p>2025년 연금개혁으로 소득대체율이 43%로 올랐지만 <b>2026년 1월 1일 이후 가입한 기간에만</b> 적용됩니다. 예를 들어 2026년에 50세인 가입자는 2026년부터 59세까지 10년 동안만 43%가 적용되고, 그 이전 기간은 당시 비례상수로 계산됩니다. 이 계산기는 가입 기간을 연도별로 나누어 각 연도의 비례상수를 합산합니다.</p>
 
-    <h2>노후 계획을 세울 때 활용하기</h2>
+    <h2>단계별 계산 예시: 1985년생, 2010~2044년 가입, 월소득 350만 원</h2>
+    <ol>
+      <li><b>가입 기간</b>: 2010년부터 2044년까지 35년 (만 25세 가입 ~ 만 59세)</li>
+      <li><b>2010~2025년 (16년)</b>: 연도별 비례상수 1.47에서 1.245까지 줄어들어 평균 1.3575, 합계 21.72</li>
+      <li><b>2026~2044년 (19년)</b>: 비례상수 1.29 × 19 = 24.51</li>
+      <li>비례상수 합계 = 21.72 + 24.51 = <b>46.23</b></li>
+      <li><b>월 기본연금액</b> = (3,193,511 + 3,500,000) ÷ 12 × (46.23 ÷ 20) = 557,793 × 2.3115 ≈ <b>1,289,338원</b></li>
+      <li>내 평균소득 대비 약 36.8%</li>
+    </ol>
+    <p>만약 35년 모두 2026년 이후 기준(1.29)이 적용됐다면 월 1,259,217원입니다. 예시가 이보다 큰 이유는 2010~2025년 구간의 비례상수(1.47에서 1.245)가 1.29보다 높기 때문입니다. 2025년 이전에는 소득대체율을 단계적으로 낮추는 중이었기 때문에, 2026년 개혁은 "새로 쌓는 기간"의 수준을 41.5%에서 43%로 올린 것입니다. 평균소득자(A값과 같은 소득)가 40년 내내 2026년 이후 기준으로 가입하면 정확히 A값의 43%인 월 1,373,210원이 나오며, 이 값이 계산 방식의 기준점입니다.</p>
+
+    <h2>소득이 달라지면 연금은 어떻게 달라지나 (40년 가입, 2026년 이후 기준)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>내 평균소득</th><th>월 기본연금액</th><th>내 소득 대비</th></tr>
+      <tr><td>150만 원</td><td>1,009,105</td><td>67.3%</td></tr><tr><td>350만 원</td><td>1,439,105</td><td>41.1%</td></tr><tr><td>600만 원</td><td>1,976,605</td><td>32.9%</td></tr>
+    </table></div>
+    <p>소득이 150만 원에서 600만 원으로 4배가 되어도 연금은 약 2배(100만 원 → 198만 원)만 늘어납니다. 반대로 소득 대비 비율은 67%에서 33%로 낮아집니다. A값이 계산에 절반 들어가기 때문입니다.</p>
+
+    <h2>가입 기간에 따른 차이 (평균소득 350만 원, 2026년 이후 기준)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>가입 기간</th><th>월 기본연금액</th></tr>
+      <tr><td>10년</td><td>359,776</td></tr><tr><td>20년</td><td>719,552</td></tr><tr><td>30년</td><td>1,079,329</td></tr><tr><td>40년</td><td>1,439,105</td></tr>
+    </table></div>
+    <p>연금액은 가입 기간에 거의 정비례합니다. 가입 기간이 10년 미만이면 노령연금이 아니라 낸 보험료에 이자를 더한 반환일시금으로 정산되므로, 10년(120개월)을 채우는 것이 첫 번째 목표입니다.</p>
+
+    <h2>수급 개시 나이와 조기·연기 수령</h2>
+    <div class="tblwrap"><table>
+      <tr><th>출생연도</th><th>1952년 이전</th><th>1953~56</th><th>1957~60</th><th>1961~64</th><th>1965~68</th><th>1969 이후</th></tr>
+      <tr><td>정상 수급 나이</td><td>60세</td><td>61세</td><td>62세</td><td>63세</td><td>64세</td><td>65세</td></tr>
+    </table></div>
+    <p>법정 나이보다 최대 5년 앞당겨 받을 수 있는 <b>조기노령연금</b>은 1년 앞당길 때마다 6%씩 줄고(최대 30%), 최대 5년 미루는 <b>연기연금</b>은 1년 미룰 때마다 7.2%씩 늘어납니다(최대 36%). 아래 표는 위 예시(월 기본연금액 1,289,338원, 65세 기준)의 비교이며, 손익분기 나이는 "정상 나이에 받기 시작한 경우와 누적 수령액이 같아지는 나이"입니다.</p>
+    <div class="tblwrap"><table>
+      <tr><th>수급 시작</th><th>증감</th><th>월 연금</th><th>손익분기</th></tr>
+      <tr><td>60세</td><td>−30.0%</td><td>902,536</td><td>76.7세</td></tr><tr><td>61세</td><td>−24.0%</td><td>979,897</td><td>77.7세</td></tr><tr><td>62세</td><td>−18.0%</td><td>1,057,257</td><td>78.7세</td></tr><tr><td>63세</td><td>−12.0%</td><td>1,134,617</td><td>79.7세</td></tr><tr><td>64세</td><td>−6.0%</td><td>1,211,977</td><td>80.7세</td></tr><tr><td>65세</td><td>0%</td><td>1,289,338</td><td>기준</td></tr><tr><td>66세</td><td>+7.2%</td><td>1,382,170</td><td>79.9세</td></tr><tr><td>67세</td><td>+14.4%</td><td>1,475,002</td><td>80.9세</td></tr><tr><td>68세</td><td>+21.6%</td><td>1,567,834</td><td>81.9세</td></tr><tr><td>69세</td><td>+28.8%</td><td>1,660,667</td><td>82.9세</td></tr><tr><td>70세</td><td>+36.0%</td><td>1,753,499</td><td>83.9세</td></tr>
+    </table></div>
+    <p>손익분기는 물가 연동과 기대수명을 단순화한 계산이라 참고용입니다. 조기수령 중 일정 소득 이상의 소득활동이 있으면 연금이 감액될 수 있고, 조기·연기 선택은 평생 월 수령액이 바뀌므로 신중하게 결정해야 합니다.</p>
+
+    <h2>이 계산기가 반영하지 않는 것</h2>
     <ul>
-      <li>노후 자금 계획을 세우기 전, 국민연금으로 대략 얼마를 받을 수 있을지 먼저 가늠해보고 싶을 때</li>
-      <li>가입기간을 늘렸을 때(추가납부, 임의가입 등) 예상 연금액이 어떻게 달라지는지 대략적으로 비교해보고 싶을 때</li>
-      <li>개인연금이나 퇴직연금으로 얼마를 추가로 준비해야 할지 계획할 때 참고 기준이 필요할 때</li>
-      <li>국민연금공단 공식 서비스를 이용하기 전, 대략적인 규모를 먼저 확인해보고 싶을 때</li>
+      <li><b>물가상승과 A값 변동</b>: 연금은 수급 시점에 A값과 재평가율로 조정되고 매년 물가에 연동됩니다. 이 계산기는 현재 가치 금액을 보여줍니다.</li>
+      <li><b>크레딧</b>: 군복무·출산 크레딧으로 늘어나는 가입 기간</li>
+      <li><b>추후납부·반납, 임의계속가입</b>: 못 낸 기간을 채우거나 만 60세 이후에도 가입을 이어가는 경우</li>
+      <li><b>부양가족연금</b>과 장애·유족연금</li>
+      <li><b>월별 소득 변화</b>: 실제 B값은 가입 기간 월별 소득을 현재 가치로 재평가한 평균입니다.</li>
     </ul>
 
-    <h2>간이 계산과 공식 조회 결과의 차이</h2>
-    <p>이 도구는 국민연금의 실제 급여 산식을 정확히 반영하지 않습니다. 실제 국민연금 기본연금액은 전체 가입자의 평균소득(A값)과 가입자 개인의 평균소득(B값)을 함께 반영하는 소득재분배 구조로 설계되어 있어서, 소득이 낮은 가입자는 이 도구가 계산하는 단순 비례 금액보다 실제로 더 많이 받고, 소득이 높은 가입자는 상대적으로 적게 받는 경향이 있습니다. 또한 소득대체율 43%는 2026년 1월 1일 이후 가입기간부터 적용되고, 그 이전 가입기간에는 각 시기의 소득대체율이 따로 적용되는 구조라서 실제 수령액은 이 도구의 단순 계산과 다를 수 있습니다. 물가상승률에 따른 연금액 재평가도 반영되어 있지 않습니다. 이 도구는 어디까지나 대략적인 규모를 가늠하는 참고용이며, 정확한 예상 수령액은 반드시 국민연금공단 홈페이지의 공식 서비스를 통해 확인하시기 바랍니다.</p>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 소득대체율 43%면 내 월급의 43%를 받는 건가요?</div><div class="a">아닙니다. 43%는 평균소득자가 40년 가입하고 2026년 이후 기준이 적용될 때의 이론값입니다. 가입 기간이 짧거나 일부 기간이 이전 비례상수로 계산되면 비율은 낮아지고, 소득이 낮은 사람은 비율이 더 높게 나옵니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 평균 월소득은 무엇을 넣어야 하나요?</div><div class="a">가입 기간 전체의 월 소득을 현재 가치로 환산한 평균입니다. 정확히 알기 어렵다면 현재 월급이나 앞으로 예상하는 평균 월급을 넣어 대략적으로 확인하세요. 기준소득월액 상한(월 659만 원) 이상은 659만 원으로 계산됩니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 보험료율이 오르면 연금도 더 받나요?</div><div class="a">보험료율은 2026년 9.5%에서 2033년 13%까지 매년 0.5%포인트 오르지만, 연금액은 보험료율이 아니라 소득과 가입 기간, 비례상수로 정해집니다. 2026년 이후 가입 기간에 43%가 적용되는 부분이 인상된 보험료의 대가입니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 입력한 정보가 저장되나요?</div><div class="a">아니요. 모든 계산은 브라우저 안에서만 이루어지며 어디로도 전송되지 않습니다.</div></div>
 
-    <h2>국민연금 계산 관련 질문</h2>
-    <div class="faqitem">
-      <div class="q">Q. 소득대체율 43%는 무슨 뜻인가요?</div>
-      <div class="a">평생(40년) 국민연금에 가입해서 평균소득만큼 계속 소득을 올렸다고 가정할 때, 은퇴 후 받는 연금이 그 평균소득의 43% 수준이 되도록 설계되었다는 뜻입니다. 2025년 3월 연금개혁에 따라 2026년 1월 1일부터 적용되며(기존에는 매년 0.5%포인트씩 낮아져 2028년 40%가 목표였습니다), 이 비율은 2026년 이후 가입기간에 적용됩니다. 같은 개혁으로 보험료율도 2026년 9.5%에서 시작해 매년 0.5%포인트씩 올라 2033년 13%가 됩니다.</div>
+    <h2>함께 쓰면 좋은 계산기</h2>
+    <div class="related">
+      <a href="salary-tool.html">연봉 실수령액 계산기<span>국민연금 4.75% 등 4대보험 공제 확인</span></a>
+      <a href="retirement-tax-tool.html">퇴직소득세 계산기<span>퇴직금을 받을 때 내는 세금</span></a>
+      <a href="severance-tool.html">퇴직금 계산기<span>평균임금 기준 예상 퇴직금</span></a>
+      <a href="loan-tool.html">대출이자 및 상환금 계산기<span>상환 방식별 월 상환액</span></a>
     </div>
-    <div class="faqitem">
-      <div class="q">Q. 소득이 낮으면 실제로 더 유리하다는 게 무슨 뜻인가요?</div>
-      <div class="a">국민연금은 소득재분배 기능이 있어서, 전체 가입자 평균소득보다 낮은 소득을 가진 가입자는 낸 보험료 대비 상대적으로 더 많은 연금을 받도록 설계되어 있습니다. 이 도구는 이런 재분배 효과를 반영하지 않은 단순 비례 계산이라는 점을 참고해주세요.</div>
-    </div>
-    <div class="faqitem">
-      <div class="q">Q. 정확한 금액은 어디서 확인하나요?</div>
-      <div class="a">국민연금공단 홈페이지(nps.or.kr)나 관련 모바일 앱에서 본인인증 후 '내 연금 알아보기' 서비스를 이용하시면 실제 가입 이력을 기반으로 한 정확한 예상 연금액을 확인하실 수 있습니다.</div>
-    </div>
-  </div>
+
+    <h2>근거와 참고</h2>
+    <ul class="refs">
+      <li>국민연금법(기본연금액, 노령연금, 조기노령연금, 연기연금 규정)과 2025년 개정 국민연금법(2026년 1월 시행)</li>
+      <li>국민연금공단 안내(A값, 기준소득월액 상·하한, 수급 개시 연령). 정확한 예상 연금은 "내 곁에 국민연금" 노후준비서비스에서 확인하세요.</li>
+    </ul>
+    <p style="font-size:11px;color:var(--sub);">요율과 A값은 매년 바뀝니다. 오류를 발견하시면 <a href="contact.html" style="color:var(--accent);">문의하기</a>로 알려주세요.</p>
+  </article>
 </div>
 
 <script>
-(function(){
-  var yearsInput = document.getElementById('yearsInput');
-  var incomeInput = document.getElementById('incomeInput');
-  var pensionVal = document.getElementById('pensionVal');
-  var pensionSub = document.getElementById('pensionSub');
-  var detailTable = document.getElementById('detailTable');
-
-  var TARGET_REPLACEMENT_RATE = 0.43; // 40년 가입 기준 소득대체율 (2026년 연금개혁 반영)
-  var FULL_YEARS = 40;
-
-  function won(n){
-    return Math.round(n).toLocaleString() + '원';
+var A_VALUE = 3193511;
+function coef(y){
+  if (y<=1998) return 2.4;
+  if (y<=2007) return 1.8;
+  if (y===2008) return 1.5;
+  if (y<=2025) return 1.5-0.015*(y-2008);
+  return 1.29;
+}
+function legalAge(b){
+  if (b<=1952) return 60; if (b<=1956) return 61; if (b<=1960) return 62;
+  if (b<=1964) return 63; if (b<=1968) return 64; return 65;
+}
+function adjFactor(shift){
+  if (shift<0) return 1-0.06*(-shift);
+  if (shift>0) return 1+0.072*shift;
+  return 1;
+}
+function pensionCalc(o){
+  var birth=o.birth, startY=Math.max(o.startY,1988,birth+18), endY=Math.min(o.endY,birth+59), gap=Math.max(0,o.gap||0);
+  var years=endY-startY+1;
+  var res={ok:false,years:years,startY:startY,endY:endY,legal:legalAge(birth)};
+  if (years<=0) return res;
+  var seg=[{k:'~1998',c:2.4,n:0},{k:'1999~2007',c:1.8,n:0},{k:'2008~2025',c:0,n:0,sum:0},{k:'2026~',c:1.29,n:0}], sum=0;
+  for (var y=startY;y<=endY;y++){
+    var c=coef(y); sum+=c;
+    if (y<=1998) seg[0].n++; else if (y<=2007) seg[1].n++; else if (y<=2025){seg[2].n++;seg[2].sum+=c;} else seg[3].n++;
   }
+  seg[2].c = seg[2].n? seg[2].sum/seg[2].n : 0;
+  var scale = gap>=years?0:(years-gap)/years;
+  var effYears=years*scale;
+  var B=Math.min(Math.max(o.B,410000),6590000);
+  var base=(A_VALUE+B)/12*(sum*scale/20);
+  res.ok = effYears>=10;
+  res.effYears=effYears; res.seg=seg; res.sum=sum*scale; res.B=B; res.Bcapped=o.B>6590000; res.base=base;
+  var shift=(o.claimAge==null?res.legal:o.claimAge)-res.legal;
+  res.shift=shift; res.factor=adjFactor(shift); res.monthly=base*res.factor;
+  res.ratio=res.monthly/B;
+  res.table=[];
+  for (var s=-5;s<=5;s++){
+    var f=adjFactor(s), m=base*f, be=null;
+    if (s<0) be=(base*res.legal-m*(res.legal+s))/(base-m);
+    if (s>0) be=(m*(res.legal+s)-base*res.legal)/(m-base);
+    res.table.push({age:res.legal+s,shift:s,factor:f,monthly:m,breakeven:be});
+  }
+  return res;
+}
 
-  function calc(){
-    var years = parseFloat(yearsInput.value) || 0;
-    var income = parseFloat(incomeInput.value) || 0;
 
-    if (years <= 0 || income <= 0){
-      pensionVal.textContent = '-';
-      pensionSub.textContent = '가입기간과 평균소득을 입력해주세요';
-      detailTable.innerHTML = '';
+(function(){
+  var el=function(id){return document.getElementById(id);};
+  function won(n){return Math.round(n).toLocaleString()+'원';}
+  function num(id){var v=parseFloat(el(id).value);return isNaN(v)?0:v;}
+  var startTouched=false,endTouched=false;
+  el('startInput').addEventListener('input',function(){startTouched=true;});
+  el('endInput').addEventListener('input',function(){endTouched=true;});
+  function buildSelect(birth,keepShift){
+    var legal=legalAge(birth),sel=el('claimSelect'),prev=keepShift;
+    sel.innerHTML='';
+    for(var s=-5;s<=5;s++){var o=document.createElement('option');o.value=legal+s;o.textContent=(legal+s)+'세'+(s===0?' (정상 수급)':(s<0?' (조기)':' (연기)'));sel.appendChild(o);}
+    sel.value=legal+(prev||0);
+  }
+  function row(t,k,v,cls){var d=document.createElement('div');d.className='drow'+(cls?' '+cls:'');var a=document.createElement('span');a.className='k';a.textContent=k;var b=document.createElement('span');b.className='v';b.textContent=v;d.appendChild(a);d.appendChild(b);t.appendChild(d);}
+  function render(){
+    var birth=Math.round(num('birthInput'));
+    var t=el('detailTable');t.innerHTML='';
+    var tb=el('ageTable');tb.innerHTML='';
+    if(!(birth>=1940&&birth<=2010)){el('monthlyVal').textContent='-';el('monthlySub').textContent='출생연도를 확인해주세요';return;}
+    var r=pensionCalc({birth:birth,startY:Math.round(num('startInput')),endY:Math.round(num('endInput')),gap:num('gapInput'),B:num('incomeInput'),claimAge:parseInt(el('claimSelect').value,10)});
+    if(r.years<=0){el('monthlyVal').textContent='-';el('monthlySub').textContent='가입 기간을 확인해주세요 (시작 연도가 종료 연도보다 앞서야 해요)';return;}
+    if(!r.ok){
+      el('monthlyVal').textContent='노령연금 대상 아님';
+      el('monthlySub').textContent='실제 가입 기간 '+r.effYears.toFixed(1)+'년 — 10년(120개월) 미만이면 연금 대신 반환일시금으로 정산돼요.';
+      row(t,'가입 기간 (공백 제외)',r.effYears.toFixed(1)+'년');
       return;
     }
-
-    var personalRate = TARGET_REPLACEMENT_RATE * (years / FULL_YEARS);
-    personalRate = Math.min(personalRate, TARGET_REPLACEMENT_RATE * (45/FULL_YEARS)); // 상한 안전장치
-    var monthlyPension = income * personalRate;
-    var annualPension = monthlyPension * 12;
-
-    pensionVal.textContent = won(monthlyPension);
-    pensionSub.textContent = '연간 약 ' + won(annualPension);
-
-    detailTable.innerHTML = '';
-    var rows = [
-      ['가입기간', years + '년'],
-      ['평균 월소득 (현재가치)', won(income)],
-      ['40년 가입 기준 목표 소득대체율', (TARGET_REPLACEMENT_RATE*100).toFixed(0) + '%'],
-      ['가입기간 비례 개인 소득대체율', (personalRate*100).toFixed(1) + '%'],
-      ['예상 월 연금액', won(monthlyPension)],
-      ['예상 연간 연금액', won(annualPension)],
-    ];
-    rows.forEach(function(r){
-      var row = document.createElement('div');
-      row.className = 'drow';
-      row.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
-      detailTable.appendChild(row);
-    });
+    el('monthlyVal').textContent=won(r.monthly);
+    el('monthlySub').textContent='내 평균소득 대비 약 '+(r.ratio*100).toFixed(1)+'% · 연 '+won(r.monthly*12)+' · 가입 '+r.effYears.toFixed(1)+'년';
+    row(t,'가입 기간 (실제 반영)',r.startY+'~'+r.endY+'년, '+r.effYears.toFixed(1)+'년');
+    r.seg.forEach(function(s){ if(s.n>0) row(t,s.k+' ('+s.n+'년)','비례상수 '+s.c.toFixed(3)); });
+    row(t,'A값 (전체 가입자 평균소득, 2026)',won(A_VALUE));
+    row(t,'B값 (내 평균소득'+(r.Bcapped?', 상한 659만원 적용':'')+')',won(r.B));
+    row(t,'월 기본연금액 (정상 나이 '+r.legal+'세)',won(r.base));
+    if(r.shift!==0) row(t,(r.shift<0?'조기수령 감액 ':'연기수령 가산 ')+Math.abs((r.factor-1)*100).toFixed(1)+'%',(r.monthly-r.base>=0?'+':'−')+won(Math.abs(r.monthly-r.base)));
+    row(t,'예상 월 연금',won(r.monthly),'total');
+    var h='<tr><th>수급 시작</th><th>증감</th><th>월 연금</th><th>손익분기</th></tr>';
+    r.table.forEach(function(x){h+='<tr'+(x.age===parseInt(el('claimSelect').value,10)?' style="background:#1e7a4c33"':'')+'><td>'+x.age+'세</td><td>'+(x.shift===0?'0%':(x.shift<0?'−':'+')+Math.abs((x.factor-1)*100).toFixed(1)+'%')+'</td><td>'+Math.round(x.monthly).toLocaleString()+'</td><td>'+(x.breakeven==null?'기준':x.breakeven.toFixed(1)+'세')+'</td></tr>';});
+    tb.innerHTML=h;
   }
-
-  [yearsInput, incomeInput].forEach(function(el){
-    el.addEventListener('input', calc);
+  el('birthInput').addEventListener('input',function(){
+    var b=Math.round(num('birthInput'));
+    if(b>=1940&&b<=2010){ if(!endTouched) el('endInput').value=b+59; if(!startTouched) el('startInput').value=b+25; buildSelect(b,0); }
+    render();
   });
-
-  calc();
+  ['startInput','endInput','gapInput','incomeInput'].forEach(function(id){el(id).addEventListener('input',render);});
+  el('claimSelect').addEventListener('change',render);
+  buildSelect(1985,0);
+  render();
 })();
 </script>
 
-<footer style="width:100%;max-width:600px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
+<footer style="width:100%;max-width:640px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
   <div>IT 도구모음 · 모든 도구는 무료이며 입력값은 브라우저 안에서만 처리됩니다</div>
   <div style="margin-top:6px;">
     <a href="index.html" style="color:#7d8590;margin:0 8px;">전체 도구</a>
@@ -234,7 +359,6 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
-
 <script>
 (function(){
   var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
