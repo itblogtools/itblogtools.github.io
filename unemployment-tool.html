@@ -5,9 +5,13 @@
      crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="퇴직 전 3개월 임금, 나이, 고용보험 가입기간으로 구직급여(실업급여) 1일 지급액과 소정급여일수, 총 수령 예상액을 계산합니다. 2026년 상·하한액 기준.">
+<meta name="description" content="퇴사일, 퇴직 전 3개월 급여, 나이, 고용보험 가입기간으로 2026년 실업급여(구직급여) 1일 지급액과 소정급여일수, 총 수령액을 계산합니다. 상·하한액 적용, 수급 요건 체크, 신청기한까지 한 번에 확인하세요.">
 <link rel="canonical" href="https://itblogtools.github.io/unemployment-tool.html">
-<title>실업급여(구직급여) 모의계산기</title>
+<meta property="og:title" content="실업급여(구직급여) 모의계산기 – 2026년 상·하한액 반영">
+<meta property="og:description" content="일액, 지급일수, 총액과 수급 요건 체크, 2026년에는 왜 대부분 비슷한 금액을 받는지까지 정리했습니다.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://itblogtools.github.io/unemployment-tool.html">
+<title>실업급여(구직급여) 모의계산기 – 2026년 상·하한액, 수급 요건, 신청기한</title>
 <style>
   :root{
     --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
@@ -16,7 +20,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
   body{display:flex;flex-direction:column;align-items:center;}
-  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .wrap{width:100%;max-width:640px;padding:16px;display:flex;flex-direction:column;gap:14px;}
 
   .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
   .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
@@ -29,6 +33,7 @@
   .titlebar .prompt{color:var(--accent);}
   h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
   .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .meta{color:var(--sub);font-size:11px;line-height:1.6;margin:0;}
 
   .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
   .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
@@ -43,26 +48,21 @@
 
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
   label{font-size:12px;color:var(--sub);}
-  input[type=number], select{
+  input[type=date], input[type=number]{
     width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
     border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
   }
-  input:focus, select:focus{outline:none;border-color:var(--accent);}
+  input:focus{outline:none;border-color:var(--accent);}
   .inputrow{display:flex;gap:8px;align-items:center;}
   .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
   .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   @media (max-width:460px){.fieldgrid{grid-template-columns:1fr;}}
+  .optlabel{font-size:11px;color:var(--sub);}
 
-  .checkrow{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
-  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
-
-  .bigresult{
-    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
-    padding:26px;text-align:center;
-  }
+  .bigresult{background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:26px;text-align:center;}
   .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
   .bigresult .val{font-size:30px;font-weight:700;color:var(--accent);word-break:break-all;}
-  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6;}
 
   .detailtable{display:flex;flex-direction:column;gap:6px;}
   .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
@@ -73,15 +73,40 @@
 
   .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
 
-  .infosection{margin-top:8px;}
-  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
-  .infosection h2:first-child{margin-top:0;}
-  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
-  .infosection ul{padding-left:20px;margin:0 0 10px;}
-  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  /* article */
+  .article{margin-top:10px;}
+  .article h2{font-size:15px;color:var(--accent);margin:28px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .article h2:first-child{margin-top:0;}
+  .article h3{font-size:13px;color:var(--amber);margin:16px 0 6px;}
+  .article p{font-size:13px;line-height:1.9;color:var(--text);margin:0 0 10px;}
+  .article ul, .article ol{padding-left:20px;margin:0 0 10px;}
+  .article li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .article b{color:#fff;}
+  .formula{background:var(--panel);border:1px solid var(--accent-dim);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.9;color:var(--accent);margin:0 0 12px;}
+  .callout{background:var(--panel);border-left:3px solid var(--amber);border-radius:6px;padding:10px 14px;font-size:12px;line-height:1.8;color:var(--text);margin:0 0 12px;}
+  .tblwrap{overflow-x:auto;margin:0 0 12px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;color:var(--text);white-space:nowrap;}
+  th{background:var(--panel);color:var(--sub);font-weight:700;}
+  td:first-child, th:first-child{text-align:left;}
   .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
   .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
-  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.8;}
+  .related{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px;}
+  @media (max-width:460px){.related{grid-template-columns:1fr;}}
+  .related a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);text-decoration:none;line-height:1.6;}
+  .related a:hover{border-color:var(--accent);}
+  .related a span{display:block;color:var(--sub);font-size:11px;}
+  .refs li{font-size:12px;color:var(--sub);}
+
+  .chkrow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+  .margline{font-size:12px;color:var(--sub);line-height:1.7;background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;}
+  .margline b{color:var(--accent);}
+
+  .chk-ok{color:var(--accent);} .chk-bad{color:var(--bad);} .chk-warn{color:var(--amber);}
+  .checklist{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.9;}
+  select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;font-family:inherit;}
 </style>
 </head>
 <body>
@@ -99,189 +124,210 @@
 <div class="wrap">
   <div class="titlebar"><span class="prompt">$</span> unemployment-calc --run</div>
   <h1>실업급여(구직급여) 모의계산기</h1>
-  <p class="desc">퇴직 전 평균임금과 고용보험 가입기간, 나이를 입력하면 예상 실업급여를 계산해드려요.</p>
-  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년에는 최저임금 인상에 맞춰 구직급여 상·하한액이 바뀝니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">구직급여 1일 상한 68,100원 · 하한 66,048원(2026년 기준)을 사용합니다.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
-
+  <p class="desc">퇴사일과 퇴직 전 3개월 급여, 나이, 고용보험 가입기간을 입력하면 1일 지급액, 지급일수, 총 예상 수령액과 수급 요건 충족 여부를 확인할 수 있어요.</p>
+  <p class="meta">최종 업데이트 2026-10-22 · 고용보험법 기준 · 작성/관리: IT 도구모음 운영자</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년에는 최저임금 인상에 따라 구직급여 상·하한액이 바뀌고, 지급 방식 개편안도 발표돼 있습니다(법령 개정 확정 전)." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">구직급여 1일 상한 68,100원 · 하한 66,048원(2026년) / 소정급여일수 120~270일 / 수급요건: 이직 전 18개월 중 피보험단위기간 180일 이상·비자발적 이직 / 신청기한: 이직일 다음 날부터 12개월.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
     <div class="body">
-      <div class="step"><span class="num">1</span><span><b>퇴직 전 3개월간 세전 급여 총액</b>을 입력하세요. 1일 평균임금 계산에 사용돼요.</span></div>
-      <div class="step"><span class="num">2</span><span><b>나이</b>와 <b>고용보험 총 가입기간</b>을 입력하세요. 소정급여일수(지급 일수)를 정하는 기준이에요.</span></div>
-      <div class="step"><span class="num">3</span><span>장애인이시라면 <b>장애인 여부</b>를 체크하세요. 지급일수 산정 기준이 달라져요.</span></div>
-      <div class="step"><span class="num">4</span><span>결과에서 <b>1일 지급액(기준일액)</b>과 <b>총 예상 수급액</b>을 확인하세요.</span></div>
-      <div class="tip">💡 실업급여는 비자발적 이직(권고사직, 계약만료, 정리해고 등) 시에만 원칙적으로 지급돼요. 자발적 퇴사는 특정 사유가 인정돼야 지급 대상이 됩니다.</div>
+      <div class="step"><span class="num">1</span><span><b>마지막 근무일</b>을 선택하세요. 퇴직 전 3개월의 실제 일수(89~92일)를 계산하는 데 써요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>퇴직 전 3개월 세전 급여 총액</b>을 입력하세요. 연간 상여금과 연차수당이 있다면 선택란에 넣으면 3/12씩 반영돼요.</span></div>
+      <div class="step"><span class="num">3</span><span><b>이직일 현재 나이</b>, <b>고용보험 가입기간</b>, 장애인 여부를 입력하세요. 지급일수가 정해져요.</span></div>
+      <div class="step"><span class="num">4</span><span><b>이직 사유</b>와 <b>이직 전 18개월 피보험단위기간</b>을 선택하면 수급 요건을 점검해드려요.</span></div>
+      <div class="tip">💡 2026년에는 하한액과 상한액이 거의 같아져서, 대부분 1일 66,048~68,100원 안에서 정해져요. 결과의 "1일 지급액" 옆 설명을 확인하세요.</div>
     </div>
   </details>
 
   <div class="panel">
-    <label>퇴직 전 3개월 세전 급여 총액</label>
-    <div class="inputrow">
-      <input type="number" id="wage3moInput" value="9000000" step="100000">
-      <span class="unit">원</span>
-    </div>
-
     <div class="fieldgrid">
-      <div>
-        <label>나이</label>
-        <input type="number" id="ageInput" value="35" min="15" max="100">
-      </div>
-      <div>
-        <label>고용보험 가입기간</label>
-        <select id="periodInput">
-          <option value="0.5">1년 미만</option>
-          <option value="2" selected>1년 이상 ~ 3년 미만</option>
-          <option value="4">3년 이상 ~ 5년 미만</option>
-          <option value="7">5년 이상 ~ 10년 미만</option>
-          <option value="10">10년 이상</option>
-        </select>
-      </div>
+      <div><label>마지막 근무일</label><input type="date" id="lastDayInput"></div>
+      <div><label>퇴직 전 3개월 세전 급여 총액</label><div class="inputrow"><input type="number" id="wage3moInput" value="9000000" step="100000" min="0"><span class="unit">원</span></div></div>
     </div>
-
-    <div class="checkrow"><input type="checkbox" id="disabledCheck"><label style="margin:0;">장애인입니다 (지급일수 산정 기준이 달라져요)</label></div>
+    <div class="fieldgrid">
+      <div><label>연간 상여금 (선택)</label><div class="inputrow"><input type="number" id="bonusInput" value="0" step="100000" min="0"><span class="unit">원</span></div></div>
+      <div><label>연차수당 (선택)</label><div class="inputrow"><input type="number" id="leaveInput" value="0" step="10000" min="0"><span class="unit">원</span></div></div>
+    </div>
+    <div class="fieldgrid">
+      <div><label>이직일 현재 만 나이</label><div class="inputrow"><input type="number" id="ageInput" value="35" min="15" max="100"><span class="unit">세</span></div></div>
+      <div><label>고용보험 가입기간</label><div class="inputrow"><input type="number" id="yearsInput" value="3" min="0" max="50"><span class="unit">년</span><input type="number" id="monthsInput" value="0" min="0" max="11"><span class="unit">개월</span></div></div>
+    </div>
+    <div class="fieldgrid">
+      <div><label>이직 사유</label><select id="reasonSelect"><option value="invol">비자발적 (해고·권고사직·계약만료·정년 등)</option><option value="just">자발적이지만 정당한 사유 있음 (임금체불, 직장 내 괴롭힘 등)</option><option value="vol">일반 자발적 퇴사</option></select></div>
+      <div><label>이직 전 18개월 피보험단위기간 (일)</label><div class="inputrow"><input type="number" id="insDaysInput" value="540" min="0" max="540"><span class="unit">일</span></div></div>
+    </div>
+    <label class="chkrow"><input type="checkbox" id="disabledCheck"> 장애인입니다 (지급일수가 50세 이상과 같은 기준)</label>
   </div>
 
   <div class="bigresult">
-    <div class="lbl">예상 실업급여 총액</div>
+    <div class="lbl" id="totalLabel">예상 실업급여 총액</div>
     <div class="val" id="totalVal">-</div>
-    <div class="sub2" id="totalSub">위 정보를 입력해주세요</div>
+    <div class="sub2" id="totalSub">-</div>
   </div>
 
+  <div class="checklist" id="checkList"></div>
   <div class="detailtable" id="detailTable"></div>
 
   <div class="disclaimer">
-    ※ 이 계산 결과는 고용보험법상 구직급여 산정 방식을 단순화한 <b style="color:var(--text);">추정치</b>이며, 상한액·하한액은 매년 변경될 수 있습니다(이 도구는 2026년 기준값(1일 상한 68,100원·하한 66,048원)을 사용). 실제 수급 여부와 정확한 금액은 이직 사유 심사 결과에 따라 달라지며, 반드시 고용노동부 워크넷 또는 관할 고용센터를 통해 확인하시기 바랍니다.
+    ※ 구직급여 산정 방식을 단순화한 <b style="color:var(--text);">추정치</b>입니다. 실제 수급 여부, 금액, 지급일은 이직 사유 심사와 실업인정 결과에 따라 달라지며, 반복 수급 감액 등은 반영하지 않습니다. 정확한 내용은 고용24(work24.go.kr)와 관할 고용센터에서 확인하세요. 법률 자문이 아닙니다.
   </div>
 
-  <div class="infosection">
-    <h2>실업급여 모의계산 방식</h2>
-    <p>실업급여(구직급여) 모의계산기는 퇴직 전 3개월간의 급여, 나이, 고용보험 가입기간을 입력하면 고용보험법상 산정 방식을 기반으로 예상 실업급여 총액을 계산해주는 도구입니다. 1일 지급액(기준일액)에 소정급여일수를 곱하는 방식으로 계산하며, 법정 상한액과 하한액도 함께 반영합니다. 실직 후 생활 계획을 세우기 전에 대략적인 수급 규모를 미리 가늠해볼 수 있도록 만들었습니다.</p>
+  <article class="article">
+    <h2>실업급여 금액은 이렇게 계산됩니다</h2>
+    <div class="formula">1일 구직급여 = 1일 평균임금 × 60% (상한 68,100원, 하한 66,048원)<br>총 수령액 = 1일 구직급여 × 소정급여일수(120~270일)</div>
+    <p>1일 평균임금은 <b>퇴직 전 3개월 임금 총액 ÷ 그 3개월의 달력상 총일수</b>입니다. 근무일수가 아니라 달력일수(89~92일)로 나누는 점이 중요합니다. 연간 상여금과 연차수당은 각각 3/12씩 3개월 임금에 더해집니다. 이 계산기는 마지막 근무일을 입력받아 실제 일수를 계산하므로, 일수를 91일로 고정하는 간이 계산기보다 정확합니다.</p>
 
-    <h2>실직 후 생활 계획을 세우는 데 도움이 되도록</h2>
-    <p>실직은 누구에게나 예민하고 불안한 시기입니다. 이 시기에 "실업급여를 얼마나, 얼마 동안 받을 수 있는지" 미리 알고 있는 것만으로도 심리적인 부담이 크게 줄어듭니다. 하지만 실업급여 계산은 기준일액 산정, 상한액·하한액 적용, 연령과 가입기간에 따른 소정급여일수 결정 등 여러 단계를 거쳐야 해서 직접 계산하기가 쉽지 않습니다. 이 복잡한 과정을 자동화해서, 몇 가지 정보만 입력하면 바로 예상 금액을 확인할 수 있는 도구가 필요하다고 생각해 만들었습니다.</p>
+    <h2>2026년에는 왜 대부분 비슷한 금액을 받나</h2>
+    <p>1일 상한액(68,100원)과 하한액(66,048원)이 거의 붙어 있기 때문입니다. 하한액은 최저임금의 80%(8시간 기준)로 정해지는데 최저임금이 오르면서 상한액 바로 아래까지 올라왔습니다. 그래서 평균임금의 60%가 그대로 일액이 되는 구간은 1일 평균임금 110,080원~113,500원(3개월 92일 기준 월급 약 338만~348만 원)뿐이고, 그보다 낮으면 하한액, 높으면 상한액이 적용됩니다.</p>
+    <div class="tblwrap"><table>
+      <tr><th>월급(세전)</th><th>1일 구직급여</th><th>적용 기준</th><th>월 환산(×30일)</th><th>180일 총액</th></tr>
+      <tr><td>200만 원</td><td>66,048원</td><td>하한액 적용</td><td>1,981,440원</td><td>11,888,640원</td></tr><tr><td>250만 원</td><td>66,048원</td><td>하한액 적용</td><td>1,981,440원</td><td>11,888,640원</td></tr><tr><td>300만 원</td><td>66,048원</td><td>하한액 적용</td><td>1,981,440원</td><td>11,888,640원</td></tr><tr><td>350만 원</td><td>68,100원</td><td>상한액 적용</td><td>2,043,000원</td><td>12,258,000원</td></tr><tr><td>400만 원</td><td>68,100원</td><td>상한액 적용</td><td>2,043,000원</td><td>12,258,000원</td></tr><tr><td>500만 원</td><td>68,100원</td><td>상한액 적용</td><td>2,043,000원</td><td>12,258,000원</td></tr><tr><td>700만 원</td><td>68,100원</td><td>상한액 적용</td><td>2,043,000원</td><td>12,258,000원</td></tr>
+    </table></div>
+    <p>일부 글에서 월급 300만 원의 일액을 60,000원으로 계산하지만, 하한액 때문에 실제로는 66,048원이 적용됩니다. 결과적으로 월급이 200만 원이든 500만 원이든 1일 지급액은 66,048~68,100원으로 3% 이내 차이이고, <b>받는 총액을 가르는 것은 소정급여일수</b>입니다. (하한액은 1일 소정근로시간이 8시간보다 짧은 경우 달라질 수 있습니다.)</p>
 
-    <h2>퇴사 전후에 미리 확인해보기</h2>
+    <h2>소정급여일수: 얼마나 오래 받을 수 있나</h2>
+    <div class="tblwrap"><table>
+      <tr><th>가입기간</th><th>1년 미만</th><th>1~3년</th><th>3~5년</th><th>5~10년</th><th>10년 이상</th></tr>
+      <tr><td>50세 미만</td><td>120일</td><td>150일</td><td>180일</td><td>210일</td><td>240일</td></tr>
+      <tr><td>50세 이상·장애인</td><td>120일</td><td>180일</td><td>210일</td><td>240일</td><td>270일</td></tr>
+    </table></div>
+    <p>이직일 현재 나이와 고용보험 가입기간으로 결정됩니다. 가입기간이 같아도 50세 이상이거나 장애인이면 30일을 더 받습니다. 지급일수는 이직일 다음 날부터 12개월 안에 소진해야 하므로 신청을 미루면 일수를 다 못 받을 수 있습니다.</p>
+
+    <h2>단계별 계산 예시: 월 350만 원, 35세, 가입 4년, 7~9월 근무</h2>
+    <ol>
+      <li><b>3개월 임금</b>: 350만 원 × 3 = 1,050만 원 (7·8·9월 총 92일)</li>
+      <li><b>1일 평균임금</b>: 10,500,000 ÷ 92 = 114,130원</li>
+      <li><b>60% 적용</b>: 68,478원 → 상한액 68,100원 초과, <b>상한액 적용</b></li>
+      <li><b>소정급여일수</b>: 50세 미만, 가입 4년 → 180일</li>
+      <li><b>총 수령액</b>: 68,100원 × 180일 = <b>12,258,000원</b> (월 환산 약 204만 원)</li>
+    </ol>
+
+    <h2>수급 요건 4가지</h2>
     <ul>
-      <li>퇴사나 실직을 앞두고, 실업급여로 생활이 어느 정도 가능할지 미리 계산해보고 싶을 때</li>
-      <li>이직 사유(권고사직·계약만료 등)를 고민할 때, 수급 가능 여부와 예상 금액을 함께 참고하고 싶을 때</li>
-      <li>구직 활동 계획을 세우면서, 실업급여 수급 기간(소정급여일수) 동안의 생활비 계획을 잡고 싶을 때</li>
-      <li>고용센터 방문 전, 대략적인 수급액을 미리 파악해서 상담을 더 효율적으로 준비하고 싶을 때</li>
+      <li><b>피보험단위기간</b>: 이직일 이전 18개월 동안 180일 이상(초단시간 근로자는 24개월). 보수가 지급된 날을 세므로 달력상 6개월 근무와 정확히 같지 않을 수 있고, 여러 직장의 기간은 합산됩니다.</li>
+      <li><b>비자발적 이직</b>: 해고, 권고사직, 계약만료, 사업장 폐업 등. 일반 자발적 퇴사는 원칙적으로 대상이 아닙니다.</li>
+      <li><b>근로 능력과 취업 의사</b>가 있고 적극적으로 재취업 활동을 하고 있을 것</li>
+      <li><b>신청기한</b>: 이직일 다음 날부터 12개월 이내</li>
+    </ul>
+    <p>자발적 퇴사라도 임금체불, 직장 내 괴롭힘, 통근이 매우 어려운 경우(왕복 3시간 이상 등), 질병 같은 정당한 사유가 인정되면 수급할 수 있습니다. 인정 여부는 고용센터가 판단하니 증빙을 준비하세요.</p>
+
+    <h2>신청부터 지급까지 순서</h2>
+    <ol>
+      <li>회사에 <b>이직확인서</b> 처리 요청(회사가 고용보험 시스템에 제출)</li>
+      <li><b>고용24에서 구직등록</b></li>
+      <li>고용센터에서 <b>수급자격 신청</b>과 교육 이수</li>
+      <li>신청일부터 7일의 <b>대기기간</b>이 지난 뒤 지급 시작</li>
+      <li>정해진 <b>실업인정일</b>(보통 1~4주 간격)마다 구직활동 내역을 신고하면 해당 기간의 급여가 지급</li>
+    </ol>
+    <p>구직급여는 소득세가 비과세이며, 수급 중 일을 하거나 소득이 생기면 반드시 신고해야 합니다. 신고하지 않으면 부정수급으로 반환과 추가 징수 대상이 될 수 있습니다.</p>
+
+    <h2>이 계산기가 반영하지 않는 것</h2>
+    <ul>
+      <li><b>반복 수급 감액</b>: 최근 5년 내 수급 횟수가 많으면 대기기간 연장이나 급여 감액이 있을 수 있습니다.</li>
+      <li><b>조기재취업수당</b>: 소정급여일수의 일정 비율 이상을 남기고 재취업·사업을 하면 남은 급여의 일부를 받을 수 있는 제도(요건 확인 필요)</li>
+      <li><b>실업인정 회차별 지급</b>과 실제 지급일, 부정수급 환수</li>
+      <li><b>2027년 개편안</b>: 지급 방식과 고용보험료 조정안이 발표돼 있으나 법령 개정이 확정되면 달라질 수 있습니다.</li>
     </ul>
 
-    <h2>수급 자격과 모의계산의 차이</h2>
-    <p>실업급여는 원칙적으로 비자발적 이직자(회사의 경영상 해고, 권고사직, 계약기간 만료 등)에게 지급되며, 단순 자발적 퇴사는 정당한 사유로 인정되는 경우(임금체불, 사업장 이전, 육아 등)에만 예외적으로 지급됩니다. 이 계산기는 수급 자격이 있다고 가정한 상태에서의 예상 금액만 보여주며, 실제 수급 자격 여부는 별도의 심사를 거쳐야 합니다. 또한 1일 지급액의 상한액과 하한액은 최저임금 인상 등에 따라 매년 바뀌므로, 이 도구에 적용된 값과 실제 연도별 고시 금액에 차이가 있을 수 있습니다. 정확한 수급 자격과 금액은 반드시 워크넷(work.go.kr)이나 관할 고용센터를 통해 확인하시기 바랍니다.</p>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 퇴직 직전 3개월 급여가 평소보다 적었으면 불리한가요?</div><div class="a">평균임금이 낮아져도 2026년에는 하한액(66,048원)이 적용되므로 영향이 작습니다. 다만 무급휴직·육아휴직 등으로 평균임금 산정 제외 기간이 있으면 그 기간은 빼고 계산하니 고용센터 산정 내역을 확인하세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 고용보험 가입기간은 어떻게 확인하나요?</div><div class="a">고용24 또는 근로복지공단 고용·산재보험 토탈서비스에서 개인 가입이력을 조회할 수 있습니다. 이 계산기의 "피보험단위기간"도 거기서 보수지급기초일수로 확인하세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 퇴사 후 바로 신청하지 않으면 손해인가요?</div><div class="a">지급일수는 이직일 다음 날부터 12개월 안에 소진해야 하고, 신청이 늦어질수록 받을 수 있는 일수가 줄어듭니다. 퇴사 직후 구직등록과 수급자격 신청을 하는 것이 유리합니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 입력한 급여 정보가 저장되나요?</div><div class="a">아니요. 모든 계산은 브라우저 안에서만 이루어지며 어디로도 전송되지 않습니다.</div></div>
 
-    <h2>실업급여 관련 질문</h2>
-    <div class="faqitem">
-      <div class="q">Q. 자발적으로 퇴사해도 실업급여를 받을 수 있나요?</div>
-      <div class="a">원칙적으로는 어렵지만, 임금체불이나 사업장의 부당한 처우, 통근 곤란, 질병, 육아 등 정당한 사유로 인정되는 경우에는 자발적 퇴사여도 수급 대상이 될 수 있습니다. 정확한 판단은 고용센터 상담을 통해 확인하셔야 합니다.</div>
+    <h2>함께 쓰면 좋은 계산기</h2>
+    <div class="related">
+      <a href="severance-tool.html">퇴직금 계산기<span>평균임금 기준 예상 퇴직금</span></a>
+      <a href="retirement-tax-tool.html">퇴직소득세 계산기<span>받은 퇴직금에서 빠지는 세금</span></a>
+      <a href="salary-tool.html">연봉 실수령액 계산기<span>월급에서 4대보험·세금 제외</span></a>
+      <a href="wage-convert-tool.html">시급/월급/연봉 변환기<span>임금을 서로 환산</span></a>
     </div>
-    <div class="faqitem">
-      <div class="q">Q. 소정급여일수는 어떻게 정해지나요?</div>
-      <div class="a">나이(50세 미만/이상)와 고용보험 가입기간에 따라 최소 120일에서 최대 270일까지 차등 적용됩니다. 가입기간이 길고 나이가 많을수록 지급일수가 늘어나는 구조입니다.</div>
-    </div>
-    <div class="faqitem">
-      <div class="q">Q. 입력한 급여 정보가 저장되나요?</div>
-      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
-    </div>
-  </div>
+
+    <h2>근거 법령과 참고</h2>
+    <ul class="refs">
+      <li>고용보험법 제40조(구직급여의 수급 요건), 제45조(구직급여일액), 제49조(대기기간), 제50조(소정급여일수)</li>
+      <li>고용24(work24.go.kr), 고용노동부 고시(구직급여 상·하한액)</li>
+    </ul>
+    <p style="font-size:11px;color:var(--sub);">상·하한액과 지급 기준은 매년 바뀝니다. 오류를 발견하시면 <a href="contact.html" style="color:var(--accent);">문의하기</a>로 알려주세요.</p>
+  </article>
 </div>
 
 <script>
+var UPPER_DAILY = 68100, LOWER_DAILY = 66048;
+function minusMonths(date, n){
+  var d = new Date(date.getFullYear(), date.getMonth() - n, 1);
+  var last = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(date.getDate(), last));
+  return d;
+}
+function benefitDays(age, months, disabled){
+  var older = age >= 50 || disabled;
+  if (months < 12) return 120;
+  if (months < 36) return older ? 180 : 150;
+  if (months < 60) return older ? 210 : 180;
+  if (months < 120) return older ? 240 : 210;
+  return older ? 270 : 240;
+}
+function unempCalc(o){
+  // o: lastDay(Date), wage3mo, bonusYear, leavePay, age, months, disabled, reason, insDays
+  var periodEnd = new Date(o.lastDay.getTime() + 86400000);
+  var periodStart = minusMonths(periodEnd, 3);
+  var periodDays = Math.round((periodEnd - periodStart) / 86400000);
+  var total3 = o.wage3mo + (o.bonusYear||0)*3/12 + (o.leavePay||0)*3/12;
+  var avg = total3 / periodDays;
+  var base = Math.floor(avg * 0.6), daily = base, note = '';
+  if (base > UPPER_DAILY){ daily = UPPER_DAILY; note = '상한액 적용'; }
+  else if (base < LOWER_DAILY){ daily = LOWER_DAILY; note = '하한액 적용'; }
+  var days = benefitDays(o.age, o.months, o.disabled);
+  var checks = [
+    {k:'피보험단위기간', ok:o.insDays >= 180, msg:'이직 전 18개월 중 '+o.insDays+'일 (180일 이상 필요)'},
+    {k:'이직 사유', ok:o.reason !== 'vol', warn:o.reason === 'just', msg:o.reason==='invol'?'비자발적 이직 (해고·권고사직·계약만료 등)':(o.reason==='just'?'정당한 사유가 인정되면 수급 가능 (고용센터 판단)':'일반 자발적 퇴사는 원칙적으로 수급 불가')}
+  ];
+  var eligible = checks.every(function(c){return c.ok;});
+  var deadline = new Date(o.lastDay.getFullYear()+1, o.lastDay.getMonth(), o.lastDay.getDate()+1);
+  return {periodStart:periodStart, periodEnd:periodEnd, periodDays:periodDays, total3:total3, avg:avg, base:base, daily:daily, note:note,
+          days:days, total:daily*days, checks:checks, eligible:eligible, deadline:deadline, upperThresholdAvg:UPPER_DAILY/0.6, lowerThresholdAvg:LOWER_DAILY/0.6};
+}
+
+
 (function(){
-  var wage3moInput = document.getElementById('wage3moInput');
-  var ageInput = document.getElementById('ageInput');
-  var periodInput = document.getElementById('periodInput');
-  var disabledCheck = document.getElementById('disabledCheck');
-  var totalVal = document.getElementById('totalVal');
-  var totalSub = document.getElementById('totalSub');
-  var detailTable = document.getElementById('detailTable');
-
-  // 2026년 기준값 (상한 68,100원 / 하한 66,048원, 실제 고시 금액은 매년 변경됨)
-  var UPPER_DAILY = 68100;   // 상한액
-  var LOWER_DAILY = 66048;   // 하한액 (최저임금 기준 근사)
-
-  function won(n){
-    return Math.round(n).toLocaleString() + '원';
+  var el=function(id){return document.getElementById(id);};
+  function won(n){return Math.round(n).toLocaleString()+'원';}
+  function num(id){var v=parseFloat(el(id).value);return isNaN(v)||v<0?0:v;}
+  function ds(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function fmt(d){return d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';}
+  var today=new Date(); el('lastDayInput').value=ds(today);
+  var insTouched=false; el('insDaysInput').addEventListener('input',function(){insTouched=true;});
+  function row(t,k,v,cls){var d=document.createElement('div');d.className='drow'+(cls?' '+cls:'');var a=document.createElement('span');a.className='k';a.textContent=k;var b=document.createElement('span');b.className='v';b.textContent=v;d.appendChild(a);d.appendChild(b);t.appendChild(d);}
+  function render(){
+    var t=el('detailTable');t.innerHTML='';el('checkList').innerHTML='';
+    var ld=el('lastDayInput').value, wage=num('wage3moInput'), age=Math.round(num('ageInput'));
+    var months=Math.round(num('yearsInput'))*12+Math.round(num('monthsInput'));
+    if(!ld||wage<=0||age<=0){el('totalVal').textContent='-';el('totalSub').textContent='마지막 근무일, 급여, 나이를 입력해주세요';return;}
+    if(!insTouched) el('insDaysInput').value=Math.min(months,18)*30;
+    var r=unempCalc({lastDay:new Date(ld+'T00:00:00'),wage3mo:wage,bonusYear:num('bonusInput'),leavePay:num('leaveInput'),age:age,months:months,disabled:el('disabledCheck').checked,reason:el('reasonSelect').value,insDays:Math.round(num('insDaysInput'))});
+    el('totalLabel').textContent=r.eligible?'예상 실업급여 총액':'요건을 충족한다고 가정한 예상 총액';
+    el('totalVal').textContent=won(r.total);
+    el('totalSub').textContent='1일 '+won(r.daily)+' × '+r.days+'일 · 월 환산 약 '+won(r.daily*30);
+    var cl='';
+    r.checks.forEach(function(c){cl+='<div class="'+(c.ok?(c.warn?'chk-warn':'chk-ok'):'chk-bad')+'">'+(c.ok?(c.warn?'△ ':'✓ '):'✗ ')+c.k+': '+c.msg+'</div>';});
+    cl+='<div class="chk-warn">△ 근로 능력·취업 의사, 적극적 구직활동은 계산기로 확인할 수 없어요</div>';
+    cl+='<div style="color:var(--sub)">신청기한: '+fmt(r.deadline)+'까지 (이직일 다음 날부터 12개월)</div>';
+    el('checkList').innerHTML=cl;
+    row(t,'평균임금 산정기간 (퇴직 전 3개월)',r.periodStart.getFullYear()+'.'+(r.periodStart.getMonth()+1)+'.'+r.periodStart.getDate()+' ~ '+ds(new Date(r.periodEnd.getTime()-86400000)).replace(/-/g,'.')+' ('+r.periodDays+'일)');
+    row(t,'3개월 임금 (상여·연차수당 3/12 포함)',won(r.total3));
+    row(t,'1일 평균임금',won(r.avg));
+    row(t,'평균임금의 60%',won(r.base));
+    row(t,'1일 지급액',won(r.daily)+(r.note?' — '+r.note:''));
+    row(t,'소정급여일수',r.days+'일');
+    row(t,'예상 총액',won(r.total),'total');
   }
-
-  function getBenefitDays(age, periodYears, disabled){
-    var isOlderGroup = age >= 50 || disabled;
-    if (periodYears < 1){
-      return 120;
-    } else if (periodYears < 3){
-      return isOlderGroup ? 180 : 150;
-    } else if (periodYears < 5){
-      return isOlderGroup ? 210 : 180;
-    } else if (periodYears < 10){
-      return isOlderGroup ? 240 : 210;
-    } else {
-      return isOlderGroup ? 270 : 240;
-    }
-  }
-
-  function calc(){
-    var wage3mo = parseFloat(wage3moInput.value) || 0;
-    var age = parseInt(ageInput.value, 10) || 0;
-    var periodYears = parseFloat(periodInput.value);
-    var disabled = disabledCheck.checked;
-
-    if (wage3mo <= 0 || age <= 0){
-      totalVal.textContent = '-';
-      totalSub.textContent = '위 정보를 입력해주세요';
-      detailTable.innerHTML = '';
-      return;
-    }
-
-    var periodDays = 91;
-    var avgDailyWage = wage3mo / periodDays;
-    var dailyBenefit = avgDailyWage * 0.6;
-
-    var capped = dailyBenefit;
-    var capNote = '';
-    if (capped > UPPER_DAILY){
-      capped = UPPER_DAILY;
-      capNote = '상한액 적용';
-    } else if (capped < LOWER_DAILY){
-      capped = LOWER_DAILY;
-      capNote = '하한액 적용';
-    }
-
-    var benefitDays = getBenefitDays(age, periodYears, disabled);
-    var total = capped * benefitDays;
-
-    totalVal.textContent = won(total);
-    totalSub.textContent = '지급일수 ' + benefitDays + '일 기준 (1일 ' + won(capped) + ')';
-
-    detailTable.innerHTML = '';
-    var rows = [
-      ['1일 평균임금', won(avgDailyWage)],
-      ['1일 구직급여 기초액 (평균임금×60%)', won(dailyBenefit)],
-      ['1일 지급액 (기준일액)', won(capped) + (capNote ? ' — ' + capNote : '')],
-      ['소정급여일수', benefitDays + '일'],
-    ];
-    rows.forEach(function(r){
-      var row = document.createElement('div');
-      row.className = 'drow';
-      row.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
-      detailTable.appendChild(row);
-    });
-    var totalRow = document.createElement('div');
-    totalRow.className = 'drow total';
-    totalRow.innerHTML = '<span class="k">예상 실업급여 총액</span><span class="v">' + won(total) + '</span>';
-    detailTable.appendChild(totalRow);
-  }
-
-  [wage3moInput, ageInput, periodInput, disabledCheck].forEach(function(el){
-    el.addEventListener('input', calc);
-    el.addEventListener('change', calc);
-  });
-
-  calc();
+  ['lastDayInput','wage3moInput','bonusInput','leaveInput','ageInput','yearsInput','monthsInput','reasonSelect','insDaysInput','disabledCheck'].forEach(function(id){el(id).addEventListener('input',render);el(id).addEventListener('change',render);});
+  render();
 })();
 </script>
 
-<footer style="width:100%;max-width:600px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
+<footer style="width:100%;max-width:640px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
   <div>IT 도구모음 · 모든 도구는 무료이며 입력값은 브라우저 안에서만 처리됩니다</div>
   <div style="margin-top:6px;">
     <a href="index.html" style="color:#7d8590;margin:0 8px;">전체 도구</a>
@@ -290,7 +336,6 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
-
 <script>
 (function(){
   var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};

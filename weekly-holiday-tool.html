@@ -5,9 +5,13 @@
      crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="시급과 1주 근무시간을 입력해 주휴수당을 계산합니다. 주 15시간 미만과 결근 주 제외 기준, 월 환산 예상액까지 보여줍니다.">
+<meta name="description" content="시급과 주 소정근로시간으로 2026년 주휴수당과 월 환산 급여를 계산합니다. 4주 평균 15시간 기준, 주 14시간과 15시간의 월급 차이, 주휴수당 포함 시급을 실제 시급으로 환산하는 방법까지 정리했습니다.">
 <link rel="canonical" href="https://itblogtools.github.io/weekly-holiday-tool.html">
-<title>주휴수당 계산기</title>
+<meta property="og:title" content="주휴수당 계산기 – 2026년 최저시급·4주 평균 15시간 기준">
+<meta property="og:description" content="주당 근무시간별 주휴수당 표, 주휴수당 포함 시급 환산, 지급 조건과 못 받았을 때 대응법">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://itblogtools.github.io/weekly-holiday-tool.html">
+<title>주휴수당 계산기 – 2026년 최저시급, 4주 평균 15시간 기준, 공고 시급 환산</title>
 <style>
   :root{
     --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
@@ -16,7 +20,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
   body{display:flex;flex-direction:column;align-items:center;}
-  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .wrap{width:100%;max-width:640px;padding:16px;display:flex;flex-direction:column;gap:14px;}
 
   .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
   .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
@@ -29,6 +33,7 @@
   .titlebar .prompt{color:var(--accent);}
   h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
   .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .meta{color:var(--sub);font-size:11px;line-height:1.6;margin:0;}
 
   .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
   .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
@@ -43,23 +48,21 @@
 
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
   label{font-size:12px;color:var(--sub);}
-  input[type=number]{
+  input[type=date], input[type=number]{
     width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
     border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
   }
   input:focus{outline:none;border-color:var(--accent);}
   .inputrow{display:flex;gap:8px;align-items:center;}
   .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
-  .checkrow{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
-  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+  .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:460px){.fieldgrid{grid-template-columns:1fr;}}
+  .optlabel{font-size:11px;color:var(--sub);}
 
-  .bigresult{
-    background:var(--panel);border:1px solid var(--accent);border-radius:10px;
-    padding:26px;text-align:center;
-  }
+  .bigresult{background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:26px;text-align:center;}
   .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
   .bigresult .val{font-size:30px;font-weight:700;color:var(--accent);word-break:break-all;}
-  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6;}
 
   .detailtable{display:flex;flex-direction:column;gap:6px;}
   .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
@@ -70,15 +73,44 @@
 
   .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
 
-  .infosection{margin-top:8px;}
-  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
-  .infosection h2:first-child{margin-top:0;}
-  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
-  .infosection ul{padding-left:20px;margin:0 0 10px;}
-  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  /* article */
+  .article{margin-top:10px;}
+  .article h2{font-size:15px;color:var(--accent);margin:28px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .article h2:first-child{margin-top:0;}
+  .article h3{font-size:13px;color:var(--amber);margin:16px 0 6px;}
+  .article p{font-size:13px;line-height:1.9;color:var(--text);margin:0 0 10px;}
+  .article ul, .article ol{padding-left:20px;margin:0 0 10px;}
+  .article li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .article b{color:#fff;}
+  .formula{background:var(--panel);border:1px solid var(--accent-dim);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.9;color:var(--accent);margin:0 0 12px;}
+  .callout{background:var(--panel);border-left:3px solid var(--amber);border-radius:6px;padding:10px 14px;font-size:12px;line-height:1.8;color:var(--text);margin:0 0 12px;}
+  .tblwrap{overflow-x:auto;margin:0 0 12px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;color:var(--text);white-space:nowrap;}
+  th{background:var(--panel);color:var(--sub);font-weight:700;}
+  td:first-child, th:first-child{text-align:left;}
   .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
   .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
-  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.8;}
+  .related{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px;}
+  @media (max-width:460px){.related{grid-template-columns:1fr;}}
+  .related a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);text-decoration:none;line-height:1.6;}
+  .related a:hover{border-color:var(--accent);}
+  .related a span{display:block;color:var(--sub);font-size:11px;}
+  .refs li{font-size:12px;color:var(--sub);}
+
+  .chkrow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+  .margline{font-size:12px;color:var(--sub);line-height:1.7;background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;}
+  .margline b{color:var(--accent);}
+
+  .tabs{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;}
+  .tab{flex:1;text-align:center;padding:10px 6px;border-radius:7px;font-size:12px;font-weight:700;color:var(--sub);cursor:pointer;}
+  .tab.active{background:var(--accent);color:var(--dark);}
+  .hidden{display:none !important;}
+  .warnbox{font-size:12px;line-height:1.7;padding:10px 14px;border-radius:8px;border:1px solid var(--amber);color:var(--amber);background:rgba(255,180,84,0.06);}
+  .badbox{border-color:var(--bad);color:var(--bad);background:rgba(255,92,92,0.06);}
+  .okbox{border-color:var(--accent);color:var(--accent);background:rgba(57,255,136,0.06);}
 </style>
 </head>
 <body>
@@ -96,152 +128,199 @@
 <div class="wrap">
   <div class="titlebar"><span class="prompt">$</span> weekly-holiday-pay --run</div>
   <h1>주휴수당 계산기</h1>
-  <p class="desc">시급과 1주 근무시간만 입력하면 이번 주 주휴수당과 월 환산액을 바로 계산해드려요.</p>
-  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년 최저시급 10,700원이 2027년 1월 1일부터 적용됩니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">기본 시급은 2026년 최저시급 10,320원이에요.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
-
+  <p class="desc">시급과 주 소정근로시간으로 주휴수당과 월 환산 급여를 계산해드려요. "주휴수당 포함 시급"으로 적힌 공고를 실제 시급으로 바꿔보는 기능도 있어요.</p>
+  <p class="meta">최종 업데이트 2026-10-22 · 근로기준법·최저임금법 기준 · 작성/관리: IT 도구모음 운영자</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년 최저시급 10,700원(월 환산 2,236,300원)이 2027년 1월 1일부터 적용됩니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">기본 시급은 2026년 최저시급 10,320원(월 209시간 2,156,880원)입니다. 주휴수당은 4주 평균 1주 소정근로시간 15시간 이상, 소정근로일 개근 기준(근로기준법 제55조·제18조).</div><div class="bn-extra" style="margin-top:4px;"></div></div>
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
     <div class="body">
-      <div class="step"><span class="num">1</span><span><b>시급</b>을 입력하세요.</span></div>
-      <div class="step"><span class="num">2</span><span><b>1주 실제 근무시간</b>을 입력하세요. 여러 날 근무시간을 다 더한 값이에요.</span></div>
-      <div class="step"><span class="num">3</span><span><b>이번 주 소정근로일을 개근했는지</b> 체크하세요. 하루라도 결근하면 그 주는 주휴수당이 발생하지 않아요.</span></div>
-      <div class="step"><span class="num">4</span><span>결과에서 <b>1주 주휴수당</b>과 <b>월 환산 예상액(약 4.345주 기준)</b>을 확인하세요.</span></div>
-      <div class="tip">💡 주휴수당은 1주 소정근로시간이 15시간 이상이고, 그 주 소정근로일을 개근했을 때만 발생해요.</div>
+      <div class="step"><span class="num">1</span><span><b>시급</b>을 입력하세요. 기본값은 2026년 최저시급 10,320원이에요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>주 소정근로시간</b>(근로계약서에 정한 시간)을 입력하세요. 연장근로 등 <b>실제로 더 일한 시간은 빼고</b> 넣어요.</span></div>
+      <div class="step"><span class="num">3</span><span>격주·교대 근무라서 주마다 시간이 다르면 <b>"주마다 달라요"</b>를 체크하고 4주치를 입력하세요. 4주 평균으로 15시간 기준을 판단해요.</span></div>
+      <div class="step"><span class="num">4</span><span>공고에 "주휴수당 포함 시급"이라고 적혀 있다면 두 번째 탭에서 <b>실제 시급</b>을 확인하세요.</span></div>
+      <div class="tip">💡 주 15시간부터 주휴시간 3시간이 붙어서, 14시간과 15시간은 월급이 크게 달라요. 아래 해설의 비교표를 확인해보세요.</div>
     </div>
   </details>
 
-  <div class="panel">
+  <div class="tabs">
+    <div class="tab active" data-tab="calc">주휴수당 계산</div>
+    <div class="tab" data-tab="incl">주휴 포함 시급 → 실제 시급</div>
+  </div>
+
+  <div id="panelCalc" class="panel">
     <label>시급 (세전)</label>
-    <div class="inputrow">
-      <input type="number" id="hourlyInput" value="10320" step="10">
-      <span class="unit">원</span>
+    <div class="inputrow"><input type="number" id="hourlyInput" value="10320" step="10" min="0"><span class="unit">원</span></div>
+    <label>주 소정근로시간</label>
+    <div class="inputrow"><input type="number" id="hoursInput" value="40" step="0.5" min="0" max="60"><span class="unit">시간</span></div>
+    <label class="chkrow"><input type="checkbox" id="varyCheck"> 주마다 소정근로시간이 달라요 (격주·교대)</label>
+    <div id="varyBox" class="hidden">
+      <label>4주간 주별 소정근로시간</label>
+      <div class="fieldgrid" style="grid-template-columns:repeat(4,1fr);">
+        <input type="number" id="w1" value="12" min="0"><input type="number" id="w2" value="18" min="0"><input type="number" id="w3" value="12" min="0"><input type="number" id="w4" value="18" min="0">
+      </div>
     </div>
+    <label class="chkrow"><input type="checkbox" id="attendCheck" checked> 이번 주 소정근로일을 개근했어요</label>
+  </div>
 
-    <label>1주 실제 근무시간</label>
-    <div class="inputrow">
-      <input type="number" id="hoursInput" value="40" step="1" min="0" max="60">
-      <span class="unit">시간</span>
-    </div>
-
-    <div class="checkrow"><input type="checkbox" id="attendCheck" checked><label style="margin:0;">이번 주 소정근로일을 개근했어요</label></div>
+  <div id="panelIncl" class="panel hidden">
+    <label>공고에 적힌 시급 (주휴수당 포함이라고 적힌 금액)</label>
+    <div class="inputrow"><input type="number" id="postedInput" value="12384" step="10" min="0"><span class="unit">원</span></div>
+    <label>주 소정근로시간</label>
+    <div class="inputrow"><input type="number" id="inclHoursInput" value="40" step="0.5" min="0" max="60"><span class="unit">시간</span></div>
   </div>
 
   <div class="bigresult">
-    <div class="lbl">이번 주 주휴수당</div>
-    <div class="val" id="weeklyVal">-</div>
-    <div class="sub2" id="weeklySub">시급과 근무시간을 입력해주세요</div>
+    <div class="lbl" id="bigLabel">1주 주휴수당</div>
+    <div class="val" id="bigVal">-</div>
+    <div class="sub2" id="bigSub">-</div>
   </div>
 
+  <div id="noteBox"></div>
   <div class="detailtable" id="detailTable"></div>
 
   <div class="disclaimer">
-    ※ 이 계산 결과는 근로기준법상 주휴수당 산정 방식을 단순화한 <b style="color:var(--text);">추정치</b>입니다. 매주 근무시간이 달라지는 경우, 각 주마다 별도로 계산해야 정확합니다. 정확한 지급 여부와 금액은 근로계약서 및 실제 근태 기록을 기준으로 회사와 확인하시길 권장합니다.
+    ※ 근로기준법상 산정 방식을 단순화한 <b style="color:var(--text);">추정치</b>입니다. 월 환산은 (주 소정시간+주휴시간)×4.345주 기준이며, 야간·연장·휴일근로 가산수당과 4대보험·세금은 포함하지 않습니다. 정확한 지급 여부는 근로계약서와 근태 기록을 기준으로 확인하세요. 법률 자문이 아닙니다.
   </div>
 
-  <div class="infosection">
-    <h2>주휴수당 계산 기준과 방법</h2>
-    <p>주휴수당 계산기는 시급과 1주 실제 근무시간, 개근 여부를 입력하면 근로기준법상 산정 방식을 기반으로 이번 주 주휴수당과 한 달 환산 예상액을 계산해주는 도구입니다. 주휴수당은 아르바이트나 파트타임 근로자도 조건을 충족하면 받을 수 있는 법정 수당인데, 실제로 얼마가 나오는지 헷갈려 하는 분들이 많아 이를 즉시 계산할 수 있도록 만들었습니다.</p>
+  <article class="article">
+    <h2>주휴수당 계산 공식</h2>
+    <div class="formula">주휴수당 = (주 소정근로시간 ÷ 40) × 8시간 × 시급   (주 소정근로시간 15~40시간)<br>주 40시간 이상 → 주휴수당 = 8시간 × 시급</div>
+    <p>주휴수당은 한 주를 개근한 근로자에게 주는 유급 주휴일의 임금입니다. 하루 소정근로시간이 8시간인 주 5일 근로자는 하루치(8시간) 임금을 더 받고, 주 20시간 근로자는 그 비율에 맞춰 4시간치를 받습니다. 하루 근무가 8시간을 넘거나 주 40시간을 초과해도 주휴수당은 늘지 않습니다.</p>
 
-    <h2>주휴수당을 받고 있는지 직접 확인하려고</h2>
-    <p>아르바이트를 하다 보면 "주휴수당이 포함된 시급"인지 "별도로 지급되는 시급"인지 헷갈리는 경우가 많고, 실제로 급여명세서를 받아봐도 이 금액이 제대로 계산된 건지 검증하기 어려운 경우가 흔합니다. 주휴수당은 조건(주 15시간 이상, 소정근로일 개근)을 충족하면 정규직뿐 아니라 아르바이트생도 당연히 받아야 할 법정 권리인데, 이를 모르고 그냥 넘어가시는 분들도 많습니다. 이런 상황에서 본인이 받아야 할 주휴수당이 정확히 얼마인지 스스로 계산해볼 수 있는 도구가 필요하다고 생각해 만들었습니다.</p>
-
-    <h2>알바·단시간 근무자가 확인해볼 점</h2>
+    <h2>주휴수당이 발생하는 조건</h2>
     <ul>
-      <li>아르바이트나 단시간 근로 중, 이번 달 급여에 주휴수당이 제대로 포함됐는지 검산하고 싶을 때</li>
-      <li>새로운 아르바이트 자리의 시급 조건을 볼 때, 주휴수당 포함 여부에 따른 실질 시급 차이를 확인하고 싶을 때</li>
-      <li>주 근무시간을 조정하려고 할 때, 15시간 기준선 근처에서 주휴수당 발생 여부가 어떻게 달라지는지 알고 싶을 때</li>
-      <li>사장님 입장에서 아르바이트생에게 지급할 주휴수당을 미리 계산해보고 싶을 때</li>
+      <li><b>4주 평균 1주 소정근로시간 15시간 이상</b>: 실제 일한 시간이 아니라 계약상 정해둔 소정근로시간 기준입니다. 이 4주 평균 기준은 2026년 8월 20일 시행된 근로기준법 제18조에 명시돼 있습니다.</li>
+      <li><b>해당 주 소정근로일 개근</b>: 지각·조퇴는 개근으로 보지만 결근이 있는 주는 주휴수당이 발생하지 않습니다.</li>
+      <li><b>정규직·아르바이트 구분 없음</b>: 사업장 규모(5인 미만 포함)와 관계없이 적용됩니다.</li>
     </ul>
+    <p>마지막 근무 주에는 계약 종료 시점과 주휴일 도래 여부에 따라 지급 여부가 달라질 수 있으니 고용센터에 확인하세요.</p>
 
-    <h2>주 15시간·개근 조건 주의사항</h2>
-    <p>주휴수당은 1주 소정근로시간이 15시간 이상이고, 그 주의 소정근로일을 개근했을 때만 발생합니다. 지각이나 조퇴는 개근으로 인정되지만, 결근이 있으면 그 주는 주휴수당이 발생하지 않는다는 점에 유의해야 합니다. 또한 이 계산기는 매주 근무시간이 일정하다고 가정한 단순화된 도구이므로, 주마다 근무시간이 들쭉날쭉한 경우 각 주의 실제 근무시간을 개별적으로 입력해서 계산해야 정확합니다. 4주 평균으로 소정근로시간을 산정하는 경우(교대제 등 특수한 스케줄)에는 이 도구의 단순 계산과 차이가 발생할 수 있습니다. 정확한 지급 여부와 금액은 근로계약서상 소정근로시간과 실제 근태 기록을 기준으로 판단해야 하며, 분쟁이 있는 경우 고용노동부 상담을 통해 확인하시길 권장합니다.</p>
+    <h2>주 근무시간별 주휴수당 (2026년 시급 10,320원)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>주 소정근로시간</th><th>주휴시간</th><th>주휴수당</th><th>1주 합계</th><th>월 환산 급여</th></tr>
+      <tr><td>10시간</td><td>대상 아님</td><td>0원</td><td>103,200원</td><td>448,429원</td></tr><tr><td>14시간</td><td>대상 아님</td><td>0원</td><td>144,480원</td><td>627,800원</td></tr><tr><td>15시간</td><td>3시간</td><td>30,960원</td><td>185,760원</td><td>807,171원</td></tr><tr><td>20시간</td><td>4시간</td><td>41,280원</td><td>247,680원</td><td>1,076,229원</td></tr><tr><td>25시간</td><td>5시간</td><td>51,600원</td><td>309,600원</td><td>1,345,286원</td></tr><tr><td>30시간</td><td>6시간</td><td>61,920원</td><td>371,520원</td><td>1,614,343원</td></tr><tr><td>35시간</td><td>7시간</td><td>72,240원</td><td>433,440원</td><td>1,883,400원</td></tr><tr><td>40시간</td><td>8시간</td><td>82,560원</td><td>495,360원</td><td>2,156,880원</td></tr>
+    </table></div>
+    <p>주 40시간 근로자의 월 환산 급여는 209시간 × 10,320원 = 2,156,880원으로, 이 금액이 2026년 최저월급입니다. 월 209시간은 주 40시간에 유급 주휴 8시간을 더해 월평균으로 환산한 고시 기준입니다.</p>
 
-    <h2>주휴수당 관련 질문</h2>
-    <div class="faqitem">
-      <div class="q">Q. 주 15시간 미만이면 주휴수당을 전혀 못 받나요?</div>
-      <div class="a">네, 1주 소정근로시간이 15시간 미만인 초단시간 근로자는 주휴수당 지급 대상에서 제외됩니다. 여러 아르바이트를 병행하더라도 하나의 사업장에서 15시간 이상 근무해야 그 사업장에서 주휴수당이 발생합니다.</div>
+    <h2>주 14시간과 15시간은 월급이 179,371원 달라집니다</h2>
+    <p>주 14시간 근무자는 주휴수당이 없어 월 약 627,800원이고, 주 15시간이면 주휴시간 3시간이 붙어 월 약 807,171원입니다. 근무시간은 1시간 늘었을 뿐인데 월 약 179,371원이 차이 납니다. 계약서에 주 14시간으로 적혀 있어도 실제로는 더 일하는 경우가 있는데, 이때는 실제 근로 실태에 따라 판단이 달라질 수 있으니 고용센터에 확인하세요.</p>
+
+    <h2>"주휴수당 포함 시급" 공고, 실제 시급은?</h2>
+    <p>일부 공고는 시급 안에 주휴수당을 미리 넣어 적습니다. 이때 실제 시급은 <b>공고 시급 × 주 소정시간 ÷ (주 소정시간 + 주휴시간)</b>입니다. 주 40시간이면 공고 시급 × 40/48(= 5/6)이 됩니다.</p>
+    <div class="tblwrap"><table>
+      <tr><th>공고 시급 (주 40시간, 주휴 포함)</th><th>실제 시급</th><th>2026년 최저임금(10,320원)</th></tr>
+      <tr><td>12,384원</td><td>10,320원</td><td>최저임금 이상</td></tr><tr><td>12,000원</td><td>10,000원</td><td>최저임금 미달</td></tr><tr><td>11,500원</td><td>9,583원</td><td>최저임금 미달</td></tr><tr><td>11,000원</td><td>9,167원</td><td>최저임금 미달</td></tr>
+    </table></div>
+    <p>12,384원이 주휴수당을 포함한 최저임금의 환산값입니다. 공고 시급이 이보다 낮다면 최저임금 위반 소지가 있습니다. 같은 방식으로 다른 근무시간도 두 번째 탭에서 계산할 수 있습니다.</p>
+
+    <h2>4주 평균으로 판단하는 예: 격주 12시간·18시간</h2>
+    <p>한 주는 12시간, 다음 주는 18시간 일하는 식으로 주마다 시간이 다르면 4주 평균이 15시간(12+18+12+18=60시간, 60÷4)이라 주휴수당 대상이 됩니다. 이 계산기에서 "주마다 달라요"를 체크하고 4주치를 넣으면 평균으로 판단합니다. 다만 주별 지급액을 어떻게 나눌지는 취업규칙과 근무표에 따라 달라서, 이 계산기는 평균 시간 기준의 근사 값을 보여줍니다.</p>
+
+    <h2>월급제·일급제 근로자는?</h2>
+    <p>월급제는 월 209시간(주 40시간 기준)에 주휴수당이 이미 포함된 월급이라고 보는 것이 일반적입니다. 월급을 209로 나누면 시급이 됩니다. 일급제나 시급제 근로자는 주휴수당이 별도로 계산되므로 급여명세서에 항목이 있는지 확인하세요. 최저임금 위반 여부를 따질 때 연장·야간·휴일 가산수당은 제외하고 기본급 기준으로 비교합니다.</p>
+
+    <h2>주휴수당을 못 받았다면</h2>
+    <p>주휴수당도 임금이므로 지급하지 않으면 임금체불입니다. 임금 채권은 3년 안에 청구해야 하며, 근로계약서, 출근 기록, 급여명세서, 통장 입금 내역을 준비한 뒤 고용노동부 노동포털에서 임금체불 진정을 접수할 수 있습니다. 사용자는 정당한 사유 없이 임금을 지급하지 않으면 3년 이하 징역 또는 3천만 원 이하 벌금에 처해질 수 있습니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 주 15시간이 안 되는데 여러 알바를 합치면 받을 수 있나요?</div><div class="a">아니요. 주휴수당은 사업장별로 판단합니다. 한 사업장에서 4주 평균 주 15시간 이상이어야 그 사업장에서 받을 수 있습니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 지각이나 조퇴를 하면 주휴수당이 없어지나요?</div><div class="a">지각·조퇴는 개근으로 보므로 주휴수당은 유지됩니다. 다만 결근한 날이 있으면 그 주는 발생하지 않습니다. 근로자가 사용자에게 사전에 승인받은 휴가 등은 결근으로 보지 않는 경우가 많으니 취업규칙을 확인하세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 야근해서 하루 10시간 일했는데 주휴수당이 더 늘어나나요?</div><div class="a">아니요. 주휴수당은 하루 8시간, 주 40시간을 상한으로 계산합니다. 초과 근로는 연장근로수당(5인 이상 사업장은 통상임금의 50% 가산)으로 따로 계산합니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 입력한 정보가 저장되나요?</div><div class="a">아니요. 모든 계산은 브라우저 안에서만 이루어지며 어디로도 전송되지 않습니다.</div></div>
+
+    <h2>함께 쓰면 좋은 계산기</h2>
+    <div class="related">
+      <a href="wage-convert-tool.html">시급/월급/연봉 변환기<span>임금을 서로 환산</span></a>
+      <a href="salary-tool.html">연봉 실수령액 계산기<span>월급에서 4대보험·세금 제외</span></a>
+      <a href="severance-tool.html">퇴직금 계산기<span>평균임금 기준 예상 퇴직금</span></a>
+      <a href="unemployment-tool.html">실업급여 모의계산기<span>퇴사 후 구직급여 예상액</span></a>
     </div>
-    <div class="faqitem">
-      <div class="q">Q. "시급에 주휴수당 포함"이라는 공고는 무슨 뜻인가요?</div>
-      <div class="a">일부 사업장은 시급 자체에 주휴수당분을 미리 얹어서 제시하는 경우가 있습니다. 이 경우 명시된 시급이 실제 최저시급보다 높게 보여도, 순수 근로시간당 임금은 그보다 낮을 수 있으니 계약 조건을 꼼꼼히 확인해야 합니다.</div>
-    </div>
-    <div class="faqitem">
-      <div class="q">Q. 입력한 정보가 저장되나요?</div>
-      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
-    </div>
-  </div>
+
+    <h2>근거 법령과 참고</h2>
+    <ul class="refs">
+      <li>근로기준법 제55조(휴일), 제18조(단시간근로자의 근로조건), 제109조(벌칙)</li>
+      <li>최저임금법, 고용노동부 고시(2026년 최저임금 시간급 10,320원·월 환산 기준시간 209시간)</li>
+    </ul>
+    <p style="font-size:11px;color:var(--sub);">최저임금과 관련 법령은 매년 바뀝니다. 오류를 발견하시면 <a href="contact.html" style="color:var(--accent);">문의하기</a>로 알려주세요.</p>
+  </article>
 </div>
 
 <script>
+var MIN_WAGE = 10320;
+var WEEKS_PER_MONTH = 365/7/12;
+function holidayHours(avg){ return avg>=15 ? Math.min(avg,40)/40*8 : 0; }
+function weeklyCalc(o){
+  var avg = o.avgHours, hourly = o.hourly;
+  var elig = avg >= 15;
+  var hh = elig ? holidayHours(avg) : 0;
+  var pay = hh*hourly;
+  var base = Math.min(avg, 40)*hourly;
+  var monthlyHours = avg>=40 ? 209 : (Math.min(avg,40)+hh)*WEEKS_PER_MONTH;
+  var monthly = monthlyHours*hourly;
+  return {avg:avg, elig:elig, hh:hh, pay:pay, weeklyBase:base, weeklyTotal:base+pay, monthlyHours:monthlyHours, monthly:monthly, belowMin:hourly<MIN_WAGE};
+}
+function inclusiveToReal(posted, avg){
+  var hh = holidayHours(avg);
+  var real = posted*Math.min(avg,40)/(Math.min(avg,40)+hh);
+  return {real:real, hh:hh, belowMin:real<MIN_WAGE};
+}
+
+
 (function(){
-  var hourlyInput = document.getElementById('hourlyInput');
-  var hoursInput = document.getElementById('hoursInput');
-  var attendCheck = document.getElementById('attendCheck');
-  var weeklyVal = document.getElementById('weeklyVal');
-  var weeklySub = document.getElementById('weeklySub');
-  var detailTable = document.getElementById('detailTable');
-
-  function won(n){
-    return Math.round(n).toLocaleString() + '원';
+  var el=function(id){return document.getElementById(id);};
+  function won(n){return Math.round(n).toLocaleString()+'원';}
+  function num(id){var v=parseFloat(el(id).value);return isNaN(v)||v<0?0:v;}
+  function row(t,k,v,cls){var d=document.createElement('div');d.className='drow'+(cls?' '+cls:'');var a=document.createElement('span');a.className='k';a.textContent=k;var b=document.createElement('span');b.className='v';b.textContent=v;d.appendChild(a);d.appendChild(b);t.appendChild(d);}
+  var mode='calc';
+  function box(cls,msg){el('noteBox').innerHTML=msg?'<div class="warnbox '+cls+'">'+msg+'</div>':'';}
+  function render(){
+    var t=el('detailTable');t.innerHTML='';box('','');
+    if(mode==='calc'){
+      el('bigLabel').textContent='1주 주휴수당';
+      var hourly=num('hourlyInput'), avg;
+      if(el('varyCheck').checked){avg=(num('w1')+num('w2')+num('w3')+num('w4'))/4;} else {avg=num('hoursInput');}
+      if(hourly<=0||avg<=0){el('bigVal').textContent='-';el('bigSub').textContent='시급과 근무시간을 입력해주세요';return;}
+      var r=weeklyCalc({avgHours:avg,hourly:hourly});
+      var attended=el('attendCheck').checked;
+      if(r.belowMin) box('badbox','입력한 시급이 2026년 최저시급('+MIN_WAGE.toLocaleString()+'원)보다 낮아요. 최저임금 위반 소지가 있어요.');
+      if(!r.elig){el('bigVal').textContent=won(0);el('bigSub').textContent='4주 평균 주 '+avg.toFixed(1)+'시간 — 15시간 미만이라 주휴수당 대상이 아니에요';}
+      else if(!attended){el('bigVal').textContent=won(0);el('bigSub').textContent='이번 주 결근이 있어 주휴수당이 발생하지 않아요';}
+      else {el('bigVal').textContent=won(r.pay);el('bigSub').textContent='주휴시간 '+r.hh.toFixed(2).replace(/\.?0+$/,'')+'시간 × 시급 '+won(hourly);}
+      row(t,'시급',won(hourly));
+      row(t,'주 소정근로시간'+(el('varyCheck').checked?' (4주 평균)':''),avg.toFixed(2).replace(/\.?0+$/,'')+'시간');
+      row(t,'주휴시간',r.elig?r.hh.toFixed(2).replace(/\.?0+$/,'')+'시간':'대상 아님');
+      row(t,'1주 기본급 (주휴 제외)',won(r.weeklyBase));
+      row(t,'1주 주휴수당',won(r.pay));
+      row(t,'1주 합계',won(r.weeklyTotal),'total');
+      row(t,'월 환산 시간수',r.monthlyHours.toFixed(1)+'시간');
+      row(t,'월 환산 급여 (세전)',won(r.monthly),'total');
+    } else {
+      el('bigLabel').textContent='실제 시급 (주휴수당 제외)';
+      var p=num('postedInput'), h=num('inclHoursInput');
+      if(p<=0||h<=0){el('bigVal').textContent='-';el('bigSub').textContent='공고 시급과 근무시간을 입력해주세요';return;}
+      if(h<15){el('bigVal').textContent=won(p);el('bigSub').textContent='주 15시간 미만은 주휴수당 대상이 아니라 공고 시급이 그대로 실제 시급이에요';row(t,'실제 시급',won(p),'total');return;}
+      var q=inclusiveToReal(p,h);
+      el('bigVal').textContent=won(q.real);
+      el('bigSub').textContent='공고 시급 '+won(p)+' × '+h+' ÷ ('+h+' + '+q.hh.toFixed(2).replace(/\.?0+$/,'')+')';
+      box(q.belowMin?'badbox':'okbox',q.belowMin?'실제 시급이 2026년 최저시급('+MIN_WAGE.toLocaleString()+'원)보다 낮아요. 최저임금 위반 소지가 있어요.':'실제 시급이 2026년 최저시급('+MIN_WAGE.toLocaleString()+'원) 이상이에요.');
+      row(t,'공고 시급 (주휴 포함)',won(p));
+      row(t,'주 소정근로시간',h+'시간');
+      row(t,'주휴시간',q.hh.toFixed(2).replace(/\.?0+$/,'')+'시간');
+      row(t,'실제 시급',won(q.real),'total');
+    }
   }
-
-  function calc(){
-    var hourly = parseFloat(hourlyInput.value) || 0;
-    var hours = parseFloat(hoursInput.value) || 0;
-    var attended = attendCheck.checked;
-
-    detailTable.innerHTML = '';
-
-    if (hourly <= 0 || hours <= 0){
-      weeklyVal.textContent = '-';
-      weeklySub.textContent = '시급과 근무시간을 입력해주세요';
-      return;
-    }
-
-    if (hours < 15){
-      weeklyVal.textContent = won(0);
-      weeklySub.textContent = '1주 15시간 미만 — 주휴수당 지급 대상 아님';
-      return;
-    }
-
-    if (!attended){
-      weeklyVal.textContent = won(0);
-      weeklySub.textContent = '결근이 있는 주 — 주휴수당 미발생';
-      return;
-    }
-
-    var cappedHours = Math.min(hours, 40);
-    var weeklyPay = (cappedHours / 40) * 8 * hourly;
-    var monthlyEstimate = weeklyPay * 4.345;
-
-    weeklyVal.textContent = won(weeklyPay);
-    weeklySub.textContent = '1주 근무시간 ' + hours + '시간 기준';
-
-    var rows = [
-      ['시급', won(hourly)],
-      ['주휴수당 산정 시간 (최대 8시간)', (cappedHours/40*8).toFixed(2) + '시간'],
-      ['1주 주휴수당', won(weeklyPay)],
-      ['월 환산 예상액 (약 4.345주)', won(monthlyEstimate)],
-    ];
-    rows.forEach(function(r){
-      var row = document.createElement('div');
-      row.className = 'drow';
-      row.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
-      detailTable.appendChild(row);
-    });
-  }
-
-  [hourlyInput, hoursInput, attendCheck].forEach(function(el){
-    el.addEventListener('input', calc);
-    el.addEventListener('change', calc);
-  });
-
-  calc();
+  document.querySelectorAll('.tab').forEach(function(tb){tb.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});tb.classList.add('active');
+    mode=tb.dataset.tab; el('panelCalc').classList.toggle('hidden',mode!=='calc'); el('panelIncl').classList.toggle('hidden',mode!=='incl'); render();
+  });});
+  el('varyCheck').addEventListener('change',function(){el('varyBox').classList.toggle('hidden',!el('varyCheck').checked);el('hoursInput').disabled=el('varyCheck').checked;render();});
+  ['hourlyInput','hoursInput','w1','w2','w3','w4','attendCheck','postedInput','inclHoursInput'].forEach(function(id){el(id).addEventListener('input',render);el(id).addEventListener('change',render);});
+  render();
 })();
 </script>
 
-<footer style="width:100%;max-width:600px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
+<footer style="width:100%;max-width:640px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
   <div>IT 도구모음 · 모든 도구는 무료이며 입력값은 브라우저 안에서만 처리됩니다</div>
   <div style="margin-top:6px;">
     <a href="index.html" style="color:#7d8590;margin:0 8px;">전체 도구</a>
@@ -250,7 +329,6 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
-
 <script>
 (function(){
   var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
