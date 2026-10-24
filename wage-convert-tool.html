@@ -5,9 +5,13 @@
      crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="시급, 월급, 연봉을 서로 변환합니다. 월 209시간 기준 최저임금 환산과 근무시간 직접 입력을 지원합니다.">
+<meta name="description" content="시급·월급·연봉 중 하나만 입력하면 나머지를 계산합니다. 주 소정근로시간에 따른 월 환산 시간(주 40시간은 209시간), 퇴직금 포함 연봉(÷13), 상여금 제외, 2026년 최저임금 비교와 연봉별 시급표를 제공합니다.">
 <link rel="canonical" href="https://itblogtools.github.io/wage-convert-tool.html">
-<title>시급/월급/연봉 상호 변환기</title>
+<meta property="og:title" content="시급·월급·연봉 변환기 – 2026년 최저임금 비교, 월 209시간 기준">
+<meta property="og:description" content="연봉별 시급표, 최저임금 연도별 월 환산액, 퇴직금 포함 연봉 환산법">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://itblogtools.github.io/wage-convert-tool.html">
+<title>시급 월급 연봉 변환기 – 2026년 최저임금 비교, 월 209시간 환산표</title>
 <style>
   :root{
     --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
@@ -16,7 +20,7 @@
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
   body{display:flex;flex-direction:column;align-items:center;}
-  .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .wrap{width:100%;max-width:640px;padding:16px;display:flex;flex-direction:column;gap:14px;}
 
   .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
   .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
@@ -29,6 +33,7 @@
   .titlebar .prompt{color:var(--accent);}
   h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
   .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .meta{color:var(--sub);font-size:11px;line-height:1.6;margin:0;}
 
   .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
   .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
@@ -41,39 +46,78 @@
   .guide .step b{color:var(--text);}
   .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
 
-  .tabs{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;}
-  .tab{flex:1;text-align:center;padding:10px 4px;border-radius:7px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;}
-  .tab.active{background:var(--accent);color:var(--dark);}
-
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;}
   label{font-size:12px;color:var(--sub);}
-  input[type=number]{
+  input[type=date], input[type=number]{
     width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);
-    border-radius:8px;padding:12px;font-size:15px;font-family:inherit;
+    border-radius:8px;padding:12px;font-size:14px;font-family:inherit;
   }
   input:focus{outline:none;border-color:var(--accent);}
   .inputrow{display:flex;gap:8px;align-items:center;}
   .unit{font-size:12px;color:var(--sub);white-space:nowrap;}
+  .fieldgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:460px){.fieldgrid{grid-template-columns:1fr;}}
   .optlabel{font-size:11px;color:var(--sub);}
 
-  .resultgrid{display:flex;flex-direction:column;gap:8px;}
-  .resultcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
-  .resultcard.main{border-color:var(--accent);}
-  .resultcard .k{font-size:12px;color:var(--sub);}
-  .resultcard .v{font-size:18px;font-weight:700;color:var(--text);text-align:right;}
-  .resultcard.main .v{color:var(--accent);font-size:22px;}
+  .bigresult{background:var(--panel);border:1px solid var(--accent);border-radius:10px;padding:26px;text-align:center;}
+  .bigresult .lbl{font-size:12px;color:var(--sub);margin-bottom:8px;}
+  .bigresult .val{font-size:30px;font-weight:700;color:var(--accent);word-break:break-all;}
+  .bigresult .sub2{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.6;}
+
+  .detailtable{display:flex;flex-direction:column;gap:6px;}
+  .drow{display:flex;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:13px;gap:8px;}
+  .drow .k{color:var(--sub);}
+  .drow .v{color:var(--text);font-weight:700;text-align:right;}
+  .drow.total{border-color:var(--accent);}
+  .drow.total .v{color:var(--accent);}
 
   .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;margin-top:4px;}
 
-  .infosection{margin-top:8px;}
-  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
-  .infosection h2:first-child{margin-top:0;}
-  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
-  .infosection ul{padding-left:20px;margin:0 0 10px;}
-  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  /* article */
+  .article{margin-top:10px;}
+  .article h2{font-size:15px;color:var(--accent);margin:28px 0 10px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .article h2:first-child{margin-top:0;}
+  .article h3{font-size:13px;color:var(--amber);margin:16px 0 6px;}
+  .article p{font-size:13px;line-height:1.9;color:var(--text);margin:0 0 10px;}
+  .article ul, .article ol{padding-left:20px;margin:0 0 10px;}
+  .article li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .article b{color:#fff;}
+  .formula{background:var(--panel);border:1px solid var(--accent-dim);border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.9;color:var(--accent);margin:0 0 12px;}
+  .callout{background:var(--panel);border-left:3px solid var(--amber);border-radius:6px;padding:10px 14px;font-size:12px;line-height:1.8;color:var(--text);margin:0 0 12px;}
+  .tblwrap{overflow-x:auto;margin:0 0 12px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right;color:var(--text);white-space:nowrap;}
+  th{background:var(--panel);color:var(--sub);font-weight:700;}
+  td:first-child, th:first-child{text-align:left;}
   .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
   .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
-  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.8;}
+  .related{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px;}
+  @media (max-width:460px){.related{grid-template-columns:1fr;}}
+  .related a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);text-decoration:none;line-height:1.6;}
+  .related a:hover{border-color:var(--accent);}
+  .related a span{display:block;color:var(--sub);font-size:11px;}
+  .refs li{font-size:12px;color:var(--sub);}
+
+  .chkrow{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sub);}
+  input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);}
+  .margline{font-size:12px;color:var(--sub);line-height:1.7;background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;}
+  .margline b{color:var(--accent);}
+
+  .tabs{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px;}
+  .tab{flex:1;text-align:center;padding:10px 6px;border-radius:7px;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;}
+  .tab.active{background:var(--accent);color:var(--dark);}
+  .hidden{display:none !important;}
+  .resultgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  @media (max-width:460px){.resultgrid{grid-template-columns:1fr;}}
+  .resultcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;}
+  .resultcard.main{border-color:var(--accent);}
+  .resultcard .k{font-size:11px;color:var(--sub);}
+  .resultcard .v{font-size:18px;font-weight:700;color:var(--text);word-break:break-all;}
+  .resultcard.main .v{color:var(--accent);}
+  .warnbox{font-size:12px;line-height:1.7;padding:10px 14px;border-radius:8px;border:1px solid var(--amber);color:var(--amber);background:rgba(255,180,84,0.06);}
+  .badbox{border-color:var(--bad);color:var(--bad);background:rgba(255,92,92,0.06);}
+  .okbox{border-color:var(--accent);color:var(--accent);background:rgba(57,255,136,0.06);}
 </style>
 </head>
 <body>
@@ -90,19 +134,19 @@
 </nav>
 <div class="wrap">
   <div class="titlebar"><span class="prompt">$</span> wage-convert --run</div>
-  <h1>시급 / 월급 / 연봉 상호 변환기</h1>
-  <p class="desc">셋 중 하나만 입력하면 나머지 두 값을 표준 근로시간 기준으로 자동 계산해드려요.</p>
-  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년 최저시급 10,700원(월 2,236,300원, 209시간 기준)이 2027년 1월 1일부터 적용됩니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">기본값은 2026년 최저시급 10,320원이에요.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
-
+  <h1>시급 / 월급 / 연봉 변환기</h1>
+  <p class="desc">셋 중 아는 값 하나만 입력하면 나머지를 계산해드려요. 주 근무시간에 따른 월 환산 시간, 퇴직금 포함 연봉, 최저임금 비교까지 반영합니다.</p>
+  <p class="meta">최종 업데이트 2026-10-22 · 최저임금법·근로기준법 기준 · 작성/관리: IT 도구모음 운영자</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2027-01-01" data-next-note="2027년 최저시급 10,700원(월 환산 2,236,300원, 209시간 기준)이 2027년 1월 1일부터 적용됩니다." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">2026년 최저시급 10,320원 · 월 환산 209시간 기준 2,156,880원. 주휴수당 계산기와 같은 월 환산 방식을 사용합니다.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
     <div class="body">
-      <div class="step"><span class="num">1</span><span>상단 탭에서 <b>알고 있는 값(시급/월급/연봉)</b>을 선택하세요.</span></div>
-      <div class="step"><span class="num">2</span><span>해당 금액을 입력창에 넣으세요.</span></div>
-      <div class="step"><span class="num">3</span><span>주 근무시간이 40시간이 아니라면 <b>월 소정근로시간</b>을 직접 수정할 수 있어요. 기본값은 주휴시간 포함 209시간이에요.</span></div>
-      <div class="step"><span class="num">4</span><span>입력하는 즉시 나머지 두 값이 <b>자동으로 계산</b>돼요.</span></div>
-      <div class="tip">💡 월 209시간은 주 40시간(주 5일, 하루 8시간) 근무자 기준으로, 유급 주휴시간(8시간)까지 포함한 표준 소정근로시간이에요.</div>
+      <div class="step"><span class="num">1</span><span>상단 탭에서 <b>알고 있는 값</b>(시급·월급·연봉)을 고르고 금액을 입력하세요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>주 소정근로시간</b>(근로계약서 기준)과 주 근무일수를 입력하세요. 주 40시간이면 월 209시간으로 환산돼요.</span></div>
+      <div class="step"><span class="num">3</span><span>월급제라면 <b>"월급에 주휴수당 포함"</b>을 그대로 두세요. 시급제로 주휴수당을 따로 받는다면 체크를 해제하세요.</span></div>
+      <div class="step"><span class="num">4</span><span>연봉 탭에서는 <b>퇴직금 포함(÷13)</b>과 <b>연간 상여금</b>을 반영해 기본급 기준 시급을 구할 수 있어요.</span></div>
+      <div class="tip">💡 결과 아래에 2026년 최저시급과 비교한 결과가 표시돼요. 시급이 최저임금에 미달하면 경고해드려요.</div>
     </div>
   </details>
 
@@ -113,128 +157,152 @@
   </div>
 
   <div class="panel">
-    <div id="inputArea">
-      <label id="inputLabel">시급 (세전)</label>
-      <div class="inputrow">
-        <input type="number" id="mainInput" value="10320" step="10">
-        <span class="unit">원</span>
-      </div>
+    <label id="inputLabel">시급 (세전)</label>
+    <div class="inputrow"><input type="number" id="mainInput" value="10320" step="10" min="0"><span class="unit">원</span></div>
+    <div class="fieldgrid">
+      <div><label>주 소정근로시간</label><div class="inputrow"><input type="number" id="weeklyInput" value="40" step="0.5" min="1" max="60"><span class="unit">시간</span></div></div>
+      <div><label>주 근무일수</label><div class="inputrow"><input type="number" id="daysInput" value="5" min="1" max="7"><span class="unit">일</span></div></div>
     </div>
-
-    <label class="optlabel">월 소정근로시간 (기본: 주 40시간 기준 209시간)</label>
-    <div class="inputrow">
-      <input type="number" id="hoursInput" value="209" step="1">
-      <span class="unit">시간</span>
+    <label class="chkrow"><input type="checkbox" id="holidayCheck" checked> 월급에 주휴수당 포함 (월급제 기본)</label>
+    <div id="annualExtras" class="hidden">
+      <label class="chkrow"><input type="checkbox" id="sevCheck"> 연봉에 퇴직금 포함 (월급 = 연봉÷13)</label>
+      <label style="margin-top:10px;display:block;">연봉 중 연간 상여금·성과급 (기본급 제외용)</label>
+      <div class="inputrow"><input type="number" id="bonusInput" value="0" step="100000" min="0"><span class="unit">원</span></div>
     </div>
   </div>
 
   <div class="resultgrid" id="resultGrid"></div>
+  <div id="noteBox"></div>
+  <div class="detailtable" id="detailTable"></div>
 
   <div class="disclaimer">
-    ※ 이 계산은 <b style="color:var(--text);">세전(gross) 금액</b> 기준이며, 4대보험료·세금 등은 반영되지 않습니다. 실수령액이 궁금하시다면 별도의 연봉 실수령액 계산기를 함께 활용해주세요. 월 소정근로시간은 근무 형태(주 근무일수, 시간)에 따라 달라질 수 있으니 본인 근로계약서 기준으로 조정해서 사용하세요.
+    ※ 세전 금액 기준이며 4대보험·세금은 반영하지 않습니다. 실수령액은 <a href="salary-tool.html" style="color:var(--accent);">연봉 실수령액 계산기</a>에서 확인하세요. 월 환산은 (주 소정시간 + 주휴시간) × 365÷7÷12 방식이며 주 40시간 이상은 고시 기준 209시간을 사용합니다. 법률 자문이 아닙니다.
   </div>
 
-  <div class="infosection">
-    <h2>시급·월급·연봉 변환 원리</h2>
-    <p>시급/월급/연봉 상호 변환기는 시급, 월급, 연봉 중 알고 있는 값 하나만 입력하면 표준 소정근로시간(기본 209시간)을 기준으로 나머지 두 값을 자동으로 계산해주는 도구입니다. 아르바이트나 계약직처럼 시급으로 급여를 받는 경우 월급과 연봉 환산액이 얼마인지, 반대로 정규직 연봉을 시급으로 환산하면 얼마인지 즉시 확인할 수 있습니다. 근무시간이 표준과 다르다면 월 소정근로시간을 직접 수정해서 본인 상황에 맞게 계산할 수도 있습니다.</p>
+  <article class="article">
+    <h2>시급·월급·연봉 변환 공식</h2>
+    <div class="formula">월급 = 시급 × 월 환산 시간 &nbsp;|&nbsp; 연봉 = 월급 × 12<br>월 환산 시간 = (주 소정근로시간 + 주휴시간) × 365 ÷ 7 ÷ 12 &nbsp;(주 40시간 → 209시간)</div>
+    <p>월급제 근로자의 월급에는 이미 유급 주휴수당이 들어 있다고 봅니다. 그래서 월급을 시급으로 바꿀 때는 실제 일한 시간이 아니라 주휴시간까지 포함한 <b>월 환산 시간</b>으로 나눕니다. 주 40시간 근로자는 (40+8)×4.345 ≈ 209시간이 월 환산 시간이며, 이는 고용노동부가 최저임금을 월급으로 환산할 때 쓰는 기준 시간수입니다. 주 40시간 미만이면 주휴시간이 근무시간에 비례해(주 20시간이면 4시간) 줄어들고, 주 15시간 미만이면 주휴수당 대상이 아니라 주휴시간이 0입니다.</p>
 
-    <h2>급여 단위가 달라 비교하기 어려워서</h2>
-    <p>구인 공고를 보다 보면 어떤 곳은 시급으로, 어떤 곳은 월급으로, 또 어떤 곳은 연봉으로 조건을 제시해서 서로 비교하기가 쉽지 않습니다. "시급 12,000원짜리 알바"와 "월급 250만원짜리 계약직" 중 어느 쪽이 실제로 더 나은 조건인지 머릿속으로 바로 계산하기는 번거롭습니다. 최저임금이 매년 바뀌면서 "올해 최저시급 기준으로 월급이 얼마나 되는지" 궁금해하는 분들도 많고요. 이런 급여 단위 변환을 즉시 처리해주는 도구가 있으면 여러 일자리 조건을 훨씬 빠르고 정확하게 비교할 수 있다고 생각해 만들었습니다.</p>
+    <h2>연봉별 월급과 시급 (주 40시간, 월 209시간 기준)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>연봉</th><th>월급(÷12)</th><th>시급(÷209)</th><th>2026년 최저시급 비교</th></tr>
+      <tr><td>2,400만 원</td><td>2,000,000원</td><td>9,569원</td><td>최저임금 미달</td></tr><tr><td>3,000만 원</td><td>2,500,000원</td><td>11,962원</td><td>최저임금 이상</td></tr><tr><td>4,000만 원</td><td>3,333,333원</td><td>15,949원</td><td>최저임금 이상</td></tr><tr><td>5,000만 원</td><td>4,166,667원</td><td>19,936원</td><td>최저임금 이상</td></tr><tr><td>6,000만 원</td><td>5,000,000원</td><td>23,923원</td><td>최저임금 이상</td></tr><tr><td>8,000만 원</td><td>6,666,667원</td><td>31,898원</td><td>최저임금 이상</td></tr><tr><td>10,000만 원</td><td>8,333,333원</td><td>39,872원</td><td>최저임금 이상</td></tr>
+    </table></div>
+    <p>연봉 2,400만 원은 월 200만 원인데 시급으로 환산하면 약 9,569원으로 2026년 최저시급(10,320원)보다 낮습니다. 상여금·퇴직금을 연봉에서 뺀 기본급 기준으로 환산해야 정확한 비교가 되므로 아래 설명을 참고하세요.</p>
 
-    <h2>일자리 조건을 비교할 때 활용하기</h2>
+    <h2>최저임금 연도별 시급과 월 환산액</h2>
+    <div class="tblwrap"><table>
+      <tr><th>연도</th><th>최저시급</th><th>월 환산(209시간)</th><th>연 환산</th></tr>
+      <tr><td>2024년</td><td>9,860원</td><td>2,060,740원</td><td>24,728,880원</td></tr><tr><td>2025년</td><td>10,030원</td><td>2,096,270원</td><td>25,155,240원</td></tr><tr><td>2026년</td><td>10,320원</td><td>2,156,880원</td><td>25,882,560원</td></tr><tr><td>2027년</td><td>10,700원</td><td>2,236,300원</td><td>26,835,600원</td></tr>
+    </table></div>
+    <p>2027년에는 최저시급이 10,700원으로 2026년보다 380원(3.7%) 오르고, 월 환산액은 2,236,300원이 됩니다. 이 변환기의 기본값은 2026년 기준이며 2027년 1월 1일부터 10,700원 기준으로 바뀝니다.</p>
+
+    <h2>주 근무시간별 월 환산 시간과 월급 (시급 10,320원)</h2>
+    <div class="tblwrap"><table>
+      <tr><th>주 소정근로시간</th><th>월 환산 시간 (주휴 포함)</th><th>월급 (세전)</th></tr>
+      <tr><td>15시간</td><td>78.2시간</td><td>807,171원</td></tr><tr><td>20시간</td><td>104.3시간</td><td>1,076,229원</td></tr><tr><td>25시간</td><td>130.4시간</td><td>1,345,286원</td></tr><tr><td>30시간</td><td>156.4시간</td><td>1,614,343원</td></tr><tr><td>35시간</td><td>182.5시간</td><td>1,883,400원</td></tr><tr><td>40시간</td><td>209.0시간</td><td>2,156,880원</td></tr>
+    </table></div>
+    <p>주 15시간부터 주휴시간이 붙어 월 환산 시간이 비약적으로 늘어납니다. 근무시간별 주휴수당과 4주 평균 판단 방법은 <a href="weekly-holiday-tool.html" style="color:var(--accent);">주휴수당 계산기</a>에서 확인하세요.</p>
+
+    <h2>연봉에 퇴직금이나 상여금이 들어 있다면</h2>
+    <p><b>퇴직금 포함 연봉</b>은 월급을 연봉÷13으로 정하고 나머지 1/13을 퇴직금으로 보는 계약입니다. 예를 들어 연봉 5,000만 원이면 월급은 약 3,846,154원, 시급은 약 18,403원입니다. 같은 연봉이라도 퇴직금이 별도로 지급되는 계약(월급 약 416만 원)보다 월급이 줄어듭니다. <b>상여금·성과급</b>이 연봉에 포함돼 있다면 그 금액을 빼고 월급을 계산해야 기본급 기준 시급을 알 수 있습니다. 연봉 5,000만 원 중 1,000만 원이 상여라면 기본 월급은 약 3,333,333원, 시급은 약 15,949원입니다.</p>
+
+    <h2>시급을 환산할 때 자주 하는 실수</h2>
     <ul>
-      <li>아르바이트나 파트타임 일자리의 시급을 월급·연봉으로 환산해서 다른 조건과 비교하고 싶을 때</li>
-      <li>최저시급이 오를 때마다 내 월급이 대략 얼마로 바뀌는지 빠르게 확인하고 싶을 때</li>
-      <li>정규직 채용 공고의 연봉을 시급으로 환산해서 실제 근무 강도 대비 조건을 가늠하고 싶을 때</li>
-      <li>주 근무시간이 표준(40시간)과 다른 단시간 근로 조건에서 급여를 직접 계산해보고 싶을 때</li>
+      <li><b>실제 근무시간으로 나누기</b>: 월급을 실제로 일한 시간(예: 월 174시간)으로 나누면 시급이 높게 나옵니다. 월급제 시급은 주휴시간이 포함된 환산 시간으로 나눕니다.</li>
+      <li><b>연봉을 12가 아닌 다른 수로 나누기</b>: 연봉에 퇴직금이 포함돼 있으면 13으로 나눈 값이 월 기본급입니다.</li>
+      <li><b>연장·야간·휴일 수당을 포함하기</b>: 최저임금 비교에서는 연장·야간·휴일 가산수당이 제외됩니다. 식대·상여금 등 다른 항목은 산입 범위가 법 개정으로 달라져 왔으니 급여 항목별로 확인하세요.</li>
+      <li><b>연장근로수당 기준 시급</b>: 가산수당은 월 통상임금을 월 환산 시간으로 나눈 통상시급을 기준으로 계산합니다. 주 40시간 근로자의 월 통상임금 300만 원이면 통상시급은 약 14,354원입니다.</li>
     </ul>
 
-    <h2>세전 금액 기준이라는 점 주의</h2>
-    <p>이 계산은 세전 금액을 기준으로 하며, 4대보험료나 세금은 반영하지 않습니다. 실제로 통장에 들어오는 실수령액이 궁금하시다면 이 도구로 나온 월급을 별도의 실수령액 계산기에 입력해서 다시 확인하시는 걸 추천합니다. 또한 기본값으로 사용된 월 209시간은 주 40시간(하루 8시간, 주 5일) 근무자가 유급 주휴시간까지 포함했을 때의 표준 소정근로시간입니다. 본인의 실제 근무시간이 이와 다르다면(예: 주 30시간 근무, 주 6일 근무 등) 반드시 월 소정근로시간 입력값을 직접 수정해서 계산하셔야 정확한 결과를 얻을 수 있습니다. 상여금이나 각종 수당이 포함된 연봉이라면, 순수 기본급만 별도로 계산하고 싶을 때는 상여금을 제외한 금액으로 입력하시는 게 더 정확합니다.</p>
+    <h2>최저임금 위반인지 확인하는 방법</h2>
+    <ol>
+      <li>월 기본급(연장·야간·휴일 수당 제외)을 구합니다.</li>
+      <li>이 금액을 월 환산 시간(주 40시간이면 209시간)으로 나눕니다.</li>
+      <li>그 값이 해당 연도 최저시급 이상인지 비교합니다.</li>
+    </ol>
+    <p>이 변환기에서 월급 탭에 기본급을 입력하면 시급과 최저시급 비교가 자동으로 표시됩니다. 최저임금에 미달하면 차액을 3년 안에 청구할 수 있으며, 근로계약서를 쓰지 않았더라도 최저임금은 그대로 적용됩니다.</p>
 
-    <h2>급여 변환 관련 질문</h2>
-    <div class="faqitem">
-      <div class="q">Q. 월 209시간은 어떻게 나온 숫자인가요?</div>
-      <div class="a">주 40시간(하루 8시간 × 5일) 근무에 유급 주휴시간 8시간을 더하면 주 48시간이 되고, 이를 4.345주(1개월 평균 주수)로 곱하면 약 209시간이 나옵니다. 근로기준법상 표준 소정근로시간 계산에 널리 쓰이는 방식입니다.</div>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 월급 300만 원이면 시급은 얼마인가요?</div><div class="a">주 40시간 월급제(주휴 포함) 기준으로 3,000,000 ÷ 209 ≈ 14,354원입니다. 주휴수당을 따로 받는 시급제라면 환산 시간이 달라집니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 월 209시간은 왜 모든 사람에게 똑같이 쓰나요?</div><div class="a">주 40시간 근로자를 기준으로 한 최저임금 환산 기준시간입니다. 주 근무시간이 다르면 이 변환기에서 주 소정근로시간을 바꿔서 본인 환산 시간을 구하세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 주 5일이 아니라 6일 일하면 시급이 달라지나요?</div><div class="a">주 소정근로시간이 40시간이면 월 환산 시간은 같고, 일급만 달라집니다. 주 40시간을 넘기는 근무는 연장근로로 별도 수당이 붙습니다.</div></div>
+    <div class="faqitem"><div class="q">Q. 입력한 금액이 저장되나요?</div><div class="a">아니요. 모든 계산은 브라우저 안에서만 이루어지며 어디로도 전송되지 않습니다.</div></div>
+
+    <h2>함께 쓰면 좋은 계산기</h2>
+    <div class="related">
+      <a href="weekly-holiday-tool.html">주휴수당 계산기<span>주 15시간 기준과 월 환산 급여</span></a>
+      <a href="salary-tool.html">연봉 실수령액 계산기<span>월급에서 4대보험·세금 제외</span></a>
+      <a href="severance-tool.html">퇴직금 계산기<span>평균임금 기준 예상 퇴직금</span></a>
+      <a href="unemployment-tool.html">실업급여 모의계산기<span>퇴사 후 구직급여 예상액</span></a>
     </div>
-    <div class="faqitem">
-      <div class="q">Q. 실수령액도 바로 확인할 수 있나요?</div>
-      <div class="a">이 도구는 세전 금액만 계산합니다. 실수령액(세후 금액)이 궁금하시다면 이 도구로 나온 월급이나 연봉을 별도의 연봉 실수령액 계산기에 입력해서 확인해보세요.</div>
-    </div>
-    <div class="faqitem">
-      <div class="q">Q. 입력한 급여 정보가 저장되나요?</div>
-      <div class="a">아니요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 정보는 어디로도 전송되지 않습니다.</div>
-    </div>
-  </div>
+
+    <h2>근거 법령과 참고</h2>
+    <ul class="refs">
+      <li>최저임금법 및 시행령(시간급 환산 방법), 고용노동부 고시(2026년 시간급 10,320원, 2027년 10,700원)</li>
+      <li>근로기준법 제2조(통상임금), 제55조(주휴일), 제56조(연장·야간·휴일 근로 가산)</li>
+    </ul>
+    <p style="font-size:11px;color:var(--sub);">최저임금과 산입 범위는 매년 바뀔 수 있습니다. 오류를 발견하시면 <a href="contact.html" style="color:var(--accent);">문의하기</a>로 알려주세요.</p>
+  </article>
 </div>
 
 <script>
+var MIN26 = 10320, MIN27 = 10700, WPM = 365/7/12;
+function monthlyHoursOf(weekly, includeHoliday){
+  var capped = Math.min(weekly,40);
+  if (!includeHoliday) return capped*WPM;
+  if (weekly>=40) return 209;
+  var hh = weekly>=15 ? capped/40*8 : 0;
+  return (capped+hh)*WPM;
+}
+function wageConvert(o){
+  // o: mode, val, weekly, days, includeHoliday, sevIncluded, bonus
+  var mh = monthlyHoursOf(o.weekly, o.includeHoliday);
+  var hourly, monthly, annual, base = null;
+  if (o.mode==='hourly'){ hourly=o.val; monthly=hourly*mh; annual=monthly*12; }
+  else if (o.mode==='monthly'){ monthly=o.val; hourly=mh>0?monthly/mh:0; annual=monthly*12; }
+  else {
+    annual=o.val; var bonus=Math.min(o.bonus||0, annual);
+    base=annual-bonus; monthly=base/(o.sevIncluded?13:12); hourly=mh>0?monthly/mh:0;
+  }
+  var daily = hourly*(o.weekly/Math.max(1,o.days));
+  var weekly = hourly*o.weekly + (o.includeHoliday && o.weekly>=15 ? hourly*Math.min(o.weekly,40)/40*8 : 0);
+  return {mh:mh,hourly:hourly,daily:daily,weekly:weekly,monthly:monthly,annual:annual,base:base,
+          vsMin26:hourly/MIN26-1, below26:hourly<MIN26};
+}
+
+
 (function(){
-  var tabs = document.querySelectorAll('.tab');
-  var mainInput = document.getElementById('mainInput');
-  var inputLabel = document.getElementById('inputLabel');
-  var hoursInput = document.getElementById('hoursInput');
-  var resultGrid = document.getElementById('resultGrid');
-
-  var mode = 'hourly';
-  var defaults = { hourly: 10320, monthly: 2156880, annual: 25882560 };
-
-  function won(n){
-    return Math.round(n).toLocaleString() + '원';
+  var el=function(id){return document.getElementById(id);};
+  function won(n){return Math.round(n).toLocaleString()+'원';}
+  function num(id){var v=parseFloat(el(id).value);return isNaN(v)||v<0?0:v;}
+  var mode='hourly', defaults={hourly:10320,monthly:2156880,annual:25882560};
+  var labels={hourly:'시급 (세전)',monthly:'월급 (세전)',annual:'연봉 (세전)'};
+  function row(t,k,v){var d=document.createElement('div');d.className='drow';var a=document.createElement('span');a.className='k';a.textContent=k;var b=document.createElement('span');b.className='v';b.textContent=v;d.appendChild(a);d.appendChild(b);t.appendChild(d);}
+  function render(){
+    var g=el('resultGrid'),t=el('detailTable'),nb=el('noteBox'); g.innerHTML='';t.innerHTML='';nb.innerHTML='';
+    var weekly=num('weeklyInput'), val=num('mainInput');
+    if(weekly<=0||val<=0){g.innerHTML='<div class="resultcard"><span class="k">입력해주세요</span><span class="v">-</span></div>';return;}
+    var r=wageConvert({mode:mode,val:val,weekly:weekly,days:Math.max(1,num('daysInput')),includeHoliday:el('holidayCheck').checked,sevIncluded:el('sevCheck').checked,bonus:num('bonusInput')});
+    var items=[['hourly','시급',r.hourly],['daily','일급 (1일 소정근로시간 기준)',r.daily],['weekly','주급',r.weekly],['monthly','월급',r.monthly],['annual','연봉',r.annual]];
+    items.forEach(function(it){var c=document.createElement('div');c.className='resultcard'+(it[0]===mode?' main':'');c.innerHTML='<span class="k">'+it[1]+(it[0]===mode?' (입력값)':'')+'</span><span class="v">'+won(it[2])+'</span>';g.appendChild(c);});
+    row(t,'월 환산 시간',r.mh.toFixed(1)+'시간');
+    if(r.base!==null) row(t,'기본급 연액 (상여 제외)',won(r.base));
+    row(t,'2026년 최저시급 대비',(r.vsMin26>=0?'+':'')+(r.vsMin26*100).toFixed(1)+'%');
+    nb.innerHTML=r.below26?'<div class="warnbox badbox">환산 시급 '+won(r.hourly)+'이 2026년 최저시급(10,320원)보다 낮아요. 최저임금 위반 소지가 있어요. 연장·야간·휴일 수당을 뺀 기본급 기준인지 확인하세요.</div>':'<div class="warnbox okbox">환산 시급이 2026년 최저시급(10,320원) 이상이에요. 2027년 최저시급은 10,700원이에요.</div>';
   }
-
-  function calc(){
-    var val = parseFloat(mainInput.value) || 0;
-    var hours = parseFloat(hoursInput.value) || 209;
-    var hourly, monthly, annual;
-
-    if (mode === 'hourly'){
-      hourly = val;
-      monthly = hourly * hours;
-      annual = monthly * 12;
-    } else if (mode === 'monthly'){
-      monthly = val;
-      hourly = hours > 0 ? monthly / hours : 0;
-      annual = monthly * 12;
-    } else {
-      annual = val;
-      monthly = annual / 12;
-      hourly = hours > 0 ? monthly / hours : 0;
-    }
-
-    resultGrid.innerHTML = '';
-    var items = [
-      { key:'hourly', label:'시급', val: won(hourly) },
-      { key:'monthly', label:'월급', val: won(monthly) },
-      { key:'annual', label:'연봉', val: won(annual) }
-    ];
-    items.forEach(function(item){
-      var card = document.createElement('div');
-      card.className = 'resultcard' + (item.key === mode ? ' main' : '');
-      card.innerHTML = '<span class="k">' + item.label + (item.key === mode ? ' (입력값)' : '') + '</span><span class="v">' + item.val + '</span>';
-      resultGrid.appendChild(card);
-    });
-  }
-
-  tabs.forEach(function(tab){
-    tab.addEventListener('click', function(){
-      tabs.forEach(function(t){ t.classList.remove('active'); });
-      tab.classList.add('active');
-      mode = tab.dataset.mode;
-      inputLabel.textContent = mode === 'hourly' ? '시급 (세전)' : (mode === 'monthly' ? '월급 (세전)' : '연봉 (세전)');
-      mainInput.value = defaults[mode];
-      calc();
-    });
-  });
-
-  mainInput.addEventListener('input', calc);
-  hoursInput.addEventListener('input', calc);
-
-  calc();
+  document.querySelectorAll('.tab').forEach(function(tb){tb.addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});tb.classList.add('active');
+    mode=tb.dataset.mode; el('inputLabel').textContent=labels[mode]; el('mainInput').value=defaults[mode];
+    el('annualExtras').classList.toggle('hidden',mode!=='annual'); render();
+  });});
+  ['mainInput','weeklyInput','daysInput','holidayCheck','sevCheck','bonusInput'].forEach(function(id){el(id).addEventListener('input',render);el(id).addEventListener('change',render);});
+  render();
 })();
 </script>
 
-<footer style="width:100%;max-width:600px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
+<footer style="width:100%;max-width:640px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
   <div>IT 도구모음 · 모든 도구는 무료이며 입력값은 브라우저 안에서만 처리됩니다</div>
   <div style="margin-top:6px;">
     <a href="index.html" style="color:#7d8590;margin:0 8px;">전체 도구</a>
@@ -243,7 +311,6 @@
     <a href="contact.html" style="color:#7d8590;margin:0 8px;">문의하기</a>
   </div>
 </footer>
-
 <script>
 (function(){
   var COLORS = {green:'#39ff88', yellow:'#ffb454', red:'#ff5c5c'};
