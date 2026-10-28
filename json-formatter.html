@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="압축된 JSON을 보기 좋게 정렬(Format)하거나 한 줄로 압축(Minify)하고, 문법 오류 위치를 바로 확인할 수 있는 JSON 포맷터·검사기입니다.">
@@ -94,6 +92,7 @@
     font-size:12px;color:var(--sub);line-height:1.6;
   }
 </style>
+<style>.tblwrap{overflow-x:auto;margin:0 0 12px;} .infosection table{width:100%;border-collapse:collapse;font-size:12px;min-width:420px;} .infosection th,.infosection td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--text);} .infosection th{background:var(--panel);color:var(--sub);} .infosection code{background:var(--panel);padding:1px 6px;border-radius:4px;color:var(--accent);font-size:12px;}</style>
 </head>
 <body>
 <nav class="sitenav">
@@ -163,7 +162,27 @@
     <h2>JSON 오류가 나는 흔한 원인</h2>
     <p>이 도구는 브라우저 안에서만 동작하며, 입력한 JSON 데이터는 서버로 전송되지 않습니다. 다만 회사 업무 관련 민감한 데이터를 다루실 때는 사내 정책상 외부 웹사이트에 데이터를 붙여넣는 것 자체가 제한되는 경우가 있으니 미리 확인하시는 것이 안전합니다. 또한 매우 큰 용량의 JSON(수 MB 이상)을 붙여넣으면 브라우저 성능에 따라 처리 속도가 느려질 수 있습니다. JSON5나 JSONC처럼 주석이 포함된 확장 문법은 표준 JSON 파서로 처리할 수 없어 오류로 인식되니 참고해주세요.</p>
 
-    <h2>JSON 포맷팅 Q&A</h2>
+    <h2>JSON 문법 규칙 한눈에 보기</h2>
+<p>JSON은 자바스크립트 객체와 비슷해 보이지만 훨씬 엄격합니다. 아래 규칙 중 하나만 어겨도 파싱 오류가 납니다.</p>
+<ul>
+<li>키와 문자열은 반드시 <b>큰따옴표(")</b>로 감쌉니다. 작은따옴표는 허용되지 않습니다.</li>
+<li>배열과 객체의 <b>마지막 항목 뒤에 쉼표</b>를 붙이면 안 됩니다.</li>
+<li><b>주석</b>(// 또는 /* */)은 쓸 수 없습니다.</li>
+<li>값은 문자열, 숫자, true/false, null, 배열, 객체 여섯 가지뿐이며 <code>undefined</code>, <code>NaN</code>, <code>Infinity</code>, 함수는 담을 수 없습니다.</li>
+<li>숫자는 <code>07</code>처럼 앞에 0을 붙일 수 없습니다.</li>
+</ul>
+<h2>자주 보는 오류 메시지와 원인</h2>
+<div class="tblwrap"><table><tr><th>오류 메시지(브라우저마다 표현 다름)</th><th>흔한 원인</th></tr><tr><td>Unexpected token ' in JSON</td><td>문자열에 작은따옴표를 사용함</td></tr><tr><td>Unexpected token } 또는 ]</td><td>마지막 항목 뒤에 쉼표가 남아 있음</td></tr><tr><td>Unexpected end of JSON input</td><td>괄호·따옴표를 닫지 않았거나 입력이 비어 있음</td></tr><tr><td>Unexpected token &lt; in JSON at position 0</td><td>JSON이 아니라 HTML(오류·로그인 페이지)을 받음. API 주소와 응답 상태를 확인</td></tr><tr><td>Unexpected non-whitespace character after JSON</td><td>JSON 객체 여러 개가 줄바꿈으로 이어진 NDJSON 형식을 통째로 붙여넣음</td></tr></table></div>
+<h2>아주 큰 숫자는 정밀도를 잃을 수 있습니다</h2>
+<p>자바스크립트 숫자는 안전하게 표현할 수 있는 정수가 9,007,199,254,740,991(2<sup>53</sup>−1)까지입니다. 그보다 큰 정수는 파싱 과정에서 값이 바뀝니다. 예를 들어 <code>12345678901234567890</code>을 JSON으로 파싱하면 <code>12345678901234567000</code>으로 나옵니다. 데이터베이스의 큰 ID나 결제 번호를 숫자로 주고받는 API라면 이 계산기에서 값이 바뀌어 보일 수 있으므로, 서버에서 해당 값을 <b>문자열로 내려주도록</b> 설계하는 것이 안전합니다.</p>
+<h2>정렬과 압축은 언제 쓰나요</h2>
+<ul>
+<li><b>정렬(Format)</b>: API 응답을 읽거나 설정 파일을 수정할 때. 들여쓰기 2칸으로 구조가 보입니다.</li>
+<li><b>압축(Minify)</b>: 요청 본문을 보내거나 코드에 JSON 문자열을 넣을 때. 공백과 줄바꿈이 사라져 용량이 줄어듭니다.</li>
+</ul>
+<p>두 방식은 데이터 내용이 같고 표현만 다릅니다. 변환 전후 내용이 정말 같은지 확인하려면 <a href="diff-tool.html" style="color:var(--accent);">텍스트 비교기</a>에 두 결과를 넣어보세요.</p>
+<p>함께 쓰면 좋은 도구: <a href="diff-tool.html" style="color:var(--accent);">텍스트 비교기</a> · <a href="encode-tool.html" style="color:var(--accent);">Base64·URL 인코더</a> · <a href="timestamp-tool.html" style="color:var(--accent);">타임스탬프 변환기</a> · <a href="regex-tool.html" style="color:var(--accent);">정규식 테스터</a></p>
+<h2>JSON 포맷팅 Q&A</h2>
     <div class="faqitem">
       <div class="q">Q. "Unexpected token" 오류가 발생해요.</div>
       <div class="a">대부분 문자열에 작은따옴표(')를 사용했거나, 배열·객체의 마지막 항목 뒤에 불필요한 쉼표가 남아있는 경우입니다. JSON은 큰따옴표만 허용하며 마지막 쉼표를 허용하지 않습니다.</div>

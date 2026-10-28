@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="공백 포함·제외 글자 수, 단어 수, 문단 수를 실시간으로 세고 글자 수 제한까지 남은 분량을 표시합니다. 자소서·에세이 작성용 글자 수 세기.">
@@ -92,6 +90,7 @@
   }
   .clearbtn:active{transform:scale(0.97);}
 </style>
+<style>.tblwrap{overflow-x:auto;margin:0 0 12px;} .infosection table{width:100%;border-collapse:collapse;font-size:12px;min-width:420px;} .infosection th,.infosection td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--text);} .infosection th{background:var(--panel);color:var(--sub);} .infosection code{background:var(--panel);padding:1px 6px;border-radius:4px;color:var(--accent);font-size:12px;}</style>
 </head>
 <body>
 <nav class="sitenav">
@@ -145,6 +144,14 @@
       <div class="label">문단 수</div>
       <div class="value" id="paraCount">0</div>
     </div>
+    <div class="statcard">
+      <div class="label">바이트 (UTF-8)</div>
+      <div class="value" id="byteUtf8">0</div>
+    </div>
+    <div class="statcard">
+      <div class="label">바이트 (한글 2바이트 방식)</div>
+      <div class="value" id="byteEuc">0</div>
+    </div>
     <div class="statcard limit hidden" id="limitCard">
       <div class="label" id="limitLabel">남은 글자 수</div>
       <div class="value" id="limitValue">-</div>
@@ -172,7 +179,18 @@
     <h2>공백·줄바꿈 처리 기준 안내</h2>
     <p>지원하려는 곳의 기준이 공백 포함인지 제외인지 먼저 확인하는 것이 가장 중요합니다. 공고문이나 지원 양식에 명시되어 있는 경우가 많은데, 명시가 안 되어 있다면 대부분 공백 포함 기준인 경우가 많습니다. 특수문자나 이모지도 1글자로 계산된다는 점도 기억해두세요. 이 도구는 브라우저 안에서만 계산하며, 입력하신 내용은 어디로도 전송되지 않습니다. 글자 수를 딱 100%까지 채우기보다는 90% 선에서 마무리하시는 걸 추천합니다. 나중에 오탈자를 고치거나 표현을 다듬을 때 여유 공간이 있어야 수정이 훨씬 수월합니다.</p>
 
-    <h2>글자 수 세기 FAQ</h2>
+    <h2>글자 수와 바이트 수는 왜 다른가요</h2>
+<p>일부 시스템은 글자 수가 아니라 <b>바이트 수</b>로 입력 길이를 제한합니다. 영문·숫자·공백은 1바이트지만 한글은 방식에 따라 2바이트(EUC-KR 방식) 또는 3바이트(UTF-8)이고, 이모지는 UTF-8에서 4바이트입니다. 이 도구는 두 방식의 바이트 수를 함께 보여주므로 제한이 어느 쪽 기준인지 확인해 맞는 값을 보세요.</p>
+<div class="tblwrap"><table><tr><th>예시 문장</th><th>“안녕하세요 반갑습니다”</th></tr><tr><td>글자 수 (공백 포함)</td><td>11자</td></tr><tr><td>글자 수 (공백 제외)</td><td>10자</td></tr><tr><td>UTF-8 바이트</td><td>31바이트</td></tr><tr><td>한글 2바이트 방식</td><td>21바이트</td></tr></table></div>
+<h2>자기소개서를 제출 양식에 맞게 다듬는 순서</h2>
+<ol>
+<li>워드·한글 프로그램에서 쓴 글을 <b>메모장에 한 번 붙여넣어 서식을 제거</b>한 뒤 이 도구에 넣으세요. 숨은 서식이 글자 수 차이의 원인이 되기도 합니다.</li>
+<li>제출 시스템이 <b>공백 포함인지 제외인지, 글자 수인지 바이트 수인지</b> 공고문에서 먼저 확인하세요.</li>
+<li>줄바꿈을 많이 쓰면 시스템에 따라 한 번에 2글자(<code>\r\n</code>)로 세는 경우가 있으니, 제한에 가까울 때는 빈 줄을 줄여 보세요.</li>
+<li>최종본을 제출 사이트 입력창에 붙여넣은 뒤 그 사이트의 글자 수 표시와 한 번 더 비교하세요.</li>
+</ol>
+<p>함께 쓰면 좋은 도구: <a href="regex-tool.html" style="color:var(--accent);">정규식 테스터</a> · <a href="diff-tool.html" style="color:var(--accent);">텍스트 비교기</a> · <a href="qr-generator.html" style="color:var(--accent);">QR코드 생성기</a></p>
+<h2>글자 수 세기 FAQ</h2>
     <div class="faqitem">
       <div class="q">Q. 워드에서는 500자였는데 여기서는 다르게 나와요.</div>
       <div class="a">문단 사이 줄바꿈이 여러 번 들어간 경우, 각 줄바꿈이 별도 문자로 계산되어 차이가 발생할 수 있습니다. 불필요한 빈 줄을 정리한 뒤 다시 확인해보세요.</div>
@@ -213,6 +231,9 @@
     charNoSpaceCount.textContent = charsNoSpace.toLocaleString();
     wordCount.textContent = words.toLocaleString();
     paraCount.textContent = paras.toLocaleString();
+    document.getElementById('byteUtf8').textContent = new TextEncoder().encode(text).length.toLocaleString();
+    var euc = 0; for (var ci = 0; ci < text.length; ci++){ var cp = text.charCodeAt(ci); euc += cp < 128 ? 1 : (cp >= 0xD800 && cp <= 0xDBFF ? 2 : (cp >= 0xDC00 && cp <= 0xDFFF ? 0 : 2)); }
+    document.getElementById('byteEuc').textContent = euc.toLocaleString();
 
     var limit = parseInt(limitInput.value, 10);
     if (limit && limit > 0){

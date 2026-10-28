@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="Unix 타임스탬프와 날짜·시간을 서로 변환합니다. 초·밀리초 단위를 지원하며 로컬 시간과 UTC를 함께 보여줍니다.">
@@ -80,6 +78,7 @@
   .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
   .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
 </style>
+<style>.tblwrap{overflow-x:auto;margin:0 0 12px;} .infosection table{width:100%;border-collapse:collapse;font-size:12px;min-width:420px;} .infosection th,.infosection td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--text);} .infosection th{background:var(--panel);color:var(--sub);} .infosection code{background:var(--panel);padding:1px 6px;border-radius:4px;color:var(--accent);font-size:12px;}</style>
 </head>
 <body>
 <nav class="sitenav">
@@ -250,7 +249,17 @@
     <h2>초 단위·밀리초 단위 구분 주의점</h2>
     <p>타임스탬프 값이 10자리 정도면 초 단위, 13자리 정도면 밀리초 단위일 가능성이 높습니다. 단위를 잘못 선택하면 완전히 다른 연도로 계산될 수 있으니 자릿수를 먼저 확인해주세요. 이 도구는 브라우저의 로컬 시간대를 기준으로 날짜를 표시하며, UTC 값도 함께 제공하니 시간대 차이가 중요한 작업에서는 UTC 값을 활용하시길 권장합니다. 입력하신 값은 브라우저 안에서만 계산되며 서버로 전송되지 않습니다.</p>
 
-    <h2>타임스탬프 관련 질문</h2>
+    <h2>자주 보는 타임스탬프 예시 (초 단위)</h2>
+<div class="tblwrap"><table><tr><th>타임스탬프</th><th>UTC</th><th>한국(KST, UTC+9)</th></tr><tr><td>0</td><td>1970-01-01 00:00:00</td><td>1970-01-01 09:00:00</td></tr><tr><td>1,000,000,000</td><td>2001-09-09 01:46:40</td><td>2001-09-09 10:46:40</td></tr><tr><td>1,700,000,000</td><td>2023-11-14 22:13:20</td><td>2023-11-15 07:13:20</td></tr><tr><td>2,000,000,000</td><td>2033-05-18 03:33:20</td><td>2033-05-18 12:33:20</td></tr><tr><td>2,147,483,647</td><td>2038-01-19 03:14:07</td><td>2038-01-19 12:14:07</td></tr></table></div>
+<p>타임스탬프가 0인 1970년 1월 1일 00:00:00 UTC를 유닉스 시간의 시작(에포크)이라 부릅니다. 값 자체는 어느 시간대에서 보든 같고, 사람이 읽는 날짜로 바꿀 때만 시간대에 따라 달라집니다.</p>
+<h2>2038년 문제</h2>
+<p>초 단위 타임스탬프를 32비트 부호 있는 정수에 저장하면 표현할 수 있는 최댓값이 2,147,483,647이고, 이 값이 2038년 1월 19일 03:14:07 UTC입니다. 이 시점을 넘으면 오래된 시스템에서 값이 음수로 뒤집혀 1901년으로 인식되는 오류가 생길 수 있습니다. 64비트 정수를 쓰는 시스템은 사실상 문제가 없지만, 임베디드 장비나 오래된 데이터베이스 컬럼 타입은 점검이 필요합니다.</p>
+<h2>언어별로 현재 타임스탬프 얻는 방법</h2>
+<div class="tblwrap"><table><tr><th>환경</th><th>초 단위</th><th>밀리초 단위</th></tr><tr><td>JavaScript</td><td><code>Math.floor(Date.now()/1000)</code></td><td><code>Date.now()</code></td></tr><tr><td>Python</td><td><code>int(time.time())</code></td><td><code>int(time.time()*1000)</code></td></tr><tr><td>Java</td><td><code>Instant.now().getEpochSecond()</code></td><td><code>System.currentTimeMillis()</code></td></tr><tr><td>MySQL</td><td><code>UNIX_TIMESTAMP()</code></td><td>—</td></tr><tr><td>리눅스·맥 터미널</td><td><code>date +%s</code></td><td>—</td></tr></table></div>
+<h2>시간대를 헷갈리지 않으려면</h2>
+<p>서버와 로그는 보통 UTC로 기록하고 화면에 보여줄 때만 사용자의 시간대로 바꿉니다. 한국은 UTC보다 9시간 빠르고 서머타임이 없습니다. 날짜만 필요한 기능에서 시간대를 무시하고 타임스탬프를 자르면 자정 근처에서 하루씩 어긋나는 버그가 생기니, "어느 시간대의 자정인지"를 항상 명시하세요.</p>
+<p>함께 쓰면 좋은 도구: <a href="dday-tool.html" style="color:var(--accent);">D-Day 계산기</a> · <a href="json-formatter.html" style="color:var(--accent);">JSON 포맷터</a> · <a href="encode-tool.html" style="color:var(--accent);">Base64·URL 인코더</a></p>
+<h2>타임스탬프 관련 질문</h2>
     <div class="faqitem">
       <div class="q">Q. 타임스탬프가 1970년으로 계산돼요.</div>
       <div class="a">밀리초 단위 값을 초 단위로 잘못 선택했을 가능성이 높습니다. 자릿수를 확인하고 단위(초/밀리초)를 다시 선택해주세요.</div>
