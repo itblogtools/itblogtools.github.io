@@ -1,163 +1,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
   <url>
-    <loc>https://itblogtools.github.io/</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>1.0</priority>
+       <loc>https://itblogtools.github.io/</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>1.0000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/about.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.3</priority>
+       <loc>https://itblogtools.github.io/index.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/age-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/pc-game-check.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/alcohol-caffeine-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/typing-game.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/broker-fee-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/tap-master.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/cartax-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/zero-timer.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/char-counter.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/aim-trainer.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/contact.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.3</priority>
+       <loc>https://itblogtools.github.io/moving-eye-test.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/dday-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/memory-challenge.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/diff-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/password-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/encode-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/hash-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/filesize-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/encode-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/hash-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/json-formatter.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/inheritance-tax-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/regex-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/json-formatter.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/timestamp-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/loan-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/uuid-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/password-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/diff-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/pc-game-check.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/qr-generator.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/pension-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/char-counter.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/privacy.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.3</priority>
+       <loc>https://itblogtools.github.io/filesize-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/pyeong-price-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/age-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/qr-generator.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/salary-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/regex-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/dday-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/retirement-tax-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/severance-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/salary-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/retirement-tax-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/severance-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/pension-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/timestamp-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/cartax-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/unemployment-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/inheritance-tax-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/uuid-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/unemployment-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/wage-convert-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/wage-convert-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/weekly-holiday-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/weekly-holiday-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
   <url>
-    <loc>https://itblogtools.github.io/worldclock-tool.html</loc>
-    <lastmod>2026-10-26</lastmod>
-    <priority>0.8</priority>
+       <loc>https://itblogtools.github.io/loan-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/worldclock-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/broker-fee-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/pyeong-price-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/alcohol-caffeine-tool.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/kiosk-tool-v2.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/color-vision-test.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/color-sense-test.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/privacy.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/contact.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
+  </url>
+  <url>
+       <loc>https://itblogtools.github.io/about.html</loc>
+       <lastmod>2026-11-02T05:52:29+00:00</lastmod>
+       <priority>0.8000</priority>
   </url>
 </urlset>
