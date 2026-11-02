@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>세계 이름 타이핑 게임 | IT 도구모음</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .lbl{font-size:12px;color:var(--sub);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .chip.on{border-color:var(--accent);color:var(--accent);}
+  button{font-family:inherit;cursor:pointer;}
+  button.primary{background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;}
+  button.primary:active{transform:scale(0.98);}
+  button.ghost{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;}
+
+  .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .hud .c{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center;}
+  .hud .k{font-size:10px;color:var(--sub);}
+  .hud .v{font-size:16px;font-weight:700;color:var(--text);margin-top:2px;}
+  .hud .v.hot{color:var(--amber);}
+
+  .route{display:flex;align-items:center;padding:6px 4px 2px;}
+  .stop{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:var(--bg);flex-shrink:0;}
+  .stop.done{background:var(--accent);border-color:var(--accent);}
+  .stop.now{border-color:var(--amber);background:var(--amber);box-shadow:0 0 0 4px rgba(255,180,84,.18);}
+  .seg{flex:1;height:3px;background:var(--line);}
+  .seg.done{background:var(--accent);}
+
+  .stage{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:22px 12px 16px;text-align:center;}
+  .stage .cat{font-size:11px;color:var(--amber);}
+  .stage .word{font-size:34px;font-weight:700;color:var(--text);margin:8px 0 14px;word-break:keep-all;letter-spacing:.02em;min-height:46px;}
+  .stage .word .ok{color:var(--accent);}
+  .stage.shake{animation:shake .25s ease;border-color:var(--bad);}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-5px);}75%{transform:translateX(5px);}}
+  .tbar{height:8px;background:var(--panel);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .tfill{height:100%;width:100%;background:var(--accent);}
+  .tfill.warn{background:var(--amber);} .tfill.low{background:var(--bad);}
+  .msg{min-height:18px;font-size:12px;color:var(--sub);margin-top:10px;}
+  .msg.good{color:var(--accent);} .msg.bad{color:var(--bad);}
+
+  .inputrow{display:flex;gap:8px;}
+  .inputrow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:14px;font-size:18px;font-family:inherit;}
+  .inputrow input:focus{outline:none;border-color:var(--accent);}
+  .inputrow button{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:0 16px;font-size:13px;font-weight:700;}
+
+  .result{border-color:var(--accent);}
+  .result .ttl{font-size:18px;font-weight:700;color:var(--accent);}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+  .rcard .k{font-size:11px;color:var(--sub);} .rcard .v{font-size:16px;font-weight:700;margin-top:2px;}
+  .rcard .v.best{color:var(--amber);}
+  .missed{font-size:12px;color:var(--sub);line-height:1.8;}
+  .missed b{color:var(--bad);font-weight:700;}
+  .hidden{display:none !important;}
+
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;}
+  .minote{font-size:11px;color:var(--sub);line-height:1.6;}
+
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;}
+  footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> typing-game --run</div>
+  <h1>세계 이름 타이핑 게임</h1>
+  <p class="desc">나라, 도시, 음식, 생활용품 이름이 제한 시간 안에 계속 나와요. 정확하게 입력해서 목숨이 다 닳기 전까지 최대한 멀리 가보세요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>연습하고 싶은 <b>주제(나라·도시·음식·생활용품·전부 섞기)</b>를 고르고 '게임 시작'을 누르세요.</span></div>
+      <div class="step"><span class="num">2</span><span>화면에 나온 이름을 그대로 입력하고 <b>엔터(또는 제출 버튼)</b>를 누르면 다음 정거장으로 넘어가요.</span></div>
+      <div class="step"><span class="num">3</span><span>위쪽 막대가 다 줄기 전에 입력해야 해요. <b>시간을 넘기면 목숨이 1개</b> 줄어들고, 목숨은 처음에 3개예요.</span></div>
+      <div class="step"><span class="num">4</span><span>정거장 8개를 지나면 <b>다음 노선(레벨)</b>으로 올라가고 목숨이 1개 회복돼요. 레벨이 오를수록 제한 시간이 짧아져요.</span></div>
+      <div class="tip">💡 틀리게 입력하면 연속 성공(콤보)이 끊기지만 목숨은 줄지 않아요. 급할수록 정확하게 치는 쪽이 점수가 더 높아요.</div>
+    </div>
+  </details>
+
+  <div class="panel" id="setupBox">
+    <div class="lbl">주제 선택</div>
+    <div class="chips" id="catChips"></div>
+    <div class="lbl" id="bestLine"></div>
+    <button class="primary" id="startBtn">게임 시작</button>
+  </div>
+
+  <div class="panel hidden" id="playBox">
+    <div class="hud">
+      <div class="c"><div class="k">점수</div><div class="v" id="hScore">0</div></div>
+      <div class="c"><div class="k">노선(레벨)</div><div class="v" id="hLevel">1</div></div>
+      <div class="c"><div class="k">목숨</div><div class="v" id="hLives">♥♥♥</div></div>
+      <div class="c"><div class="k">콤보</div><div class="v hot" id="hCombo">0</div></div>
+    </div>
+    <div class="route" id="route"></div>
+    <div class="stage" id="stage">
+      <div class="cat" id="wCat"></div>
+      <div class="word" id="wWord"></div>
+      <div class="tbar"><div class="tfill" id="tFill"></div></div>
+      <div class="msg" id="msg"></div>
+    </div>
+    <div class="inputrow">
+      <input type="text" id="typeInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="여기에 입력하고 엔터">
+      <button id="submitBtn" type="button">제출</button>
+    </div>
+    <button class="ghost" id="quitBtn" type="button">그만하기</button>
+  </div>
+
+  <div class="panel result hidden" id="resultBox"></div>
+
+  <div class="minote">※ 결과와 기록은 재미로 즐기는 참고용이에요.</div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 재미로 즐기는 참고용 게임이에요. 단어 표기는 일반적으로 널리 쓰이는 표기를 기준으로 했고, 나라·도시 이름은 외래어 표기나 공식 명칭과 다를 수 있습니다. 최고 기록은 이 브라우저에만 저장되며 서버로 전송되지 않습니다.
+  </div>
+
+  <div class="infosection">
+    <h2>정거장을 지나듯 이름을 하나씩 치는 게임</h2>
+    <p>세계 이름 타이핑 게임은 나라, 세계 도시, 음식, 생활용품 이름이 하나씩 나타나면 제한 시간 안에 똑같이 입력하는 게임이에요. 지하철 노선도처럼 정거장 8개를 지날 때마다 레벨이 오르고, 레벨이 높아질수록 제한 시간이 줄어듭니다. 목숨이 다 없어질 때까지 몇 개나 맞혔는지, 어떤 단어에서 놓쳤는지까지 마지막에 정리해서 보여줘요. 한 판은 보통 2~4분이라 짧게 쉬어가기에도, 길게 기록에 도전하기에도 잘 맞아요.</p>
+
+    <h2>만든 이유: 타자 연습은 지루한데 단어는 외워지길 바랐어요</h2>
+    <p>일반 타자 연습은 같은 문장을 반복하다 보면 10분을 넘기기 어렵습니다. 반대로 "남아프리카공화국"이나 "아르헨티나"처럼 길고 헷갈리는 이름은 직접 손으로 쳐봐야 철자가 오래 남아요. 그래서 재미 요소(목숨, 콤보, 레벨업)를 넣어서 한 번 시작하면 20~30개 단어를 자연스럽게 치게 되도록 만들었어요. 같은 주제를 반복해서 하다 보면 처음엔 3초 걸리던 단어가 1초 안에 나오는 걸 직접 느낄 수 있습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>일하다 잠깐 쉬면서 3분 정도 가볍게 타이핑 감각을 깨우고 싶을 때</li>
+      <li>아이와 함께 세계 나라와 도시 이름을 재미있게 익히고 싶을 때</li>
+      <li>한글 타자가 느려서 속도를 올리고 싶지만 일반 연습은 금방 질릴 때</li>
+      <li>음식이나 생활용품 이름을 정확한 맞춤법으로 쳐보며 헷갈리는 표기를 확인하고 싶을 때</li>
+      <li>친구와 최고 점수와 도달 레벨로 가볍게 내기를 하고 싶을 때</li>
+    </ul>
+
+    <h2>사용할 때 주의할 점</h2>
+    <p>한글 입력은 마지막 글자가 조합 중일 때 바로 인식되지 않을 수 있어서, 다 친 뒤에 엔터나 제출 버튼을 눌러주는 방식이 가장 정확해요. 모바일에서는 키보드 자동완성이 단어를 바꿔 넣을 수 있으니, 필요하면 자동완성을 꺼두세요. 띄어쓰기는 단어에 들어 있지 않아서 신경 쓰지 않아도 됩니다. 최고 기록은 이 브라우저에만 저장되기 때문에 다른 기기나 시크릿 모드에서는 따로 기록돼요. 눈이 피로하거나 손목이 불편하면 중간에 쉬어가며 즐겨주세요.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 맞게 쳤는데 다음으로 안 넘어가요.</div>
+      <div class="a">마지막 글자가 조합 중이면 아직 확정되지 않았을 수 있어요. 엔터나 '제출' 버튼을 누르면 바로 확인됩니다. 그래도 안 넘어가면 맞춤법이나 받침이 다른지 단어를 한 번 더 확인해보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 틀리면 목숨이 줄어드나요?</div>
+      <div class="a">아니요. 틀려도 목숨은 그대로이고 콤보만 끊겨요. 제한 시간 안에 입력하지 못했을 때만 목숨이 1개씩 줄어들어요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 기록은 어디에 저장되나요?</div>
+      <div class="a">이 브라우저 안에만 저장되고 서버로 전송되지 않아요. 사이트 데이터를 지우거나 다른 기기에서 접속하면 기록이 사라지거나 따로 쌓입니다.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="index.html">전체 도구</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var WORDS = {
+    country:['대한민국','일본','중국','미국','캐나다','브라질','아르헨티나','이탈리아','프랑스','독일','스페인','포르투갈','영국','네덜란드','스위스','스웨덴','노르웨이','핀란드','덴마크','그리스','터키','이집트','남아프리카공화국','케냐','모로코','인도','태국','베트남','인도네시아','필리핀','말레이시아','싱가포르','몽골','호주','뉴질랜드','멕시코','페루','칠레','콜롬비아','쿠바','사우디아라비아','이란','우크라이나','폴란드','헝가리','체코','오스트리아','아이슬란드'],
+    city:['파리','런던','뉴욕','도쿄','베이징','상하이','방콕','하노이','로마','베를린','마드리드','바르셀로나','암스테르담','프라하','부다페스트','리스본','이스탄불','카이로','시드니','멜버른','토론토','밴쿠버','샌프란시스코','로스앤젤레스','시카고','두바이','홍콩','타이베이','오사카','교토','모스크바','부에노스아이레스','리우데자네이루','멕시코시티','나이로비','뮌헨','밀라노','제네바','코펜하겐','스톡홀름'],
+    food:['김치찌개','된장찌개','비빔밥','불고기','삼겹살','떡볶이','순대','김밥','냉면','칼국수','짜장면','짬뽕','탕수육','초밥','라멘','우동','돈가스','피자','파스타','햄버거','스테이크','샐러드','타코','부리토','쌀국수','팟타이','카레','크루아상','티라미수','마카롱','아이스크림','와플','호떡','붕어빵','약과','김치볶음밥','오므라이스','샌드위치','감자튀김','닭갈비','족발','보쌈','곱창','갈비탕','설렁탕','잔치국수','수제비'],
+    item:['텔레비전','냉장고','세탁기','청소기','전자레인지','선풍기','에어컨','주전자','프라이팬','도마','칫솔','치약','수건','샴푸','비누','우산','열쇠','지갑','안경','손목시계','충전기','이어폰','노트북','마우스','키보드','가위','테이프','연필','지우개','공책','형광펜','책상','의자','침대','이불','베개','커튼','거울','쓰레기통','휴지','건전지','손전등','달력','리모컨','보조배터리','멀티탭']
+  };
+  var CATS = [['country','나라'],['city','세계 도시'],['food','음식'],['item','생활용품'],['all','전부 섞기']];
+  var CATNAME = {country:'나라',city:'세계 도시',food:'음식',item:'생활용품'};
+  var STOPS = 8, MAXLIVES = 5;
+  var KEY = 'typing-game-best-v1';
+
+  var $ = function(id){ return document.getElementById(id); };
+  var chosen = 'country', g = null, timer = null;
+
+  function loadBest(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+  function saveBest(b){ try{ localStorage.setItem(KEY, JSON.stringify(b)); }catch(e){} }
+
+  function drawChips(){
+    $('catChips').innerHTML = CATS.map(function(c){ return '<button type="button" class="chip' + (c[0] === chosen ? ' on' : '') + '" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('');
+    var b = loadBest()[chosen];
+    $('bestLine').textContent = b ? ('내 최고 기록: ' + b.score.toLocaleString() + '점 · ' + b.level + '노선') : '아직 기록이 없어요. 첫 기록에 도전해보세요!';
+  }
+  $('catChips').addEventListener('click', function(e){
+    var c = e.target.getAttribute('data-c'); if (!c) return;
+    chosen = c; drawChips();
+  });
+
+  function buildDeck(){
+    var list = [];
+    if (g.cat === 'all'){ Object.keys(WORDS).forEach(function(k){ WORDS[k].forEach(function(w){ list.push({w:w, c:k}); }); }); }
+    else WORDS[g.cat].forEach(function(w){ list.push({w:w, c:g.cat}); });
+    for (var i = list.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = list[i]; list[i] = list[j]; list[j] = t; }
+    return list;
+  }
+  function nextCard(){
+    if (!g.deck.length) g.deck = buildDeck();
+    return g.deck.pop();
+  }
+  function timeFor(word, level){
+    var base = 2.2 + word.length * 0.8;
+    var factor = Math.max(0.5, 1 - (level - 1) * 0.07);
+    return base * factor;
+  }
+
+  function start(){
+    g = {cat:chosen, level:1, stop:0, score:0, lives:3, combo:0, maxCombo:0, deck:[], cur:null, tTotal:1, tLeft:1, ok:0, tries:0, typed:0, missed:[], running:true, last:0};
+    g.deck = buildDeck();
+    $('setupBox').classList.add('hidden');
+    $('resultBox').classList.add('hidden');
+    $('playBox').classList.remove('hidden');
+    drawRoute(); newWord(); hud();
+    $('typeInput').value = ''; $('typeInput').focus();
+    g.last = Date.now();
+    clearInterval(timer); timer = setInterval(tick, 50);
+  }
+
+  function hud(){
+    $('hScore').textContent = g.score.toLocaleString();
+    $('hLevel').textContent = g.level;
+    var h = ''; for (var i = 0; i < g.lives; i++) h += '♥';
+    $('hLives').textContent = h || '-';
+    $('hCombo').textContent = g.combo;
+  }
+  function drawRoute(){
+    var h = '';
+    for (var i = 0; i < STOPS; i++){
+      var cls = i < g.stop ? 'done' : (i === g.stop ? 'now' : '');
+      h += '<span class="stop ' + cls + '"></span>';
+      if (i < STOPS - 1) h += '<span class="seg' + (i < g.stop ? ' done' : '') + '"></span>';
+    }
+    $('route').innerHTML = h;
+  }
+  function newWord(){
+    g.cur = nextCard();
+    g.tTotal = timeFor(g.cur.w, g.level);
+    g.tLeft = g.tTotal;
+    $('wCat').textContent = CATNAME[g.cur.c];
+    $('wWord').textContent = g.cur.w;
+    $('tFill').style.width = '100%';
+    $('tFill').className = 'tfill';
+  }
+  function say(t, cls){ var m = $('msg'); m.textContent = t; m.className = 'msg ' + (cls || ''); }
+  function shake(){ var s = $('stage'); s.classList.remove('shake'); void s.offsetWidth; s.classList.add('shake'); setTimeout(function(){ s.classList.remove('shake'); }, 260); }
+
+  function tick(){
+    if (!g || !g.running) return;
+    var now = Date.now(); var dt = (now - g.last) / 1000; g.last = now;
+    g.tLeft -= dt;
+    var p = Math.max(0, g.tLeft / g.tTotal);
+    var f = $('tFill'); f.style.width = (p * 100) + '%';
+    f.className = 'tfill' + (p < 0.25 ? ' low' : (p < 0.5 ? ' warn' : ''));
+    if (g.tLeft <= 0) timeout();
+  }
+  function timeout(){
+    g.missed.push(g.cur);
+    g.lives--; g.combo = 0;
+    shake(); say('시간 초과! 정답은 "' + g.cur.w + '"', 'bad');
+    hud();
+    if (g.lives <= 0){ end(); return; }
+    newWord(); $('typeInput').value = '';
+  }
+
+  function submit(){
+    if (!g || !g.running) return;
+    var v = $('typeInput').value.replace(/\s/g, '');
+    if (!v) return;
+    g.tries++;
+    if (v === g.cur.w){
+      g.ok++; g.typed += g.cur.w.length; g.combo++;
+      if (g.combo > g.maxCombo) g.maxCombo = g.combo;
+      var gain = 100 + g.cur.w.length * 10 + Math.round(Math.max(0, g.tLeft) * 10) + g.combo * 5;
+      g.score += gain;
+      say('+' + gain + '점', 'good');
+      g.stop++;
+      if (g.stop >= STOPS){
+        g.stop = 0; g.level++;
+        if (g.lives < MAXLIVES) g.lives++;
+        say('노선 ' + g.level + ' 진입! 제한 시간이 더 짧아져요', 'good');
+      }
+      drawRoute(); hud(); newWord();
+    } else {
+      g.combo = 0; shake(); say('다시 확인해보세요 (입력: ' + v + ')', 'bad'); hud();
+    }
+    $('typeInput').value = '';
+  }
+
+  function end(){
+    g.running = false; clearInterval(timer);
+    var b = loadBest(), prev = b[g.cat];
+    var isBest = !prev || g.score > prev.score;
+    if (isBest){ b[g.cat] = {score:g.score, level:g.level}; saveBest(b); }
+    var acc = g.tries ? Math.round(g.ok / g.tries * 100) : 0;
+    var seen = {}, miss = g.missed.filter(function(m){ if (seen[m.w]) return false; seen[m.w] = 1; return true; });
+    $('playBox').classList.add('hidden');
+    var r = $('resultBox'); r.classList.remove('hidden');
+    r.innerHTML = '<div class="ttl">' + (isBest ? '🏆 새 최고 기록!' : '게임 종료') + '</div>' +
+      '<div class="rgrid">' +
+      '<div class="rcard"><div class="k">점수</div><div class="v' + (isBest ? ' best' : '') + '">' + g.score.toLocaleString() + '</div></div>' +
+      '<div class="rcard"><div class="k">도달 노선</div><div class="v">' + g.level + '</div></div>' +
+      '<div class="rcard"><div class="k">맞힌 단어</div><div class="v">' + g.ok + '개</div></div>' +
+      '<div class="rcard"><div class="k">정확도 / 최고 콤보</div><div class="v">' + acc + '% / ' + g.maxCombo + '</div></div></div>' +
+      (miss.length ? '<div class="missed">놓친 단어: ' + miss.map(function(m){ return '<b>' + m.w + '</b>'; }).join(', ') + '<br>한 번씩 눈에 익혀두면 다음엔 더 빨라요.</div>' : '') +
+      '<button class="primary" id="againBtn" type="button">같은 주제로 다시 하기</button>' +
+      '<button class="ghost" id="menuBtn" type="button">주제 바꾸기</button>';
+    $('againBtn').addEventListener('click', start);
+    $('menuBtn').addEventListener('click', function(){ r.classList.add('hidden'); $('setupBox').classList.remove('hidden'); drawChips(); });
+  }
+
+  $('startBtn').addEventListener('click', start);
+  $('submitBtn').addEventListener('click', function(){ submit(); $('typeInput').focus(); });
+  $('quitBtn').addEventListener('click', function(){ if (g && g.running) end(); });
+  var inp = $('typeInput');
+  inp.addEventListener('keyup', function(e){ if (e.key === 'Enter') submit(); });
+  inp.addEventListener('input', function(e){
+    if (!e.isComposing && g && g.running && inp.value.replace(/\s/g, '') === g.cur.w) submit();
+  });
+  inp.addEventListener('compositionend', function(){
+    if (g && g.running && inp.value.replace(/\s/g, '') === g.cur.w) submit();
+  });
+  drawChips();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>숫자의 신 암기 테스트 – 숫자·원소 기호 기억력 챌린지 | IT 도구모음</title>
+<meta name="description" content="잠깐 보여주는 숫자와 주기율표 1~20번 원소 기호를 기억해 입력하는 기억력 챌린지. 몇 자리까지 외울 수 있는지 재미있게 확인하세요.">
+<style>
+  :root{--bg:#0d1117;--panel:#151b23;--line:#2b3440;--text:#e6edf3;--sub:#7d8590;--accent:#39ff88;--accent-dim:#1e7a4c;--bad:#ff5c5c;--amber:#ffb454;--dark:#04140b;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .lbl{font-size:12px;color:var(--sub);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .chip.on{border-color:var(--accent);color:var(--accent);}
+  button{font-family:inherit;cursor:pointer;}
+  button.primary{background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;}
+  button.primary:active{transform:scale(.98);}
+  button.ghost{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;}
+  .hud{display:grid;gap:8px;}
+  .hud .c{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center;}
+  .hud .k{font-size:10px;color:var(--sub);} .hud .v{font-size:15px;font-weight:700;margin-top:2px;}
+  .hud .v.hot{color:var(--amber);}
+  .fb{min-height:18px;font-size:12px;text-align:center;color:var(--sub);}
+  .fb.bad{color:var(--bad);} .fb.good{color:var(--accent);}
+  .result{border-color:var(--accent);}
+  .result .ttl{font-size:13px;color:var(--sub);text-align:center;}
+  .result .big{font-size:34px;font-weight:700;color:var(--accent);text-align:center;margin:2px 0;}
+  .result .tier{font-size:16px;font-weight:700;text-align:center;color:var(--amber);}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+  .rcard .k{font-size:11px;color:var(--sub);} .rcard .v{font-size:16px;font-weight:700;margin-top:2px;}
+  .note{font-size:12px;line-height:1.7;color:var(--sub);}
+  .log{font-size:12px;color:var(--sub);line-height:1.8;}
+  .hidden{display:none !important;}
+  .minote{font-size:11px;color:var(--sub);line-height:1.6;}
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;}
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;} footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .seq{background:var(--bg);border:1px solid var(--line);border-radius:10px;min-height:96px;display:flex;align-items:center;justify-content:center;font-size:34px;letter-spacing:6px;font-weight:700;color:var(--accent);text-align:center;word-break:break-all;padding:10px;}
+  .seq.dim{color:var(--sub);font-size:15px;letter-spacing:0;font-weight:500;}
+  .inrow{display:flex;gap:8px;}
+  .inrow input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:14px;font-size:20px;font-family:inherit;letter-spacing:4px;text-align:center;}
+  .inrow input:focus{outline:none;border-color:var(--accent);}
+  .inrow button{background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);border-radius:8px;padding:0 18px;font-size:14px;font-weight:700;}
+  .pal{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+  .pal button{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 0;font-size:16px;font-weight:700;font-family:inherit;}
+  .pal button small{display:block;font-size:9px;color:var(--sub);font-weight:400;}
+  .pal button:disabled{opacity:.35;}
+  .ans{min-height:40px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;font-size:18px;font-weight:700;color:var(--amber);}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> memory-challenge --run</div>
+  <h1>숫자의 신 암기 테스트</h1>
+  <p class="desc">잠깐 보여주는 숫자나 주기율표 1~20번 원소 기호를 기억했다가 입력하세요. 성공할 때마다 하나씩 늘어나요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>모드(숫자 암기·원소 기호 암기)</b>를 고르고 시작 버튼을 누르세요.</span></div>
+      <div class="step"><span class="num">2</span><span>화면에 <b>숫자나 원소 기호가 잠깐 나타나요</b>. 사라지기 전에 최대한 기억하세요.</span></div>
+      <div class="step"><span class="num">3</span><span>숫자는 <b>입력칸에 입력</b>, 원소는 <b>순서대로 눌러서</b> 답하세요. 성공하면 하나씩 늘어나요.</span></div>
+      <div class="step"><span class="num">4</span><span><b>목숨 3개</b>가 다하면 끝나요. 성공한 최대 길이와 등급을 알려드려요.</span></div>
+      <div class="tip">💡 숫자는 2~3자리씩 묶어서 외우면 훨씬 오래 기억돼요.</div>
+    </div>
+  </details>
+
+  <div class="panel" id="menuBox">
+    <div class="lbl">모드</div>
+    <div class="chips" id="chips"></div>
+    <div class="note" id="lvNote"></div>
+    <button class="primary" id="startBtn">챌린지 시작</button>
+    <div class="lbl">내 최고 기록</div>
+    <div class="log" id="logBox"></div>
+  </div>
+
+  <div class="panel hidden" id="playBox">
+    <div class="hud" style="grid-template-columns:repeat(3,1fr);">
+      <div class="c"><div class="k" id="k1">자릿수</div><div class="v hot" id="h1">3</div></div>
+      <div class="c"><div class="k">목숨</div><div class="v" id="h2">♥♥♥</div></div>
+      <div class="c"><div class="k">최고 클리어</div><div class="v" id="h3">-</div></div>
+    </div>
+    <div class="seq dim" id="seq">준비하세요</div>
+    <div class="inrow hidden" id="inrow"><input id="inp" type="text" inputmode="numeric" autocomplete="off" placeholder="기억한 숫자 입력"><button id="okBtn" type="button">확인</button></div>
+    <div class="ans hidden" id="ans"></div>
+    <div class="pal hidden" id="pal"></div>
+    <div class="fb" id="fb"></div>
+    <button class="ghost" id="quitBtn" type="button">그만하기</button>
+  </div>
+
+  <div class="panel result hidden" id="resultBox"></div>
+
+  <div class="minote">※ 결과는 재미로 즐기는 참고용이에요.</div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 재미로 즐기는 참고용 게임이에요. 기억력·인지 능력을 의학적으로 평가하지 않고, 등급은 이 도구가 임의로 정한 가상의 기준이에요. 기기·마우스·화면 주사율·브라우저 상태에 따라 결과가 달라질 수 있고, 의학적 평가나 진단이 아니에요. 기록은 이 브라우저 안에만 저장되고 서버로 전송되지 않아요.
+  </div>
+
+  <div class="infosection">
+    <h2>잠깐 본 숫자와 원소 기호를 얼마나 기억할 수 있을까</h2>
+    <p>숫자의 신 암기 테스트는 잠깐 보여주는 숫자나 원소 기호를 기억했다가 그대로 입력하는 기억력 게임이에요. 숫자 모드는 3자리에서 시작해 성공할 때마다 한 자리씩 늘어나고, 원소 모드는 주기율표 1~20번 원소 기호가 무작위 순서로 나타나서 기억한 순서대로 골라야 해요. 목숨 3개가 다할 때까지 몇 자리, 몇 개까지 성공하는지가 기록으로 남아요.</p>
+    <h2>만든 이유: 암기 실력이 늘어나는 걸 눈으로 보고 싶어서</h2>
+    <p>전화번호나 비밀번호, 시험 공부에서 숫자와 기호를 외우는 일은 누구에게나 필요해요. 하지만 내 단기 기억이 어느 정도인지, 연습하면 정말 늘어나는지는 확인하기 어려워요. 한 판이 2~3분이면 끝나는 챌린지로 만들어 며칠 동안 반복하면서 기록이 올라가는 걸 보도록 했어요. 원소 기호 모드는 학생들이 주기율표 앞부분을 놀이처럼 익힐 수 있도록 넣었고, 원소 이름과 번호가 함께 보여서 외우는 데 도움이 돼요.</p>
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>쉬는 시간에 짧게 집중력과 기억력을 써보고 싶을 때</li>
+      <li>화학 수업이나 시험 준비로 주기율표 1~20번 원소 기호를 놀이처럼 익히고 싶을 때</li>
+      <li>친구와 숫자 몇 자리까지 외웠는지 겨뤄보고 싶을 때</li>
+      <li>숫자를 묶어서 외우는 방법을 써보고 그 전후 기록을 비교하고 싶을 때</li>
+    </ul>
+    <h2>기억을 오래 붙잡는 요령</h2>
+    <p>숫자는 한 자리씩 외우기보다 2~3자리씩 묶고, 묶음마다 나이나 날짜처럼 의미를 붙이면 훨씬 오래 남아요. 소리 내어 읽는 것처럼 마음속으로 리듬을 붙여 읽는 방법도 효과적이에요. 원소 기호는 번호, 이름, 기호를 한 세트로 떠올리면(6번 탄소 C) 순서를 기억하기 쉬워요. 보여주는 시간이 끝나기 전에 마음속으로 한 번 반복하고, 틀렸을 때는 어디서 헷갈렸는지 정답과 비교해보세요. 졸리거나 피곤할 때는 기록이 크게 떨어지니 컨디션이 좋을 때 해보세요.</p>
+    <h2>기록을 볼 때 알아둘 점</h2>
+    <p>이 테스트는 재미로 즐기는 단기 기억 게임이고, 기억력이나 인지 능력을 의학적으로 평가하지 않아요. 졸림, 소음, 피로에 따라 결과가 크게 달라지는 게 정상이에요. 등급은 이 도구가 임의로 정한 가상의 구간이고 실제 평균과는 달라요. 원소 기호는 1~20번만 쓰며, 기록은 이 브라우저에만 저장돼요. 기억력 저하가 걱정된다면 이 게임이 아니라 의료기관의 상담을 받으세요.</p>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 숫자를 보여주는 시간이 너무 짧아요.</div><div class="a">자릿수가 늘어날수록 보여주는 시간도 함께 늘어나지만 한 자리당 약 0.45초라서 빠르게 느껴질 수 있어요. 2~3자리씩 묶어서 보면 훨씬 쉬워요.</div></div>
+    <div class="faqitem"><div class="q">Q. 원소 기호는 왜 1~20번만 나오나요?</div><div class="a">처음 외우기 좋은 구간이라 1~20번(수소~칼슘)만 넣었어요. 알려드린 원소 이름과 번호는 주기율표와 같은 순서예요.</div></div>
+    <div class="faqitem"><div class="q">Q. 기록은 어디에 저장되나요?</div><div class="a">이 브라우저에만 저장되고 서버로 전송되지 않아요. 사이트 데이터를 지우면 기록도 사라져요.</div></div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="index.html">전체 도구</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+var KEY = 'memory-challenge-v1';
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function showPanel(id){ ['menuBox','playBox','resultBox'].forEach(function(x){ $(x).classList.toggle('hidden', x !== id); }); }
+function renderResult(o){
+  var h = '<div class="ttl">' + o.title + '</div><div class="big">' + o.big + '</div>' + (o.tier ? '<div class="tier">' + o.tier + '</div>' : '') +
+    '<div class="rgrid">' + o.stats.map(function(s){ return '<div class="rcard"><div class="k">' + s[0] + '</div><div class="v">' + s[1] + '</div></div>'; }).join('') + '</div>' +
+    (o.extra || '') + '<div class="note">' + o.note + '</div>' +
+    '<button class="primary" id="againBtn" type="button">다시 도전</button><button class="ghost" id="copyBtn" type="button">결과 문구 복사</button><button class="ghost" id="menuBtn" type="button">설정 바꾸기</button>' +
+    '<div class="minote">※ 재미로 즐기는 참고용 결과예요.</div>';
+  $('resultBox').innerHTML = h; showPanel('resultBox');
+  $('againBtn').onclick = o.again;
+  $('menuBtn').onclick = function(){ showPanel('menuBox'); if(window.__menu) window.__menu(); };
+  $('copyBtn').onclick = function(){ if(navigator.clipboard) navigator.clipboard.writeText(o.share + ' https://itblogtools.github.io/memory-challenge.html').then(function(){ $('copyBtn').textContent = '복사됨!'; }); };
+}
+
+var EL = [['H','수소'],['He','헬륨'],['Li','리튬'],['Be','베릴륨'],['B','붕소'],['C','탄소'],['N','질소'],['O','산소'],['F','플루오린'],['Ne','네온'],['Na','나트륨'],['Mg','마그네슘'],['Al','알루미늄'],['Si','규소'],['P','인'],['S','황'],['Cl','염소'],['Ar','아르곤'],['K','칼륨'],['Ca','칼슘']];
+var MODES = {digit:{n:'숫자 암기', d:'잠깐 보여주는 숫자를 기억해 입력해요. 성공할 때마다 한 자리씩 늘어나요.'},
+             elem:{n:'원소 기호 암기 (1~20번)', d:'주기율표 1~20번 원소 기호가 순서대로 나타나요. 기억한 순서대로 골라요.'}};
+var pick = 'digit', g = null;
+var DT = [[4,'🌱 워밍업'],[6,'🙂 평균 근처'],[8,'👍 평균 이상'],[10,'🧠 좋은 기억력'],[13,'✨ 암기 고수'],[1e9,'🏆 숫자의 신']];
+var ET = [[4,'🌱 워밍업'],[5,'🙂 평균 근처'],[6,'👍 평균 이상'],[7,'🧠 좋은 기억력'],[8,'✨ 암기 고수'],[1e9,'🏆 주기율표의 신']];
+function tierOf(t, v){ for(var i = 0; i < t.length; i++){ if(v <= t[i][0]) return t[i][1]; } return t[t.length - 1][1]; }
+function drawMenu(){
+  $('chips').innerHTML = Object.keys(MODES).map(function(k){ return '<button type="button" class="chip' + (k === pick ? ' on' : '') + '" data-k="' + k + '">' + MODES[k].n + '</button>'; }).join('');
+  $('lvNote').textContent = MODES[pick].d;
+  var b = load().best || {};
+  $('logBox').innerHTML = '숫자 암기: ' + (b.digit ? b.digit + '자리' : '-') + '<br>원소 기호: ' + (b.elem ? b.elem + '개' : '-');
+}
+window.__menu = drawMenu;
+$('chips').onclick = function(e){ var k = e.target.getAttribute('data-k'); if(k){ pick = k; drawMenu(); } };
+function hide(id, on){ $(id).classList.toggle('hidden', !!on); }
+function hud(){ $('h1').textContent = g.n; var h = ''; for(var i = 0; i < g.lives; i++) h += '♥'; $('h2').textContent = h || '-'; $('h3').textContent = g.cleared ? g.cleared : '-'; }
+function begin(){
+  g = {mode:pick, n:3, lives:3, cleared:0, done:false, t0:Date.now(), seq:null, input:[], ready:false};
+  $('k1').textContent = pick === 'digit' ? '자릿수' : '원소 개수';
+  showPanel('playBox'); $('fb').textContent = ''; hud(); round();
+}
+function round(){
+  if(!g || g.done) return;
+  hide('inrow', true); hide('pal', true); hide('ans', true); g.ready = false; $('fb').textContent = '';
+  var s = $('seq'); s.className = 'seq dim'; s.textContent = '준비… 곧 나타나요';
+  setTimeout(function(){
+    if(!g || g.done) return;
+    if(g.mode === 'digit'){
+      var str = ''; for(var i = 0; i < g.n; i++) str += (i === 0 ? 1 + rnd(9) : rnd(10)); g.seq = str;
+      s.className = 'seq'; s.textContent = str;
+      setTimeout(function(){ if(!g || g.done) return; s.className = 'seq dim'; s.textContent = '방금 본 숫자를 입력하세요'; hide('inrow', false); $('inp').value = ''; $('inp').focus(); g.ready = true; }, 800 + g.n * 450);
+    } else {
+      var idx = shuffle(EL.map(function(x, i){ return i; })).slice(0, g.n); g.seq = idx; g.input = [];
+      s.className = 'seq'; s.style.fontSize = g.n > 7 ? '24px' : '34px'; s.textContent = idx.map(function(i){ return EL[i][0]; }).join('  ');
+      setTimeout(function(){ if(!g || g.done) return; s.className = 'seq dim'; s.style.fontSize = ''; s.textContent = '순서대로 ' + g.n + '개를 골라주세요'; drawPal(); hide('pal', false); hide('ans', false); g.ready = true; }, 1000 + g.n * 700);
+    }
+  }, 800);
+}
+function drawPal(){
+  $('pal').innerHTML = EL.map(function(x, i){ return '<button type="button" data-i="' + i + '"' + (g.input.indexOf(i) >= 0 ? ' disabled' : '') + '>' + x[0] + '<small>' + (i + 1) + '번</small></button>'; }).join('');
+  $('ans').innerHTML = g.input.map(function(i){ return '<span>' + EL[i][0] + '</span>'; }).join('') || '<span style="color:var(--sub);font-weight:400;font-size:12px;">여기에 선택한 순서가 나와요</span>';
+}
+$('pal').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b || !g || !g.ready || g.mode !== 'elem' || b.disabled) return;
+  g.input.push(Number(b.getAttribute('data-i'))); drawPal();
+  if(g.input.length === g.n){ g.ready = false; judge(g.input.join(',') === g.seq.join(',')); }
+});
+function submitDigit(){ if(!g || !g.ready || g.mode !== 'digit') return; var v = $('inp').value.replace(/\s/g, ''); if(!v) return; g.ready = false; judge(v === g.seq); }
+$('okBtn').onclick = submitDigit;
+$('inp').addEventListener('keydown', function(e){ if(e.key === 'Enter') submitDigit(); });
+function judge(ok){
+  var ans = g.mode === 'digit' ? g.seq : g.seq.map(function(i){ return EL[i][0]; }).join(' → ');
+  if(ok){ g.cleared = g.n; g.n++; $('fb').textContent = '정답!'; $('fb').className = 'fb good'; hud(); if(g.mode === 'elem' && g.n > 10){ finish(); return; } if(g.mode === 'digit' && g.n > 20){ finish(); return; } setTimeout(round, 900); }
+  else { g.lives--; $('fb').textContent = '아쉬워요. 정답은 ' + ans; $('fb').className = 'fb bad'; hud(); if(g.lives <= 0){ setTimeout(finish, 1500); return; } setTimeout(round, 1800); }
+}
+$('quitBtn').onclick = function(){ if(g && !g.done) finish(); };
+function finish(){
+  g.done = true; var d = load(); d.best = d.best || {}; var key = g.mode;
+  var isBest = g.cleared > (d.best[key] || 0); if(isBest){ d.best[key] = g.cleared; save(d); }
+  var t = g.cleared ? tierOf(g.mode === 'digit' ? DT : ET, g.cleared) : '🌱 다음엔 꼭 해낼 수 있어요';
+  var unit = g.mode === 'digit' ? '자리' : '개';
+  renderResult({title: MODES[g.mode].n + ' 결과' + (isBest ? ' 🏆 최고 기록!' : ''), big: g.cleared ? g.cleared + unit : '-', tier: t,
+    stats: [['성공한 최대 길이', g.cleared ? g.cleared + unit : '-'], ['남은 목숨', String(g.lives)], ['걸린 시간', Math.round((Date.now() - g.t0) / 1000) + '초'], ['내 최고 기록', (d.best[key] || '-') + (d.best[key] ? unit : '')]],
+    note: g.mode === 'digit' ? '숫자는 낱개로 외우기보다 2~3자리씩 묶어서(예: 47-92-1) 외우면 훨씬 오래 기억돼요. 등급은 이 도구가 임의로 정한 가상의 기준이에요.' : '원소 기호는 이름과 번호를 함께 떠올리면 잘 외워져요(예: 6번 C 탄소). 등급은 이 도구가 임의로 정한 가상의 기준이에요.',
+    again: begin, share: '숫자의 신 암기 테스트(' + MODES[g.mode].n + ') ' + (g.cleared ? g.cleared + unit : '-') + ' ' + t.replace(/^\S+\s/, '') + '!'});
+}
+$('startBtn').onclick = begin;
+drawMenu();
+window.__t = {get g(){ return g; }};
+
+})();
+</script>
+</body>
+</html>

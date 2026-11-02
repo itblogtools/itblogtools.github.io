@@ -5,7 +5,7 @@
      crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="description" content="차량 취득가액과 차종으로 2026년 자동차 취득세를 계산합니다. 승용 7%·경차 4%·승합화물 5% 세율, 중고차 시가표준액 적용, 경차 75만원·전기차 140만원 감면, 가격대별 취득세 표와 공채 안내를 정리했습니다.">
+<meta name="description" content="차량 취득가액과 차종으로 2026년 자동차 취득세를 계산합니다. 승용 7%·경차 4%·승합화물 5% 세율, 중고차 시가표준액 적용, 경차 75만원·전기차 140만원 감면, 차종·차 종류별 선택 방법, 2027년 전기차 감면 변경 예정(미확정), 공채 안내를 정리했습니다.">
 <link rel="canonical" href="https://itblogtools.github.io/cartax-tool.html">
 <meta property="og:title" content="자동차 취득세 계산기 – 2026년 세율·경차·전기차 감면, 중고차 시가표준액">
 <meta property="og:description" content="신차·중고차 취득세 계산과 가격대별 비교표, 감면 한도와 적용 기한">
@@ -105,6 +105,12 @@
   .margline b{color:var(--accent);}
 
   select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;font-family:inherit;}
+  .newsbox{font-size:12px;line-height:1.75;padding:10px 14px;border-radius:8px;border:1px solid var(--amber);border-left:4px solid var(--amber);color:var(--text);background:rgba(255,180,84,0.08);}
+  .newsbox b{color:var(--amber);} .newsbox a{color:var(--accent);}
+  .exlist{display:flex;flex-wrap:wrap;gap:6px;}
+  .ex{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:7px 10px;font-size:12px;font-family:inherit;cursor:pointer;text-align:left;line-height:1.4;}
+  .ex small{display:block;color:var(--sub);font-size:10px;}
+  .ex:hover{border-color:var(--accent);} .ex:active{transform:scale(.97);}
   .hidden{display:none !important;}
   .warnbox{font-size:12px;line-height:1.7;padding:10px 14px;border-radius:8px;border:1px solid var(--amber);color:var(--amber);background:rgba(255,180,84,0.06);}
 </style>
@@ -125,30 +131,33 @@
   <div class="titlebar"><span class="prompt">$</span> car-tax-calc --run</div>
   <h1>자동차 취득세 계산기</h1>
   <p class="desc">차량 가격과 차종을 선택하면 예상 취득세를 계산해드려요. 중고차 시가표준액 적용, 경차·전기차 감면까지 반영합니다.</p>
-  <p class="meta">최종 업데이트 2026-10-22 · 지방세법·지방세특례제한법 기준 · 작성/관리: IT 도구모음 운영자</p>
-  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2026-12-31" data-next-note="전기차 취득세 감면(140만원 한도)의 적용 기한이 2026년 12월 31일로 안내됩니다. 연장 여부를 확인하세요." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">비영업용 승용 7% · 경차 4% · 승합·화물·특수 5% · 영업용 4% · 이륜 2%. 경차 감면 75만원(2027.12.31까지 안내), 전기차 감면 140만원(2026.12.31까지 안내), 하이브리드 감면 종료.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
+  <p class="meta">최종 업데이트 2026-10-29 · 지방세법·지방세특례제한법 기준 · 작성/관리: IT 도구모음 운영자</p>
+  <div class="baseline-note" data-baseline-year="2026" data-checked="2026년 10월" data-next-change="2026-12-31" data-next-note="전기차 취득세 감면(140만원 한도)의 적용 기한이 2026년 12월 31일로 안내됩니다. 2027년 이후 한도를 70만원으로 줄이는 개편안이 발표됐으나 아직 확정 전이니 등록 전에 확인하세요." data-watch="" style="margin:6px 0 10px;padding:10px 14px;border:1px solid #2b3440;border-left:4px solid #7d8590;border-radius:8px;background:#151b23;color:#7d8590;font-size:12px;line-height:1.7;"><div><span class="bn-dot" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#7d8590;margin-right:6px;vertical-align:middle;"></span><b class="bn-label" style="color:#e6edf3;">기준 확인 중…</b> <span style="color:#7d8590;">· 2026년 기준 · 최종 확인 2026년 10월</span></div><div class="bn-note" style="margin-top:4px;">비영업용 승용 7% · 경차 4% · 승합·화물·특수 5% · 영업용 4% · 이륜 2%. 경차 감면 75만원(2027.12.31까지 안내), 전기차 감면 140만원(2026.12.31까지 안내), 하이브리드 감면 종료.</div><div class="bn-extra" style="margin-top:4px;"></div></div>
+
+  <div class="newsbox"><b>📢 2027년 전기차 감면 변경 예정 (아직 확정 아님)</b><br>2026년 8월 발표된 지방세제 개편안에 전기차 취득세 감면 한도를 140만 원에서 70만 원으로 줄이는 내용이 있어요. 법 개정 전이라 이 계산기는 현행 기준(140만 원)으로 계산하고, 전기차를 선택하면 결과 아래에 참고 금액을 함께 보여드려요. <a href="#ev2027">자세히 보기</a></div>
 
   <details class="guide">
     <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
     <div class="body">
       <div class="step"><span class="num">1</span><span><b>차량 취득가액</b>을 입력하세요. 부가세를 뺀 금액이고, 옵션을 포함한 실제 차량대금 기준이에요.</span></div>
-      <div class="step"><span class="num">2</span><span><b>차종</b>을 선택하세요. 승용 7%, 승합·화물·특수 5%, 경차·영업용 4%, 이륜 2%예요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>차종</b>을 선택하세요. 헷갈리면 위쪽 <b>차종 예시 버튼</b>(경차·세단·SUV·수입차·전기차 등)을 누르면 알맞은 차종이 자동으로 골라져요.</span></div>
       <div class="step"><span class="num">3</span><span><b>중고차</b>라면 "중고차"를 선택하고 <b>시가표준액</b>을 입력하세요. 실거래가와 시가표준액 중 큰 금액이 과세표준이에요.</span></div>
-      <div class="step"><span class="num">4</span><span><b>감면</b>을 선택하면 경차(75만 원 한도) 또는 전기·수소차(140만 원 한도)가 반영돼요.</span></div>
+      <div class="step"><span class="num">4</span><span><b>연료·구동</b>에서 전기·수소차를 고르면 감면이 자동 선택돼요. 경차(75만 원 한도)·전기·수소차(140만 원 한도)가 반영되고, 직접 바꿀 수도 있어요.</span></div>
       <div class="tip">💡 다자녀·장애인·국가유공자 감면은 요건이 복잡해 계산에 넣지 않았어요. 해당되면 관할 구청에 확인하세요.</div>
     </div>
   </details>
 
   <div class="panel">
+    <div><label>차 종류 예시로 채우기 (선택 · 누르면 차종과 연료가 자동 선택돼요)</label><div class="exlist" id="exList"></div></div>
     <div class="fieldgrid">
       <div><label>구분</label><select id="usedSelect"><option value="new">신차</option><option value="used">중고차 (개인 간 거래 포함)</option></select></div>
       <div><label>차종 (세율)</label><select id="typeSelect">
         <optgroup label="비영업용 (개인 소유)">
-          <option value="7">승용차 일반 (7%)</option>
-          <option value="4" data-light="1">경형 승용·승합·화물 (4%)</option>
-          <option value="5">승합차 (5%)</option>
-          <option value="5">화물차 (5%)</option>
-          <option value="5">특수자동차 (5%)</option>
+          <option value="7" data-key="car">승용차 — 소형·중형·대형·SUV·수입차 모두 (7%)</option>
+          <option value="4" data-light="1" data-key="light">경형(경차) — 모닝·레이·캐스퍼 등 (4%)</option>
+          <option value="5" data-key="van">승합차 — 승차정원 11인 이상 등 (5%)</option>
+          <option value="5" data-key="truck">화물차 — 포터·봉고 등 (5%)</option>
+          <option value="5" data-key="special">특수자동차 — 견인차·청소차 등 (5%)</option>
         </optgroup>
         <optgroup label="영업용">
           <option value="4">영업용 자동차 (4%)</option>
@@ -156,6 +165,12 @@
         <optgroup label="이륜차">
           <option value="2">이륜자동차 (2%)</option>
         </optgroup>
+      </select></div>
+      <div><label>연료·구동</label><select id="fuelSelect">
+        <option value="gas">휘발유·경유·LPG (감면 없음)</option>
+        <option value="hev">하이브리드 (감면 종료)</option>
+        <option value="ev">전기차 (감면 대상)</option>
+        <option value="fcev">수소전기차 (감면 대상)</option>
       </select></div>
     </div>
     <label>실제 취득가액 (부가세 제외, 옵션 포함)</label>
@@ -180,6 +195,7 @@
 
   <div id="noteBox"></div>
   <div class="detailtable" id="detailTable"></div>
+  <div class="margline">💡 <b>공채 매입 비용은 따로 들어요.</b> 지역개발채권·도시철도채권 매입 대상과 비율은 지역·차종·배기량(가격)에 따라 지자체별로 달라 이 계산기에는 넣지 못했어요. 등록 전 딜러 견적서의 공채 할인 비용 항목이나 관할 구청에서 확인하세요. <a href="#bond" style="color:var(--accent);">자세히 보기</a></div>
 
   <div class="disclaimer">
     ※ 표준세율 기준 <b style="color:var(--text);">추정치</b>입니다. 실제 과세표준(특히 중고차·할인 차량), 지자체 고지서의 세목 구성, 공채 매입 비용, 다자녀·장애인·국가유공자 등 개별 감면은 반영하지 않습니다. 감면 적용 기한은 연장 여부에 따라 달라질 수 있으니 차량 등록 전 관할 구청에서 확인하세요. 세무 자문이 아닙니다.
@@ -201,6 +217,23 @@
     </table></div>
     <p>승합차와 화물차를 7%로 계산하는 계산기가 있는데, 비영업용 승합·화물·특수자동차는 5%입니다. 승용차 7%는 일반 소비자가 가장 많이 접하는 세율이고, 경차는 4%로 더 낮습니다.</p>
 
+    <h2 id="models">내 차는 어떤 차종으로 계산하나요? (소형·SUV·수입차)</h2>
+    <p>취득세 세율은 소형·중형·대형이나 SUV 같은 크기·모양이 아니라, 자동차 등록증에 적힌 법적 차종(승용·승합·화물·특수)과 경형 여부로 정해져요. 같은 SUV라도 승용으로 등록되면 7%, 승합이나 화물로 등록된 차는 5%일 수 있어서 등록증의 차종을 최종 기준으로 보세요.</p>
+    <div class="tblwrap"><table>
+      <tr><th>흔히 부르는 이름</th><th>대표 예시</th><th>이 계산기에서 고를 항목</th></tr>
+      <tr><td>경차</td><td>모닝·레이·캐스퍼 등</td><td>경형 (4%) + 경차 감면</td></tr>
+      <tr><td>준중형·중형 세단</td><td>아반떼·K3·쏘나타·K5 등</td><td>승용차 (7%)</td></tr>
+      <tr><td>준대형·대형 세단</td><td>그랜저·K8·제네시스 G80 등</td><td>승용차 (7%)</td></tr>
+      <tr><td>SUV·RV</td><td>투싼·스포티지·싼타페·쏘렌토 등</td><td>승용차 (7%) · 등록증 확인</td></tr>
+      <tr><td>수입차</td><td>BMW·벤츠·테슬라 등</td><td>승용차 (7%) · 국산차와 같은 세율</td></tr>
+      <tr><td>전기차</td><td>아이오닉5·EV6·테슬라 등</td><td>승용차 + 연료 "전기차" (감면 대상)</td></tr>
+      <tr><td>수소전기차</td><td>넥쏘 등</td><td>승용차 + 연료 "수소전기차" (감면 대상)</td></tr>
+      <tr><td>하이브리드</td><td>쏘나타·K5 하이브리드 등</td><td>승용차 + 연료 "하이브리드" (감면 없음)</td></tr>
+      <tr><td>소형 트럭</td><td>포터·봉고 등</td><td>화물차 (5%)</td></tr>
+      <tr><td>승합차</td><td>승차정원 11인 이상 등록 차량</td><td>승합차 (5%)</td></tr>
+    </table></div>
+    <div class="callout">경형 기준은 배기량 1,000cc 미만이면서 길이 3.6m·너비 1.6m·높이 2.0m 이하예요. 해당 여부는 차량 등록증으로 확인하세요. K7은 2021년 K8로 이름이 바뀌어 지금은 K8로 판매돼요. 목록에 없는 차는 위 분류를 기준으로 가장 가까운 항목을 고르세요. 수입차도 취득가액은 부가세를 뺀 실제 구입가를 넣으면 돼요.</div>
+
     <h2>과세표준: 신차와 중고차의 차이</h2>
     <ul>
       <li><b>신차</b>: 부가가치세를 뺀 실제 차량대금(옵션 포함)을 기준으로 합니다. 개별소비세·교육세는 차량 가격에 포함돼 있고 부가세만 제외합니다. 딜러가 안내한 "취득세 견적"과 같은지 항목별로 비교해 보세요.</li>
@@ -217,6 +250,17 @@
     </ul>
     <div class="callout">감면은 자동으로 적용되지 않을 수 있으니 등록 전에 신청 여부를 확인하세요. 경차는 감면을 받은 뒤 일정 기간 안에 영업용으로 용도를 바꾸면 감면액이 추징될 수 있습니다.</div>
 
+    <h2 id="ev2027">2027년 전기차 감면 변경 예정 (개편안, 아직 미확정)</h2>
+    <div class="callout">행정안전부가 2026년 8월 발표한 지방세제 개편안에는 전기차 취득세 100% 감면은 유지하되 한도를 140만 원에서 70만 원으로 낮추고, 2027년 1월 1일 이후 납세의무가 생기는 차량부터 적용하며 감면 제도 자체는 2029년 말까지 연장하는 내용이 담겼다고 보도됐어요. 개편안은 법 개정이 끝나야 효력이 생기므로 <b>아직 확정이 아니고</b>, 이 계산기는 현행 기준(140만 원)으로 계산해요. 연말·연초에 등록하는 경우 납세의무가 생기는 시점(취득·등록 시점)에 따라 적용 기준이 달라질 수 있으니 딜러와 관할 구청에 확인하세요. 수소차는 별도 일정으로 안내되니 따로 확인하세요.</div>
+    <div class="tblwrap"><table>
+      <tr><th>차량 취득가액 (전기차 승용 7%)</th><th>현행 (140만 원 감면)</th><th>개편안 (70만 원 감면, 참고)</th></tr>
+      <tr><td>2,000만 원</td><td>0원</td><td>700,000원</td></tr>
+      <tr><td>3,000만 원</td><td>700,000원</td><td>1,400,000원</td></tr>
+      <tr><td>4,000만 원</td><td>1,400,000원</td><td>2,100,000원</td></tr>
+      <tr><td>5,000만 원</td><td>2,100,000원</td><td>2,800,000원</td></tr>
+      <tr><td>7,000만 원</td><td>3,500,000원</td><td>4,200,000원</td></tr>
+    </table></div>
+
     <h2>가격대별 취득세 비교 (비영업용 승용차 7%)</h2>
     <div class="tblwrap"><table>
       <tr><th>차량 취득가액</th><th>일반 승용차</th><th>전기·수소차 (140만 원 감면 후)</th></tr>
@@ -230,15 +274,23 @@
       <tr><td>1,500만 원</td><td>600,000원</td><td>0원</td></tr><tr><td>1,875만 원</td><td>750,000원</td><td>0원</td></tr><tr><td>2,200만 원</td><td>880,000원</td><td>130,000원</td></tr>
     </table></div>
 
-    <h2>공채(도시철도채권 등) 매입은 별도</h2>
-    <p>차량을 등록할 때는 취득세와 별도로 지역개발채권·도시철도채권 같은 공채를 의무적으로 사야 합니다. 대부분 그 자리에서 할인해 되파는데, 이때 생기는 할인 손실이 실질적인 추가 비용입니다. 매입 비율은 지역과 차종에 따라 다르고 경차는 면제되는 것으로 안내됩니다. 이 계산기의 금액에는 공채 비용이 포함되지 않습니다.</p>
+    <h2 id="bond">공채(도시철도채권 등) 매입은 별도</h2>
+    <p>차량을 등록할 때는 취득세와 별도로 지역개발채권·도시철도채권 같은 공채를 의무적으로 사야 하는 경우가 있어요. 매입 대상과 비율은 지역(시·도 조례)과 차종, 배기량이나 가격에 따라 달라서 이 계산기에서는 금액을 계산하지 않고 안내만 드려요.</p>
+    <ul>
+      <li>대부분 등록 과정에서 채권을 사자마자 할인해 되파는 방식으로 처리하고, 이때 생기는 할인 차액이 실질적인 추가 비용이에요. 할인율은 시점에 따라 달라져요.</li>
+      <li>경차 등 일부 차종이나 감면 대상은 면제되는 경우가 있지만 지자체마다 기준이 달라, 내 차가 해당하는지 확인이 필요해요.</li>
+      <li>신차는 딜러 견적서의 "공채 할인(매입) 비용" 항목을, 중고차를 직접 이전한다면 관할 시·군·구청이나 등록 대행업체에 문의하면 정확한 금액을 알 수 있어요.</li>
+    </ul>
+    <div class="callout">딜러가 안내한 취득세 견적과 총 등록비용이 다르다면 공채 할인 비용이 별도로 붙어 있는 경우가 많아요. 이 계산기의 예상 취득세에는 공채 비용이 포함되지 않아요.</div>
 
     <h2>신고·납부 시기</h2>
     <p>취득세는 취득일부터 60일 이내에 신고·납부해야 하고, 신차 구매 시에는 딜러가 등록을 대행하면서 함께 처리하는 경우가 많습니다. 중고차를 직접 이전 등록한다면 기한을 넘기지 않도록 하세요. 기한이 지나면 가산세가 붙을 수 있습니다.</p>
 
     <h2>자주 묻는 질문</h2>
     <div class="faqitem"><div class="q">Q. 중고차를 싸게 샀는데 취득세가 왜 더 나오나요?</div><div class="a">실제 거래가가 시가표준액보다 낮으면 시가표준액이 과세표준이 되기 때문입니다. 이 계산기에서 "중고차"를 선택하고 시가표준액을 넣으면 반영됩니다.</div></div>
-    <div class="faqitem"><div class="q">Q. 전기차 감면은 얼마까지 받나요?</div><div class="a">취득세액에서 최대 140만 원을 공제합니다. 승용차 7% 기준으로 차량가액 약 2,000만 원 이하는 0원이고, 그 이상은 140만 원이 줄어듭니다. 적용 기한은 등록 전에 확인하세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 전기차 감면은 얼마까지 받나요?</div><div class="a">취득세액에서 최대 140만 원을 공제합니다. 승용차 7% 기준으로 차량가액 약 2,000만 원 이하는 0원이고, 그 이상은 140만 원이 줄어듭니다. 적용 기한은 등록 전에 확인하세요. 2027년 이후에는 한도를 70만 원으로 줄이는 개편안이 발표됐지만 아직 확정되지 않았어요.</div></div>
+    <div class="faqitem"><div class="q">Q. SUV나 수입차는 취득세율이 다른가요?</div><div class="a">크기나 국산·수입 여부로 세율이 달라지지 않아요. 승용으로 등록되는 SUV와 수입 승용차는 모두 7%이고, 등록증의 차종이 승합이나 화물이면 5%로 계산해요.</div></div>
+    <div class="faqitem"><div class="q">Q. 하이브리드도 취득세 감면이 되나요?</div><div class="a">하이브리드 취득세 감면은 종료돼 일반 승용차와 같은 세율이 적용돼요. 전기차와 수소전기차만 감면 대상이에요.</div></div>
     <div class="faqitem"><div class="q">Q. 취득세 말고 자동차를 살 때 드는 세금은?</div><div class="a">구입 단계에서 개별소비세, 교육세, 부가가치세가 차량 가격에 붙고, 등록 시 취득세와 공채 매입이 추가되며, 보유 중에는 자동차세를 매년 냅니다. 이 계산기는 이 중 취득세만 계산합니다.</div></div>
     <div class="faqitem"><div class="q">Q. 입력한 정보가 저장되나요?</div><div class="a">아니요. 모든 계산은 브라우저 안에서만 이루어지며 어디로도 전송되지 않습니다.</div></div>
 
@@ -254,6 +306,7 @@
     <ul class="refs">
       <li>지방세법 제10조의5(취득세 과세표준 — 시가표준액 적용), 제12조(취득세 세율)</li>
       <li>지방세특례제한법(경형자동차·환경친화적 자동차 취득세 감면), 위택스 시가표준액 조회</li>
+      <li>행정안전부 2026년 지방세제 개편안(2026년 8월 발표, 국회 확정 전)</li>
     </ul>
     <p style="font-size:11px;color:var(--sub);">세율과 감면 기한은 매년 바뀔 수 있습니다. 오류를 발견하시면 <a href="contact.html" style="color:var(--accent);">문의하기</a>로 알려주세요.</p>
   </article>
@@ -280,7 +333,7 @@ function carTax(o){
     var t=el('detailTable');t.innerHTML='';var nb=el('noteBox');nb.innerHTML='';
     var used=el('usedSelect').value==='used';
     el('appraisedBox').classList.toggle('hidden',!used);
-    var price=num('priceInput'), pct=parseInt(el('typeSelect').value,10), disc=el('discountSelect').value;
+    var price=num('priceInput'), pct=parseInt(el('typeSelect').value,10), disc=el('discountSelect').value, fuel=el('fuelSelect').value;
     if(price<=0){el('taxVal').textContent='-';el('taxSub').textContent='차량 취득가액을 입력해주세요';return;}
     var sel=el('typeSelect').selectedOptions[0], isLight=sel&&sel.dataset.light==='1', lightWarn=false;
     if(disc==='light'&&!isLight){disc='none';lightWarn=true;}
@@ -290,18 +343,45 @@ function carTax(o){
     var warn='';
     if(lightWarn) warn+='경차 감면은 "경형" 차종을 선택했을 때만 적용돼요. 이번 계산에는 감면을 반영하지 않았어요. ';
     if(r.usedBase) warn+='시가표준액이 실거래가보다 커서 시가표준액을 과세표준으로 적용했어요. ';
-    if(disc==='ev') warn+='전기차 감면은 2026년 12월 31일까지로 안내돼요. 연장 여부를 등록 전에 확인하세요. ';
-    if(warn) nb.innerHTML='<div class="warnbox">'+warn+'</div>';
+    if(disc==='ev') warn+='전기·수소차 감면 기한은 전기차 2026년 12월 31일, 수소차 2027년 12월 31일로 안내돼요. 등록 전에 확인하세요. ';
+    if(fuel==='hev'&&disc==='none') warn+='하이브리드는 취득세 감면이 종료돼 일반 세율이 적용돼요. ';
+    if((fuel==='ev'||fuel==='fcev')&&disc==='none') warn+='전기·수소차인데 감면이 선택되지 않았어요. 아래 "감면 선택"에서 전기·수소차 감면을 고르면 반영돼요. ';
+    if((fuel==='ev'||fuel==='fcev')&&isLight) warn+='경형 전기·수소차는 경차 감면과 전기·수소차 감면 중 해당하는 쪽을 선택하세요. 중복 적용 여부는 관할 구청에서 확인하세요. ';
+    var nhtml=warn?'<div class="warnbox">'+warn+'</div>':'';
+    if(disc==='ev'){
+      var alt=r.raw-Math.min(r.raw,700000);
+      nhtml+='<div class="newsbox" style="margin-top:8px;"><b>📢 2027년 변경 예정 (미확정, 참고용)</b><br>전기차 감면 한도를 70만 원으로 낮추는 개편안이 확정되면 같은 조건에서 약 '+won(alt)+'이 돼요. 2026년 12월 31일까지는 현행 140만 원 한도로 계산한 위 금액이 기준이에요. <a href="#ev2027">자세히 보기</a></div>';
+    }
+    nb.innerHTML=nhtml;
     row(t,'구분',used?'중고차':'신차');
     row(t,'입력한 취득가액',won(price));
     if(used) row(t,'시가표준액',won(num('appraisedInput')));
     row(t,'과세표준',won(r.base));
     row(t,'적용 세율',pct+'%');
+    row(t,'연료·구동',el('fuelSelect').selectedOptions[0].textContent.replace(/ \(.*\)$/,''));
     row(t,'산출 취득세',won(r.raw));
     if(r.disc>0) row(t,'감면액','- '+won(r.disc));
     row(t,'예상 취득세',won(r.tax),'total');
   }
-  ['usedSelect','typeSelect','priceInput','appraisedInput','discountSelect'].forEach(function(id){el(id).addEventListener('input',render);el(id).addEventListener('change',render);});
+  var EX=[
+    {n:'경차',h:'모닝·레이·캐스퍼',t:'light',f:'gas',d:'light'},
+    {n:'준중형·중형 세단',h:'아반떼·K3·쏘나타·K5',t:'car',f:'gas',d:'none'},
+    {n:'준대형·대형 세단',h:'그랜저·K8·제네시스',t:'car',f:'gas',d:'none'},
+    {n:'SUV',h:'투싼·스포티지·싼타페·쏘렌토',t:'car',f:'gas',d:'none'},
+    {n:'수입차',h:'BMW·벤츠 등',t:'car',f:'gas',d:'none'},
+    {n:'하이브리드',h:'쏘나타·K5 하이브리드',t:'car',f:'hev',d:'none'},
+    {n:'전기차',h:'아이오닉5·EV6·테슬라',t:'car',f:'ev',d:'ev'},
+    {n:'수소전기차',h:'넥쏘',t:'car',f:'fcev',d:'ev'},
+    {n:'소형 트럭',h:'포터·봉고',t:'truck',f:'gas',d:'none'}
+  ];
+  function setType(k){var o=el('typeSelect').querySelector('option[data-key="'+k+'"]');if(o)o.selected=true;}
+  var exList=el('exList');
+  EX.forEach(function(x){var b=document.createElement('button');b.type='button';b.className='ex';b.innerHTML=x.n+'<small>'+x.h+'</small>';b.addEventListener('click',function(){setType(x.t);el('fuelSelect').value=x.f;el('discountSelect').value=x.d;render();});exList.appendChild(b);});
+  function isLightType(){var o=el('typeSelect').selectedOptions[0];return !!(o&&o.dataset.light==='1');}
+  el('typeSelect').addEventListener('change',function(){var d=el('discountSelect');if(isLightType()&&d.value==='none')d.value='light';else if(!isLightType()&&d.value==='light')d.value='none';});
+  el('fuelSelect').addEventListener('change',function(){var f=el('fuelSelect').value,d=el('discountSelect');
+    if((f==='ev'||f==='fcev')&&!isLightType())d.value='ev';else if((f==='gas'||f==='hev')&&d.value==='ev')d.value='none';});
+  ['usedSelect','typeSelect','fuelSelect','priceInput','appraisedInput','discountSelect'].forEach(function(id){el(id).addEventListener('input',render);el(id).addEventListener('change',render);});
   render();
 })();
 </script>

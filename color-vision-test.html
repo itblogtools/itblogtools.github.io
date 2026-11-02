@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>색맹 테스트 (숫자·한글·도형·알파벳) 색각 퀴즈 | IT 도구모음</title>
+<meta name="description" content="점으로 이루어진 그림 속에 숨은 숫자·한글·도형·알파벳을 찾는 색각 퀴즈. 하·중·상 3단계, 별 도감으로 재미있게 즐기는 참고용 테스트입니다.">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#151b23; --line:#2b3440; --text:#e6edf3; --sub:#7d8590;
+    --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .lbl{font-size:12px;color:var(--sub);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .chip.on{border-color:var(--accent);color:var(--accent);}
+  .chip small{display:block;font-size:10px;color:var(--sub);margin-top:2px;}
+  button{font-family:inherit;cursor:pointer;}
+  button.primary{background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;}
+  button.primary:active{transform:scale(.98);}
+  button.ghost{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;}
+  table.dex{width:100%;border-collapse:collapse;font-size:12px;}
+  table.dex th,table.dex td{border:1px solid var(--line);padding:7px 4px;text-align:center;}
+  table.dex th{color:var(--sub);font-weight:700;background:var(--bg);}
+  table.dex td.s{color:var(--amber);letter-spacing:1px;}
+  .hud{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .hud .c{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center;}
+  .hud .k{font-size:10px;color:var(--sub);} .hud .v{font-size:15px;font-weight:700;margin-top:2px;}
+  .hud .v.hot{color:var(--amber);}
+  .bar{height:6px;background:var(--bg);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+  .barfill{height:100%;width:0;background:var(--accent);transition:width .2s;}
+  .platewrap{display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .platewrap canvas{width:100%;max-width:320px;aspect-ratio:1/1;border-radius:50%;background:#0a0d12;}
+  .tag{font-size:11px;color:var(--amber);}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .opt{background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:14px 8px;font-size:16px;font-weight:700;font-family:inherit;}
+  .opt:active{transform:scale(.97);}
+  .opt.right{border-color:var(--accent);background:rgba(57,255,136,.12);color:var(--accent);}
+  .opt.wrong{border-color:var(--bad);background:rgba(255,92,92,.12);color:var(--bad);}
+  .opt.skip{grid-column:1/-1;font-size:13px;color:var(--sub);font-weight:500;}
+  .fb{min-height:20px;font-size:13px;text-align:center;color:var(--sub);}
+  .fb.good{color:var(--accent);} .fb.bad{color:var(--bad);}
+  .result{border-color:var(--accent);} .result .ttl{font-size:18px;font-weight:700;color:var(--accent);}
+  .stars{font-size:26px;color:var(--amber);letter-spacing:4px;text-align:center;}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+  .rcard .k{font-size:11px;color:var(--sub);} .rcard .v{font-size:16px;font-weight:700;margin-top:2px;}
+  .note{font-size:12px;line-height:1.7;color:var(--sub);}
+  .note b{color:var(--text);}
+  .hidden{display:none !important;}
+  .minote{font-size:11px;color:var(--sub);line-height:1.6;}
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;}
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;} footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> color-vision-test --run</div>
+  <h1>색맹 테스트 · 색각 퀴즈</h1>
+  <p class="desc">색깔 점 속에 숨은 숫자·한글·도형·알파벳을 찾아보세요. 하·중·상 3단계로 10문제씩, 별을 모으며 즐기는 재미용 색각 퀴즈예요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>카테고리</b>(숫자·한글·도형·알파벳·섞어서)와 <b>단계</b>(하·중·상)를 고르고 '시작'을 누르세요.</span></div>
+      <div class="step"><span class="num">2</span><span>색깔 점들 사이에 <b>다른 색으로 숨은 글자나 모양</b>이 있어요. 보이는 대로 아래 보기에서 골라주세요.</span></div>
+      <div class="step"><span class="num">3</span><span>그림이 애매하면 <b>'새로 그리기'</b>(문제당 3번)를, 안 보이면 <b>'잘 안 보여요'</b>를 누르세요. 틀려도 감점은 없고 정답을 바로 알려줘요.</span></div>
+      <div class="step"><span class="num">4</span><span>10문제를 마치면 정확도에 따라 <b>별 1~3개</b>를 받고, 카테고리×단계 <b>별 도감</b>을 채워갈 수 있어요.</span></div>
+      <div class="tip">💡 화면 밝기를 중간 이상으로 올리고, 야간 모드·블루라이트 필터·색상 보정 기능은 끄고 하세요. 같은 화면에서도 설정에 따라 점 색이 달라 보여요.</div>
+    </div>
+  </details>
+
+  <div class="panel" id="menuBox">
+    <div class="lbl">카테고리</div>
+    <div class="chips" id="catChips"></div>
+    <div class="lbl">단계</div>
+    <div class="chips" id="lvChips"></div>
+    <button class="primary" id="startBtn">시작 (10문제)</button>
+    <div class="lbl">별 도감 <span id="totalLine"></span></div>
+    <table class="dex" id="dexTable"></table>
+  </div>
+
+  <div class="panel hidden" id="playBox">
+    <div class="hud">
+      <div class="c"><div class="k">문제</div><div class="v" id="hNo">1/10</div></div>
+      <div class="c"><div class="k">점수</div><div class="v" id="hScore">0</div></div>
+      <div class="c"><div class="k">콤보</div><div class="v hot" id="hCombo">0</div></div>
+      <div class="c"><div class="k">시간</div><div class="v" id="hTime">0.0s</div></div>
+    </div>
+    <div class="bar"><div class="barfill" id="progFill"></div></div>
+    <div class="platewrap">
+      <canvas id="plate" width="640" height="640" aria-label="색각 퀴즈 그림"></canvas>
+      <div class="tag" id="plateTag"></div>
+    </div>
+    <div class="opts" id="opts"></div>
+    <div class="fb" id="fb"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="ghost" id="redrawBtn" type="button">그림이 애매해요 · 새로 그리기 (3번)</button><button class="ghost" id="quitBtn" type="button">그만하기</button></div>
+  </div>
+
+  <div class="panel result hidden" id="resultBox"></div>
+
+  <div class="minote">※ 이 결과는 재미로 즐기는 참고용이며 의학적 진단이 아니에요.</div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 재미로 즐기는 참고용 퀴즈예요. 색맹·색약(색각 이상) 여부를 진단하거나 대신할 수 없고, 정식 색각 검사표나 의료기기와 방식이 달라요. 모니터 종류, 밝기, 야간 모드, 주변 조명에 따라 색이 다르게 보이므로 결과가 정확하지 않을 수 있어요. 색을 구분하는 데 불편이 계속된다면 안과 전문의에게 정식 검사를 받아보세요. 입력과 기록은 이 브라우저 안에서만 처리·저장됩니다.
+  </div>
+
+  <div class="infosection">
+    <h2>점 속에 숨은 글자를 찾는 색각 퀴즈</h2>
+    <p>색맹 테스트·색각 퀴즈는 크기와 색이 제각각인 수백 개의 점으로 만든 그림 속에서, 다른 색으로 숨어 있는 숫자·한글·도형·알파벳을 찾아내는 게임이에요. 하·중·상 3단계는 숨은 글자와 배경 점의 색 차이가 점점 줄어들도록 만들었고, 한 판은 10문제로 보통 2~3분이면 끝납니다. 정확도에 따라 별을 받고 카테고리×단계 도감을 채워가는 구조라, 한 번 시작하면 여러 판을 이어서 하게 되도록 구성했어요.</p>
+
+    <h2>만든 이유: 궁금하지만 검사받기엔 애매해서</h2>
+    <p>"혹시 나도 색을 남들과 다르게 보는 건 아닐까?" 한 번쯤 궁금해도 일부러 병원을 찾아가 검사받기는 애매할 때가 많아요. 학교나 취업 때 받는 색각 검사표는 평생 몇 번 보지 못하고, 인터넷에는 같은 숫자 그림 몇 장이 전부인 페이지도 흔합니다. 그래서 정식 검사를 대신하려는 목적이 아니라, 색의 차이를 눈으로 느껴보는 놀이처럼 즐기면서 내 화면에서는 어느 단계부터 헷갈리는지 가볍게 확인할 수 있도록 만들었어요. 문제가 매번 새로 그려지고 카테고리도 여러 가지라 같은 그림을 외워서 맞히는 일도 없습니다.</p>
+
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>잠깐 쉬는 3분 동안 눈과 집중력을 가볍게 쓰는 미니게임이 필요할 때</li>
+      <li>아이와 함께 숫자·한글·도형 찾기를 하며 색의 차이를 이야기해보고 싶을 때</li>
+      <li>친구나 가족과 누가 상 단계에서 더 많이 맞히는지 별 개수로 겨뤄보고 싶을 때</li>
+      <li>색을 구분하기 어려웠던 경험이 있어 정식 검사를 받기 전에 대략 어떤 느낌인지 궁금할 때</li>
+      <li>새 모니터나 노트북 화면에서 색이 잘 구분되는지 밝기·야간 모드 설정을 바꿔가며 비교해보고 싶을 때</li>
+    </ul>
+
+    <h2>사용하기 전에 알아둘 점</h2>
+    <p>이 퀴즈는 색각 이상을 판정하지 않아요. 같은 사람도 화면 밝기, 야간 모드, 블루라이트 필터, 주변 조명에 따라 점의 색이 다르게 보이고, 상 단계는 색각이 정상이어도 헷갈릴 만큼 색 차이를 작게 만들었습니다. 하 단계에서 여러 문제가 계속 안 보인다면 화면 설정을 바꿔 한 번 더 해보고, 그래도 걱정되거나 일상에서 색 구분이 불편하다면 안과에서 정식 검사를 받는 것이 가장 정확해요. 이 결과를 근거로 스스로 판단하거나 진로·직업을 결정하지는 말아주세요. 점수와 별은 이 브라우저에만 저장되고 서버로 전송되지 않습니다.</p>
+
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem">
+      <div class="q">Q. 하 단계가 잘 안 보이면 색맹인가요?</div>
+      <div class="a">그렇게 단정할 수 없어요. 밝기나 야간 모드, 화면 종류만으로도 달라 보일 수 있고, 이 퀴즈는 진단 도구가 아니에요. 걱정된다면 안과에서 정식 색각 검사를 받아보세요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 같은 문제가 반복되나요?</div>
+      <div class="a">점의 위치와 색이 매번 새로 그려져서 같은 그림이 나오지 않아요. 같은 카테고리와 단계로 여러 번 해도 새로운 느낌으로 즐길 수 있어요.</div>
+    </div>
+    <div class="faqitem">
+      <div class="q">Q. 기록은 어디에 저장되나요?</div>
+      <div class="a">별과 최고 점수는 이 브라우저에만 저장되고 서버로 전송되지 않아요. 사이트 데이터를 지우거나 다른 기기·시크릿 모드에서는 기록이 따로 쌓입니다.</div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="index.html">전체 도구</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var CATS = [['num','숫자','🔢'],['han','한글','가'],['shp','도형','🔺'],['abc','알파벳','A'],['mix','섞어서','🎲']];
+  var LVS = [['low','하','쉬움'],['mid','중','보통'],['high','상','어려움']];
+  var CATNAME = {num:'숫자',han:'한글',shp:'도형',abc:'알파벳'};
+  var SHAPE_NAME = {circle:'동그라미',tri:'세모',sq:'네모',star:'별',heart:'하트',dia:'마름모',cross:'십자가'};
+  var SHAPES = {low:['circle','tri','sq'], mid:['circle','tri','sq','star','heart'], high:['star','heart','dia','cross','tri','circle']};
+  var POOL = {
+    han:{low:['가','나','다','라','마','바','사','아','자','하'], mid:['한','글','달','밤','산','강','물','눈','집','길'], high:['아기','나무','사자','바지','우유','나비','도마','두부','누나','오리']},
+    abc:{low:'AEHTLOXKM'.split(''), mid:'BDGNPQRSUVWYZCF'.split('')}
+  };
+  var LVCFG = {
+    low:{rMin:2.8, rMax:6.5, noise:0, sat:[55,80], pal:[{f:130,b:15,sp:10}], fl:[48,72], bl:[38,62]},
+    mid:{rMin:2.6, rMax:6, noise:0, sat:[48,75], pal:[{f:120,b:28,sp:10}], fl:[38,70], bl:[38,70]},
+    high:{rMin:2.4, rMax:5.4, noise:0.03, sat:[45,72], pal:[{f:118,b:34,sp:8},{f:128,b:46,sp:8}], fl:[38,70], bl:[38,70]}
+  };
+  var N = 10, KEY = 'color-vision-test-v1';
+  var $ = function(id){ return document.getElementById(id); };
+  var pickCat = 'num', pickLv = 'low', g = null, timer = null;
+
+  function rnd(n){ return Math.floor(Math.random() * n); }
+  function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+  function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+  function starStr(n){ return '★★★'.slice(0, n) + '☆☆☆'.slice(0, 3 - n); }
+
+  /* ---------- 메뉴 ---------- */
+  function drawMenu(){
+    $('catChips').innerHTML = CATS.map(function(c){ return '<button type="button" class="chip' + (c[0] === pickCat ? ' on' : '') + '" data-c="' + c[0] + '">' + c[2] + ' ' + c[1] + '</button>'; }).join('');
+    $('lvChips').innerHTML = LVS.map(function(l){ return '<button type="button" class="chip' + (l[0] === pickLv ? ' on' : '') + '" data-l="' + l[0] + '">' + l[1] + '<small>' + l[2] + '</small></button>'; }).join('');
+    var d = load(), st = d.stars || {};
+    $('dexTable').innerHTML = '<tr><th></th>' + LVS.map(function(l){ return '<th>' + l[1] + '</th>'; }).join('') + '</tr>' +
+      CATS.map(function(c){ return '<tr><th>' + c[1] + '</th>' + LVS.map(function(l){ var s = (st[c[0]] || {})[l[0]] || 0; return '<td class="s">' + starStr(s) + '</td>'; }).join('') + '</tr>'; }).join('');
+    var t = d.total || {p:0, c:0};
+    $('totalLine').textContent = t.p ? '· 누적 ' + t.p + '문제 · 정답 ' + t.c + '개' : '';
+  }
+  $('catChips').addEventListener('click', function(e){ var c = e.target.getAttribute('data-c'); if(c){ pickCat = c; drawMenu(); } });
+  $('lvChips').addEventListener('click', function(e){ var l = e.target.closest('[data-l]'); if(l){ pickLv = l.getAttribute('data-l'); drawMenu(); } });
+
+  /* ---------- 문제 만들기 ---------- */
+  function similarNumbers(ans, n){
+    var set = {}; set[ans] = 1; var out = [], guard = 0;
+    while(out.length < n && guard++ < 200){
+      var arr = ans.split(''), i = rnd(arr.length), d = String(rnd(10));
+      if(i === 0 && d === '0') continue;
+      arr[i] = d; var v = arr.join('');
+      if(!set[v]){ set[v] = 1; out.push(v); }
+    }
+    return out;
+  }
+  function others(pool, ans, n){ return shuffle(pool.filter(function(x){ return x !== ans; })).slice(0, n); }
+  function makeQ(cat, lv){
+    var q = {cat:cat, kind:'text'}, wrong;
+    if(cat === 'num'){
+      q.value = String(lv === 'low' ? 1 + rnd(9) : 10 + rnd(90));
+      wrong = lv === 'low' ? others('123456789'.split(''), q.value, 3) : similarNumbers(q.value, 3);
+    } else if(cat === 'han'){
+      var p = POOL[cat][lv]; q.value = p[rnd(p.length)]; wrong = others(p, q.value, 3);
+    } else if(cat === 'abc'){
+      if(lv === 'high'){
+        var L = 'ABDEFGHKLMNPRSTUVXYZ'.split(''); q.value = L[rnd(L.length)] + L[rnd(L.length)];
+        var set = {}; set[q.value] = 1; wrong = [];
+        while(wrong.length < 3){ var a = q.value.split(''); a[rnd(2)] = L[rnd(L.length)]; var v = a.join(''); if(!set[v]){ set[v] = 1; wrong.push(v); } }
+      } else { var pl = POOL.abc[lv]; q.value = pl[rnd(pl.length)]; wrong = others(POOL.abc.low.concat(POOL.abc.mid), q.value, 3); }
+    } else {
+      q.kind = 'shape'; var sl = SHAPES[lv]; q.value = sl[rnd(sl.length)];
+      var pool = sl.slice(); Object.keys(SHAPE_NAME).forEach(function(k){ if(pool.indexOf(k) < 0) pool.push(k); });
+      wrong = others(pool, q.value, 3).map(function(k){ return SHAPE_NAME[k]; });
+    }
+    q.answer = q.kind === 'shape' ? SHAPE_NAME[q.value] : q.value;
+    q.options = shuffle([q.answer].concat(wrong));
+    return q;
+  }
+
+  /* ---------- 그림 그리기 ---------- */
+  function drawShape(c, k){
+    c.beginPath();
+    if(k === 'circle'){ c.arc(160, 160, 100, 0, 7); }
+    else if(k === 'tri'){ c.moveTo(160, 52); c.lineTo(268, 240); c.lineTo(52, 240); c.closePath(); }
+    else if(k === 'sq'){ c.rect(68, 68, 184, 184); }
+    else if(k === 'star'){ for(var i = 0; i < 10; i++){ var r = i % 2 ? 52 : 118, a = -Math.PI / 2 + i * Math.PI / 5; c[i ? 'lineTo' : 'moveTo'](160 + r * Math.cos(a), 165 + r * Math.sin(a)); } c.closePath(); }
+    else if(k === 'heart'){ c.moveTo(160, 265); c.bezierCurveTo(30, 175, 55, 55, 160, 112); c.bezierCurveTo(265, 55, 290, 175, 160, 265); c.closePath(); }
+    else if(k === 'dia'){ c.moveTo(160, 48); c.lineTo(262, 160); c.lineTo(160, 272); c.lineTo(58, 160); c.closePath(); }
+    else if(k === 'cross'){ c.rect(122, 50, 76, 220); c.rect(50, 122, 220, 76); }
+    c.fill();
+  }
+  function drawGlyph(c, q){
+    c.fillStyle = '#000'; c.strokeStyle = '#000'; c.lineJoin = 'round';
+    if(q.kind === 'shape'){ drawShape(c, q.value); return; }
+    c.textAlign = 'center'; c.textBaseline = 'middle';
+    var fs = 250, w;
+    do { c.font = '900 ' + fs + 'px "Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo","Nanum Gothic",sans-serif'; w = c.measureText(q.value).width; fs -= 6; } while(w > 245 && fs > 40);
+    c.lineWidth = fs * 0.09; c.strokeText(q.value, 160, 168); c.fillText(q.value, 160, 168);
+  }
+  function pack(rMin, rMax, maskFn){
+    var dots = [], cell = 16, grid = {}, mid = (rMin + rMax) / 2;
+    function edge(x, y, r){ var c = maskFn(x, y), q = r * 0.9; for(var a = 0; a < 8; a++){ if(maskFn(x + q * Math.cos(a * 0.7854), y + q * Math.sin(a * 0.7854)) !== c) return true; } return false; }
+    var passes = [[rMax * 0.75, rMax, 5000], [mid * 0.9, rMax * 0.75, 9000], [rMin, mid, 16000]];
+    passes.forEach(function(ps){
+      for(var t = 0; t < ps[2]; t++){
+        var r = ps[0] + Math.random() * (ps[1] - ps[0]), ang = Math.random() * 6.2832, rad = Math.sqrt(Math.random()) * (152 - r);
+        var x = 160 + rad * Math.cos(ang), y = 160 + rad * Math.sin(ang), ok = true;
+        if(r > rMin * 1.4 && edge(x, y, r)) continue;
+        var cx = Math.floor(x / cell), cy = Math.floor(y / cell), span = Math.ceil((r + rMax + 1.2) / cell);
+        for(var i = cx - span; i <= cx + span && ok; i++) for(var j = cy - span; j <= cy + span && ok; j++){
+          var lst = grid[i + ',' + j]; if(!lst) continue;
+          for(var k = 0; k < lst.length; k++){ var d = lst[k], dx = d.x - x, dy = d.y - y, rr = d.r + r + 1.0; if(dx * dx + dy * dy < rr * rr){ ok = false; break; } }
+        }
+        if(!ok) continue;
+        var dot = {x:x, y:y, r:r}; dots.push(dot);
+        var key = cx + ',' + cy; (grid[key] = grid[key] || []).push(dot);
+      }
+    });
+    return dots;
+  }
+  function between(a){ return a[0] + Math.random() * (a[1] - a[0]); }
+  function drawPlate(q, lv){
+    var cv = $('plate'), ctx = cv.getContext('2d');
+    ctx.setTransform(2, 0, 0, 2, 0, 0); ctx.clearRect(0, 0, 320, 320);
+    var m = document.createElement('canvas'); m.width = m.height = 320;
+    var mc = m.getContext('2d'); drawGlyph(mc, q);
+    var md = mc.getImageData(0, 0, 320, 320).data;
+    ctx.fillStyle = '#d8d2c2'; ctx.beginPath(); ctx.arc(160, 160, 158, 0, 7); ctx.fill();
+    var cfg = LVCFG[lv], pal = cfg.pal[rnd(cfg.pal.length)], swap = Math.random() < 0.5;
+    var figH = swap ? pal.b : pal.f, bgH = swap ? pal.f : pal.b;
+    function inMask(x, y){ var ix = Math.floor(x), iy = Math.floor(y); return ix >= 0 && iy >= 0 && ix < 320 && iy < 320 && md[(iy * 320 + ix) * 4 + 3] > 128; }
+    pack(cfg.rMin, cfg.rMax, inMask).forEach(function(d){
+      var inside = inMask(d.x, d.y);
+      if(cfg.noise && Math.random() < cfg.noise) inside = !inside;
+      var h = (inside ? figH : bgH) + (Math.random() * 2 - 1) * pal.sp;
+      var s = between(cfg.sat), l = between(inside ? cfg.fl : cfg.bl);
+      ctx.fillStyle = 'hsl(' + h.toFixed(0) + ',' + s.toFixed(0) + '%,' + l.toFixed(0) + '%)';
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 7); ctx.fill();
+    });
+  }
+
+  /* ---------- 진행 ---------- */
+  function start(){
+    g = {redraws:0, cat:pickCat, lv:pickLv, no:0, ok:0, skip:0, score:0, combo:0, maxCombo:0, times:[], locked:false, missed:[], perCat:{}};
+    $('menuBox').classList.add('hidden'); $('resultBox').classList.add('hidden'); $('playBox').classList.remove('hidden');
+    next();
+    clearInterval(timer); timer = setInterval(function(){ if(g && !g.locked) $('hTime').textContent = ((Date.now() - g.t0) / 1000).toFixed(1) + 's'; }, 100);
+  }
+  function hud(){ $('hNo').textContent = Math.min(g.no, N) + '/' + N; $('hScore').textContent = g.score; $('hCombo').textContent = g.combo; $('progFill').style.width = ((g.no - 1) / N * 100) + '%'; }
+  function next(){
+    g.no++;
+    if(g.no > N){ finish(); return; }
+    var cat = g.cat === 'mix' ? ['num','han','shp','abc'][rnd(4)] : g.cat;
+    g.q = makeQ(cat, g.lv); g.locked = false;
+    drawPlate(g.q, g.lv);
+    $('plateTag').textContent = CATNAME[cat] + ' · ' + LVS.filter(function(l){ return l[0] === g.lv; })[0][1] + '단계';
+    $('opts').innerHTML = g.q.options.map(function(o, i){ return '<button type="button" class="opt" data-i="' + i + '">' + o + '</button>'; }).join('') + '<button type="button" class="opt skip" data-i="-1">잘 안 보여요</button>';
+    $('fb').textContent = ''; $('fb').className = 'fb';
+    g.redraws = 0; $('redrawBtn').textContent = '그림이 애매해요 · 새로 그리기 (3번)'; $('redrawBtn').disabled = false;
+    g.t0 = Date.now(); $('hTime').textContent = '0.0s'; hud();
+  }
+  $('redrawBtn').addEventListener('click', function(){
+    if(!g || g.locked || g.redraws >= 3) return;
+    g.redraws++; drawPlate(g.q, g.lv);
+    var left = 3 - g.redraws; $('redrawBtn').textContent = '그림이 애매해요 · 새로 그리기 (' + left + '번)'; $('redrawBtn').disabled = left <= 0;
+  });
+  $('opts').addEventListener('click', function(e){
+    var b = e.target.closest('.opt'); if(!b || !g || g.locked) return;
+    g.locked = true;
+    var i = Number(b.getAttribute('data-i')), t = (Date.now() - g.t0) / 1000, q = g.q;
+    var right = i >= 0 && q.options[i] === q.answer;
+    g.times.push(t);
+    var pc = g.perCat[q.cat] = g.perCat[q.cat] || {p:0, c:0}; pc.p++;
+    if(right){
+      g.ok++; pc.c++; g.combo++; if(g.combo > g.maxCombo) g.maxCombo = g.combo;
+      var gain = 100 + Math.max(0, Math.round((8 - t) * 6)) + g.combo * 10; g.score += gain;
+      b.classList.add('right'); $('fb').textContent = '정답! +' + gain; $('fb').className = 'fb good';
+    } else {
+      g.combo = 0; if(i < 0) g.skip++; else b.classList.add('wrong');
+      g.missed.push(q.answer);
+      [].forEach.call($('opts').querySelectorAll('.opt'), function(x){ var k = Number(x.getAttribute('data-i')); if(k >= 0 && q.options[k] === q.answer) x.classList.add('right'); });
+      $('fb').textContent = (i < 0 ? '괜찮아요. ' : '아쉬워요. ') + '정답은 "' + q.answer + '"'; $('fb').className = 'fb bad';
+    }
+    hud();
+    setTimeout(next, right ? 700 : 1500);
+  });
+  $('quitBtn').addEventListener('click', function(){ if(g){ g.locked = true; g.no = N + 1; clearInterval(timer); g.quit = true; finish(); } });
+
+  function finish(){
+    clearInterval(timer);
+    var done = g.times.length, acc = done ? g.ok / done : 0;
+    var stars = acc >= 0.9 ? 3 : (acc >= 0.7 ? 2 : (acc >= 0.5 ? 1 : 0));
+    if(g.quit && done < N) stars = 0;
+    var d = load(); d.stars = d.stars || {}; d.stars[g.cat] = d.stars[g.cat] || {}; d.best = d.best || {}; d.best[g.cat] = d.best[g.cat] || {};
+    var prev = d.stars[g.cat][g.lv] || 0, newStar = stars > prev;
+    if(newStar) d.stars[g.cat][g.lv] = stars;
+    var prevBest = d.best[g.cat][g.lv] || 0, newBest = g.score > prevBest && done >= N;
+    if(newBest) d.best[g.cat][g.lv] = g.score;
+    d.total = d.total || {p:0, c:0}; d.total.p += done; d.total.c += g.ok; save(d);
+    var avg = done ? (g.times.reduce(function(a, b){ return a + b; }, 0) / done).toFixed(1) : '-';
+    var lvName = LVS.filter(function(l){ return l[0] === g.lv; })[0][1], catName = CATS.filter(function(c){ return c[0] === g.cat; })[0][1];
+    var msg;
+    if(acc >= 0.9) msg = '대부분 또렷하게 찾았어요. 다음 단계에 도전해 보세요.';
+    else if(g.lv === 'low' && acc < 0.6 && done >= 5) msg = '하 단계에서 여러 개가 안 보이거나 헷갈렸다면 화면 밝기를 올리고 야간 모드·색상 보정을 끈 뒤 한 번 더 해보세요. 이 퀴즈로는 색각 이상 여부를 알 수 없어요. 계속 불편하다면 안과에서 정식 검사를 받아보세요.';
+    else if(g.lv === 'high') msg = '상 단계는 색각이 정상이어도 어려울 만큼 색 차이를 줄였어요. 못 맞혀도 자연스러운 일이에요.';
+    else msg = '조금 헷갈린 문제가 있었어요. 같은 단계를 한 번 더 해보면 눈이 금방 적응해요.';
+    var r = $('resultBox');
+    $('playBox').classList.add('hidden'); r.classList.remove('hidden');
+    r.innerHTML = '<div class="ttl">' + catName + ' · ' + lvName + '단계 결과' + (newBest ? ' 🏆 최고 점수!' : '') + '</div>' +
+      '<div class="stars">' + starStr(stars) + '</div>' + (newStar ? '<div class="note" style="text-align:center;color:var(--amber);">새 별을 도감에 올렸어요!</div>' : '') +
+      '<div class="rgrid"><div class="rcard"><div class="k">정답</div><div class="v">' + g.ok + ' / ' + done + '</div></div>' +
+      '<div class="rcard"><div class="k">점수</div><div class="v">' + g.score + '</div></div>' +
+      '<div class="rcard"><div class="k">평균 시간</div><div class="v">' + avg + '초</div></div>' +
+      '<div class="rcard"><div class="k">최고 콤보 · 안 보임</div><div class="v">' + g.maxCombo + ' · ' + g.skip + '</div></div></div>' +
+      '<div class="note">' + msg + '</div>' +
+      '<button class="primary" id="againBtn" type="button">같은 설정으로 다시</button>' +
+      (g.lv !== 'high' ? '<button class="ghost" id="upBtn" type="button">한 단계 올려서 도전</button>' : '') +
+      '<button class="ghost" id="menuBtn" type="button">카테고리·단계 바꾸기</button>' +
+      '<div class="minote">※ 재미로 즐기는 참고용 결과예요.</div>';
+    $('againBtn').addEventListener('click', start);
+    if($('upBtn')) $('upBtn').addEventListener('click', function(){ pickLv = g.lv === 'low' ? 'mid' : 'high'; start(); });
+    $('menuBtn').addEventListener('click', function(){ r.classList.add('hidden'); $('menuBox').classList.remove('hidden'); drawMenu(); });
+  }
+
+  $('startBtn').addEventListener('click', start);
+  drawMenu();
+})();
+</script>
+</body>
+</html>
