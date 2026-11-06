@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>힐링 위로 메시지 뽑기 – 오늘의 카드 한 장 | IT 도구모음</title>
+<meta name="description" content="지쳤어요·불안해요·외로워요 등 마음 상태를 고르면 마음에 닿는 한 문장을 뽑아주는 힐링 위로 메시지 카드. 하루 한 장 오늘의 카드와 수집 기록을 확인하세요.">
+<style>
+  :root{--bg:#0d1117;--panel:#151b23;--line:#2b3440;--text:#e6edf3;--sub:#7d8590;--accent:#39ff88;--accent-dim:#1e7a4c;--bad:#ff5c5c;--amber:#ffb454;--dark:#04140b;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .lbl{font-size:12px;color:var(--sub);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .chip.on{border-color:var(--accent);color:var(--accent);}
+  button{font-family:inherit;cursor:pointer;}
+  button.primary{background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;}
+  button.primary:active{transform:scale(.98);}
+  button.ghost{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;}
+  .hud{display:grid;gap:8px;}
+  .hud .c{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center;}
+  .hud .k{font-size:10px;color:var(--sub);} .hud .v{font-size:15px;font-weight:700;margin-top:2px;}
+  .hud .v.hot{color:var(--amber);}
+  .fb{min-height:18px;font-size:12px;text-align:center;color:var(--sub);}
+  .fb.bad{color:var(--bad);} .fb.good{color:var(--accent);}
+  .result{border-color:var(--accent);}
+  .result .ttl{font-size:13px;color:var(--sub);text-align:center;}
+  .result .big{font-size:34px;font-weight:700;color:var(--accent);text-align:center;margin:2px 0;}
+  .result .tier{font-size:16px;font-weight:700;text-align:center;color:var(--amber);}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+  .rcard .k{font-size:11px;color:var(--sub);} .rcard .v{font-size:16px;font-weight:700;margin-top:2px;}
+  .note{font-size:12px;line-height:1.7;color:var(--sub);}
+  .log{font-size:12px;color:var(--sub);line-height:1.8;}
+  .hidden{display:none !important;}
+  .minote{font-size:11px;color:var(--sub);line-height:1.6;}
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;}
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;} footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .mcard{min-height:200px;background:linear-gradient(160deg,#16222b,#0f161d);border:1px solid var(--accent-dim);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 20px;gap:12px;}
+  .mcard .mt{font-size:11px;color:var(--amber);} .mcard .tx{font-size:17px;line-height:1.85;color:var(--text);font-weight:600;word-break:keep-all;}
+  .mcard.flip{animation:flipin .5s ease;} @keyframes flipin{0%{transform:rotateY(90deg);opacity:0;}100%{transform:rotateY(0);opacity:1;}}
+  .help{background:rgba(255,180,84,.07);border:1px solid var(--amber);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.7;color:var(--text);}
+  .help b{color:var(--amber);}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> healing-message --run</div>
+  <h1>힐링 위로 메시지 뽑기</h1>
+  <p class="desc">마음 상태를 고르고 카드를 뽑으면 한 문장의 위로가 나와요. 하루에 한 장 오늘의 카드도 있어요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span>지금 마음에 가까운 <b>기분(지쳤어요·불안해요 등)</b>을 고르세요. 모르겠다면 '아무거나'를 선택해요.</span></div>
+      <div class="step"><span class="num">2</span><span><b>'한 장 뽑기'</b>를 누르면 카드가 나타나요. 마음에 안 들면 다시 뽑아도 돼요.</span></div>
+      <div class="step"><span class="num">3</span><span><b>오늘의 카드</b>는 하루 동안 같은 문장이 나오는 고정 카드예요.</span></div>
+      <div class="step"><span class="num">4</span><span>마음에 드는 문구는 <b>복사 버튼</b>으로 친구에게 보낼 수 있어요. 수집한 카드 수도 쌓여요.</span></div>
+      <div class="tip">💡 문구가 마음에 남으면 소리 내어 한 번 읽거나 메모장에 옮겨 적어보세요.</div>
+    </div>
+  </details>
+
+  <div class="panel" id="menuBox">
+    <div class="lbl">지금 마음은 어때요?</div>
+    <div class="chips" id="chips"></div>
+    <div class="mcard" id="card"><div class="mt">카드를 뽑아보세요</div><div class="tx">마음에 닿는 한 문장을 골라드릴게요</div></div>
+    <button class="primary" id="drawBtn">한 장 뽑기</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;"><button class="ghost" id="todayBtn" type="button">오늘의 카드(하루 한 장)</button><button class="ghost" id="copyBtn2" type="button">문구 복사</button></div>
+    <div class="log" id="logBox"></div>
+    <div class="help"><b>마음이 많이 힘들다면</b> 혼자 견디지 말고 도움을 청해보세요. 자살예방상담전화 <b>109</b>(24시간) 또는 가까운 정신건강복지센터에서 상담받을 수 있어요. 이 도구의 문구는 위로를 위한 글이며 상담이나 치료를 대신하지 않아요.</div>
+  </div>
+
+  <div class="panel hidden" id="playBox">
+    <div></div>
+  </div>
+
+  <div class="panel result hidden" id="resultBox"></div>
+
+  <div class="minote">※ 문구는 위로를 위한 참고용이에요.</div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 위로를 위한 짧은 문구 모음이에요. 마음이 힘들 때는 109(자살예방상담전화, 24시간) 또는 정신건강복지센터에 상담해 보세요. 상담이나 치료, 진단을 대신하지 않아요. 카드 수집 기록은 이 브라우저 안에만 저장되고 서버로 전송되지 않아요.
+  </div>
+
+  <div class="infosection">
+    <h2>지금 마음에 맞는 한 문장을 뽑아보는 힐링 메시지 카드</h2>
+    <p>무작위 힐링 위로 메시지 뽑기는 지금 마음이 어떤지(지쳤어요·불안해요·외로워요·힘내고 싶어요·쉬고 싶어요)를 고르고 카드를 뽑으면 마음에 닿는 한 문장을 보여주는 도구예요. 문구는 모두 이 사이트에서 새로 쓴 80개이고, 매번 다른 카드가 나오도록 직전과 같은 카드는 피해요. 하루에 한 장 고정으로 보는 오늘의 카드와, 수집한 카드 수도 확인할 수 있어요.</p>
+    <h2>만든 이유: 길게 말하지 않아도 되는 위로가 필요할 때가 있어서</h2>
+    <p>힘든 날에는 상담이나 긴 글을 읽을 여력이 없는 경우가 많아요. 짧은 문장 하나가 잠깐 숨을 돌리게 해주기도 하죠. 그래서 로그인이나 입력 없이, 마음 상태만 고르면 바로 한 문장을 보여주는 가벼운 형태로 만들었어요. 명언을 가져오면 출처나 저작권 문제가 생길 수 있어서 모든 문구를 직접 썼고, 조언이나 훈계가 아니라 곁에서 해주는 말투를 지키려고 했어요.</p>
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>하루를 마무리하며 오늘의 나에게 건네줄 한 문장을 찾고 싶을 때</li>
+      <li>친구나 가족에게 따뜻한 한마디를 전하고 싶은데 어떤 말이 좋을지 모를 때</li>
+      <li>시험이나 면접 전에 긴장을 가라앉히고 싶을 때</li>
+      <li>출근길이나 쉬는 시간에 짧게 마음을 환기하고 싶을 때</li>
+      <li>매일 하나씩 오늘의 카드를 모으며 작은 습관을 만들고 싶을 때</li>
+    </ul>
+    <h2>사용할 때 알아둘 점</h2>
+    <p>이 도구의 문구는 위로를 위한 짧은 글이고, 심리 상담이나 치료, 진단을 대신하지 않아요. 우울감이나 불안이 오래 이어지거나 일상이 힘들 정도라면 가까운 정신건강복지센터나 의료기관에 상담하세요. 위기 상황이라면 자살예방상담전화 109(24시간)에 바로 연락할 수 있어요. 카드 수집 기록은 이 브라우저에만 저장되고 서버로 전송되지 않아요. 입력하는 정보가 없어서 개인정보도 수집하지 않아요.</p>
+    <h2>카드를 더 잘 활용하는 방법</h2>
+    <p>마음에 드는 문구가 나오면 소리 내어 한 번 읽어보거나 메모장에 옮겨 적어보세요. 눈으로 보는 것보다 오래 남아요. 같은 마음 상태를 골라 몇 장 연달아 뽑으면 그날 가장 와닿는 문장을 찾기 쉬워요. 하루에 한 장 고정으로 보는 오늘의 카드는 아침이나 잠들기 전에 보는 습관을 만들기 좋아요. 친구에게 보내고 싶은 문구는 복사 버튼으로 간단히 전할 수 있어요.</p>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 문구는 어디서 가져왔나요?</div><div class="a">유명 명언이나 책 구절이 아니라 이 사이트에서 새로 쓴 문구예요. 출처가 없는 대신 누구의 말을 빌린 것이 아니라서 자유롭게 읽고 공유할 수 있어요.</div></div>
+    <div class="faqitem"><div class="q">Q. 오늘의 카드는 왜 같은 문구가 나오나요?</div><div class="a">날짜를 기준으로 하루 동안 같은 카드가 나오도록 만들었어요. 다른 문구를 보고 싶다면 한 장 뽑기를 눌러보세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 기록은 어디에 저장되나요?</div><div class="a">수집한 카드와 오늘 뽑은 횟수는 이 브라우저에만 저장되고 서버로 전송되지 않아요.</div></div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="index.html">전체 도구</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+var KEY = 'healing-message-v1';
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function showPanel(id){ ['menuBox','playBox','resultBox'].forEach(function(x){ $(x).classList.toggle('hidden', x !== id); }); }
+function renderResult(o){
+  var h = '<div class="ttl">' + o.title + '</div><div class="big">' + o.big + '</div>' + (o.tier ? '<div class="tier">' + o.tier + '</div>' : '') +
+    '<div class="rgrid">' + o.stats.map(function(s){ return '<div class="rcard"><div class="k">' + s[0] + '</div><div class="v">' + s[1] + '</div></div>'; }).join('') + '</div>' +
+    (o.extra || '') + '<div class="note">' + o.note + '</div>' +
+    '<button class="primary" id="againBtn" type="button">다시 도전</button><button class="ghost" id="copyBtn" type="button">결과 문구 복사</button><button class="ghost" id="menuBtn" type="button">설정 바꾸기</button>' +
+    '<div class="minote">※ 재미로 즐기는 참고용 결과예요.</div>';
+  $('resultBox').innerHTML = h; showPanel('resultBox');
+  $('againBtn').onclick = o.again;
+  $('menuBtn').onclick = function(){ showPanel('menuBox'); if(window.__menu) window.__menu(); };
+  $('copyBtn').onclick = function(){ if(navigator.clipboard) navigator.clipboard.writeText(o.share + ' https://itblogtools.github.io/healing-message.html').then(function(){ $('copyBtn').textContent = '복사됨!'; }); };
+}
+
+var MSG = {"tired": ["오늘까지 버텨온 것만으로도 충분히 잘한 거예요. 지금은 쉬어도 되는 시간이에요.", "지친 건 약해서가 아니라 열심히 달려왔다는 신호일 수 있어요. 오늘은 속도를 조금 줄여봐요.", "모든 일을 오늘 끝낼 필요는 없어요. 내일의 나에게도 할 일을 남겨주세요.", "따뜻한 물 한 잔 마시고 어깨에 힘을 한 번 빼봐요. 그것만으로도 오늘은 충분해요.", "쉬는 것도 일의 일부예요. 충전 없이 달리는 사람은 없어요.", "완벽하지 않아도 괜찮아요. 해낸 만큼이 오늘의 몫이에요.", "오늘 하루도 수고했어요. 그 말을 가장 먼저 스스로에게 해주세요.", "눈을 감고 숨을 천천히 세 번만 쉬어봐요. 지금 이 순간은 아무것도 하지 않아도 돼요.", "힘든 날에는 작은 것부터 해요. 이불 정리, 샤워, 따뜻한 한 끼면 충분해요.", "오래 달리려면 쉬어가는 구간이 꼭 필요해요. 지금이 그 구간이에요.", "피곤한 나를 다그치지 말아요. 토닥여주는 사람이 필요하다면 오늘은 내가 되어줘요.", "하루가 길었다면 저녁은 짧게 끝내도 돼요. 오늘은 일찍 쉬는 걸로 해요.", "지금 느끼는 무거움은 영원하지 않아요. 잠깐 내려놓고 쉬어가요.", "해야 할 일 목록보다 오늘의 컨디션이 먼저예요. 나를 먼저 챙겨요.", "오늘 하지 못한 일보다 오늘 해낸 일을 하나만 떠올려봐요.", "조금 느려도 괜찮아요. 멈추지만 않으면 계속 가고 있는 거예요."], "anxious": ["불안한 마음은 아직 오지 않은 일을 미리 걱정할 때 커져요. 지금 이 순간에 발을 붙여봐요.", "지금 할 수 있는 한 가지만 골라봐요. 나머지는 잠시 내려놓아도 괜찮아요.", "걱정은 대부분 생각보다 작게 끝나요. 오늘은 그 가능성을 믿어봐요.", "숨을 4초 들이마시고 6초 내쉬어봐요. 몸이 먼저 차분해지면 마음도 뒤따라와요.", "모르는 것이 있어도 괜찮아요. 한 걸음씩 알아가면 돼요.", "지금의 불안은 소중한 것을 지키고 싶다는 마음의 다른 모습일 수 있어요.", "주변에서 보이는 물건 다섯 가지를 천천히 말해봐요. 마음이 지금 여기로 돌아와요.", "완벽한 계획이 없어도 첫걸음은 뗄 수 있어요. 오늘은 가장 작은 첫걸음만 해요.", "걱정이 많을수록 종이에 적어보세요. 머릿속에서 나오면 훨씬 가벼워져요.", "내가 통제할 수 있는 것과 없는 것을 나눠봐요. 없는 것은 잠시 놓아도 돼요.", "불안해도 잘해왔어요. 지금까지 헤쳐온 날들이 그 증거예요.", "오늘 밤은 걱정을 내일 아침으로 미뤄봐요. 아침의 나는 더 잘 해결할 수 있어요.", "심장이 빨리 뛰어도 괜찮아요. 천천히 숨 쉬면서 이 순간이 지나가기를 기다려봐요.", "혼자 끌어안지 않아도 돼요. 믿을 수 있는 사람에게 한마디만 건네봐요.", "일어나지 않은 일에 쓰는 힘을 오늘의 나를 돌보는 데 써봐요.", "마음이 시끄러운 날에는 잠깐 걷는 것도 좋은 방법이에요. 바람을 쐬고 와요."], "lonely": ["혼자라고 느껴지는 순간에도 당신을 떠올리는 누군가가 있을 수 있어요.", "외로움은 누군가와 연결되고 싶은 마음이에요. 그 마음은 자연스러운 거예요.", "오늘은 나와 둘이 보내는 날로 정해봐요. 좋아하는 음악을 틀고 따뜻한 차를 한 잔 마셔요.", "문득 생각나는 사람에게 안부 한 줄만 보내봐요. 반가워할지도 몰라요.", "사람들 속에서도 외로울 수 있어요. 그건 이상한 게 아니에요.", "하늘을 한 번 올려다봐요. 같은 하늘 아래 누군가도 비슷한 마음일 거예요.", "지금 이 시간에도 당신처럼 조용히 하루를 마무리하는 사람이 많아요.", "외로운 밤에는 좋아하는 이야기 속으로 들어가 봐요. 책이든 영화든 괜찮아요.", "혼자 있는 시간은 나를 알아가는 시간이기도 해요. 천천히 나와 친해져봐요.", "마음을 나눌 수 있는 사람은 천천히 생기기도 해요. 서두르지 않아도 괜찮아요.", "오늘 하루 나에게 따뜻한 말을 한마디 건네봐요. 가장 가까운 친구는 나예요.", "작은 인사부터 시작해봐요. 이웃, 가게 사장님, 동료에게 건네는 한마디도 연결이에요.", "외로움이 깊어질 땐 혼자 두지 말고 누군가의 목소리를 들어보세요. 짧은 통화도 힘이 돼요.", "당신이 있어서 따뜻해진 순간이 분명히 있었어요. 그걸 기억해봐요.", "오늘 밤엔 창밖의 불빛을 한참 바라봐요. 모두 누군가의 하루가 담긴 불빛이에요.", "외로운 마음을 이야기하는 것은 약한 게 아니라 용기예요. 말해도 괜찮아요."], "motivate": ["오늘의 한 걸음이 내일의 길이 돼요. 작게 시작해도 충분해요.", "잘하고 싶은 마음이 있다는 것만으로 이미 반은 온 거예요.", "실수는 틀린 게 아니라 배우는 중이라는 표시예요. 다시 해봐요.", "지금 막막해도 괜찮아요. 시작하고 나면 길이 조금씩 보여요.", "다른 사람의 속도와 비교하지 말아요. 내 속도로 가는 길이 가장 단단해요.", "오늘 할 수 있는 일 하나만 끝내봐요. 작은 성취가 큰 힘이 돼요.", "넘어졌다면 일어나는 것만으로도 충분히 용기 있는 일이에요.", "지금까지 포기하지 않고 온 당신이 이미 대단해요.", "하고 싶은 일이 있다면 5분만 해봐요. 5분이 시작을 만들어줘요.", "결과보다 과정을 아껴주세요. 과정에서 자란 나는 사라지지 않아요.", "오늘의 나는 어제의 나보다 하나쯤은 더 알고 있어요. 그게 성장이에요.", "쉬었다가 다시 시작해도 늦지 않아요. 돌아오는 사람이 멀리 가요.", "당신의 가능성을 믿어요. 아직 보여주지 않았을 뿐이에요.", "오늘의 목표를 한 줄로 적어봐요. 선명해지면 행동이 쉬워져요.", "실패한 경험도 내 이야기의 한 장면이에요. 다음 장을 써내려가 봐요.", "힘을 내야 한다고 스스로 몰아붙이지 않아도 돼요. 숨 고르고 한 걸음만 가요."], "rest": ["아무것도 하지 않는 시간도 하루에 꼭 필요해요. 오늘은 마음껏 쉬어요.", "창문을 열고 바람을 한 번 맞아봐요. 공기가 바뀌면 기분도 조금 바뀌어요.", "좋아하는 음악 한 곡이 끝날 때까지만 아무것도 하지 말아봐요.", "오늘은 알림을 잠시 꺼두고 나만의 시간을 가져봐요.", "따뜻한 샤워와 포근한 이불, 그것만으로도 훌륭한 하루예요.", "생산적이지 않아도 괜찮아요. 쉬는 날은 쉬는 게 일이에요.", "천천히 걸으며 오늘의 하늘을 구경해봐요. 구름 모양을 찾아보는 것도 좋아요.", "눈을 감고 좋아하는 장소를 떠올려봐요. 마음이 그곳에서 잠깐 쉬어요.", "오늘은 해야 할 일 대신 하고 싶은 일을 한 가지만 해봐요.", "쉬면서 죄책감이 든다면, 쉬는 것도 나를 돌보는 일이라고 말해줘요.", "차 한 잔의 온기를 천천히 느껴봐요. 지금 이 순간이 오늘의 휴식이에요.", "머릿속 생각을 잠시 구름처럼 흘려보내요. 붙잡지 않아도 돼요.", "오늘은 더 하지 말고 여기까지만 해요. 내일의 내가 이어서 할 거예요.", "따뜻한 조명 아래 가만히 앉아 있어도 좋아요. 아무 이유 없이 쉬어도 돼요.", "몸이 보내는 신호에 귀 기울여봐요. 쉬어달라고 하고 있을지도 몰라요.", "오늘 밤은 일찍 불을 끄고 푹 쉬어요. 좋은 하루였어요."]};
+var MOODS = [['all','아무거나'],['tired','지쳤어요'],['anxious','불안해요'],['lonely','외로워요'],['motivate','힘내고 싶어요'],['rest','쉬고 싶어요']];
+var NAME = {tired:'지친 하루에',anxious:'불안한 마음에',lonely:'외로운 밤에',motivate:'힘이 필요할 때',rest:'쉬어가는 시간에'};
+var mood = 'all', cur = null, lastId = '';
+function allIds(){ var a = []; Object.keys(MSG).forEach(function(k){ MSG[k].forEach(function(t, i){ a.push(k + ':' + i); }); }); return a; }
+function text(id){ var p = id.split(':'); return MSG[p[0]][Number(p[1])]; }
+function drawChips(){ $('chips').innerHTML = MOODS.map(function(m){ return '<button type="button" class="chip' + (m[0] === mood ? ' on' : '') + '" data-m="' + m[0] + '">' + m[1] + '</button>'; }).join(''); }
+function stat(){ var d = load(), seen = (d.seen || []).length; $('logBox').textContent = '수집한 카드 ' + seen + ' / ' + allIds().length + ' · 오늘 뽑은 횟수 ' + ((d.day === ymd() ? d.cnt : 0) || 0) + '회'; }
+function ymd(){ var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+window.__menu = function(){ drawChips(); stat(); };
+$('chips').onclick = function(e){ var m = e.target.getAttribute('data-m'); if(m){ mood = m; drawChips(); } };
+function show(id, tag){
+  cur = id; var c = $('card'); c.classList.remove('flip'); void c.offsetWidth; c.classList.add('flip');
+  c.innerHTML = '<div class="mt">' + tag + '</div><div class="tx">' + text(id) + '</div>';
+  var d = load(); d.seen = d.seen || []; if(d.seen.indexOf(id) < 0) d.seen.push(id);
+  if(d.day !== ymd()){ d.day = ymd(); d.cnt = 0; } d.cnt++; save(d); stat();
+}
+$('drawBtn').onclick = function(){
+  var pool = mood === 'all' ? allIds() : MSG[mood].map(function(t, i){ return mood + ':' + i; });
+  var id, guard = 0; do { id = pool[rnd(pool.length)]; guard++; } while(id === lastId && guard < 20);
+  lastId = id; show(id, mood === 'all' ? NAME[id.split(':')[0]] : NAME[mood]);
+};
+$('todayBtn').onclick = function(){
+  var ids = allIds(), s = ymd(), h = 0; for(var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  var id = ids[h % ids.length]; show(id, '오늘의 카드 · ' + NAME[id.split(':')[0]]);
+};
+$('copyBtn2').onclick = function(){ if(cur && navigator.clipboard) navigator.clipboard.writeText(text(cur) + ' – 힐링 위로 메시지 뽑기 https://itblogtools.github.io/healing-message.html').then(function(){ $('copyBtn2').textContent = '복사됨!'; setTimeout(function(){ $('copyBtn2').textContent = '문구 복사'; }, 1500); }); };
+drawChips(); stat();
+window.__t = {MSG: MSG};
+
+})();
+</script>
+</body>
+</html>

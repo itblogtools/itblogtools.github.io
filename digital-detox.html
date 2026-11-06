@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>디지털 디톡스 타이머 – 스마트폰 멀리하기 도전 | IT 도구모음</title>
+<meta name="description" content="10분·30분·1시간·2시간 동안 스마트폰에서 벗어나 보는 디지털 디톡스 타이머. 화면 이탈 횟수와 연속 일수, 누적 시간으로 습관을 기록하세요.">
+<style>
+  :root{--bg:#0d1117;--panel:#151b23;--line:#2b3440;--text:#e6edf3;--sub:#7d8590;--accent:#39ff88;--accent-dim:#1e7a4c;--bad:#ff5c5c;--amber:#ffb454;--dark:#04140b;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .lbl{font-size:12px;color:var(--sub);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .chip.on{border-color:var(--accent);color:var(--accent);}
+  button{font-family:inherit;cursor:pointer;}
+  button.primary{background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;}
+  button.primary:active{transform:scale(.98);}
+  button.ghost{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;}
+  .hud{display:grid;gap:8px;}
+  .hud .c{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center;}
+  .hud .k{font-size:10px;color:var(--sub);} .hud .v{font-size:15px;font-weight:700;margin-top:2px;}
+  .hud .v.hot{color:var(--amber);}
+  .fb{min-height:18px;font-size:12px;text-align:center;color:var(--sub);}
+  .fb.bad{color:var(--bad);} .fb.good{color:var(--accent);}
+  .result{border-color:var(--accent);}
+  .result .ttl{font-size:13px;color:var(--sub);text-align:center;}
+  .result .big{font-size:34px;font-weight:700;color:var(--accent);text-align:center;margin:2px 0;}
+  .result .tier{font-size:16px;font-weight:700;text-align:center;color:var(--amber);}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+  .rcard .k{font-size:11px;color:var(--sub);} .rcard .v{font-size:16px;font-weight:700;margin-top:2px;}
+  .note{font-size:12px;line-height:1.7;color:var(--sub);}
+  .log{font-size:12px;color:var(--sub);line-height:1.8;}
+  .hidden{display:none !important;}
+  .minote{font-size:11px;color:var(--sub);line-height:1.6;}
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;}
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;} footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .ring{position:relative;width:200px;height:200px;margin:4px auto;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:conic-gradient(var(--accent) var(--p,0%), var(--line) 0);}
+  .ring::before{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--panel);}
+  .ring>*{position:relative;z-index:1;}
+  .ring .plant{font-size:40px;line-height:1;}
+  .ring .tm{font-size:34px;font-weight:700;margin-top:4px;}
+  .ring .sub{font-size:11px;color:var(--sub);margin-top:2px;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> digital-detox --run</div>
+  <h1>디지털 디톡스 타이머</h1>
+  <p class="desc">정해진 시간 동안 스마트폰에서 벗어나 보세요. 화면 이탈 횟수와 연속 일수를 기록하며 습관을 만들어요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>디톡스 시간</b>(10분·30분·1시간·2시간)을 고르고 시작하세요.</span></div>
+      <div class="step"><span class="num">2</span><span>타이머를 켜 둔 기기는 그대로 두고 <b>폰은 멀리</b>, 알림은 꺼 주세요.</span></div>
+      <div class="step"><span class="num">3</span><span>다른 탭이나 앱으로 이동하거나 화면이 꺼지면 <b>화면 이탈</b>로 기록돼요.</span></div>
+      <div class="step"><span class="num">4</span><span>완주하면 <b>이탈 횟수·순수 집중 시간·연속 일수</b>가 나와요. 중간에 포기해도 괜찮아요.</span></div>
+      <div class="tip">💡 PC나 태블릿에 켜 두고 스마트폰은 다른 방에 두는 방식이 가장 효과적이에요.</div>
+    </div>
+  </details>
+
+  <div class="panel" id="menuBox">
+    <div class="lbl">디톡스 시간</div>
+    <div class="chips" id="chips"></div>
+    <div class="note">이 타이머는 폰이 아니라 <b>PC·태블릿에서 켜 두고</b> 스마트폰은 멀리 두는 용도로 쓰면 좋아요. 이 화면을 떠나 다른 탭·앱으로 이동하거나 화면이 꺼지면 "화면 이탈"로 기록돼요.</div>
+    <button class="primary" id="startBtn">디톡스 시작</button>
+    <div class="lbl">내 기록</div>
+    <div class="log" id="logBox"></div>
+  </div>
+
+  <div class="panel hidden" id="playBox">
+    <div class="ring" id="ring"><div class="plant" id="plant">🌱</div><div class="tm" id="tm">00:00</div><div class="sub" id="sub">남은 시간</div></div>
+    <div class="hud" style="grid-template-columns:repeat(3,1fr);">
+      <div class="c"><div class="k">경과</div><div class="v" id="hEl">0분</div></div>
+      <div class="c"><div class="k">화면 이탈</div><div class="v hot" id="hAway">0회</div></div>
+      <div class="c"><div class="k">이탈 시간</div><div class="v" id="hAwayT">0초</div></div>
+    </div>
+    <div class="fb" id="fb">폰은 멀리, 시선은 편하게. 이 화면은 그대로 두세요.</div>
+    <button class="ghost" id="quitBtn" type="button">포기하기</button>
+  </div>
+
+  <div class="panel result hidden" id="resultBox"></div>
+
+  <div class="minote">※ 결과는 습관 형성을 돕는 참고용이에요.</div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 휴식과 습관 형성을 돕는 참고용 타이머예요.  스마트폰 사용을 강제로 막지 못하며 의학적 치료나 상담을 대신하지 않아요. 기록은 이 브라우저 안에만 저장되고 서버로 전송되지 않아요.
+  </div>
+
+  <div class="infosection">
+    <h2>폰을 멀리하고 시간을 채우는 디지털 디톡스 타이머</h2>
+    <p>디지털 디톡스 타이머는 10분·30분·1시간·2시간 중에서 시간을 정하고 스마트폰이나 SNS에서 벗어나 있는 시간을 채워 보는 타이머예요. 남은 시간에 따라 새싹이 나무로 자라는 모습이 보이고, 이 화면을 떠나 다른 탭이나 앱으로 이동하면 "화면 이탈"로 횟수와 시간이 기록돼요. 끝나면 이탈 횟수와 순수 집중 시간, 연속 일수, 누적 시간을 한눈에 볼 수 있어요.</p>
+    <h2>만든 이유: 의지만으로는 폰을 멀리하기 어려워서</h2>
+    <p>폰을 내려놓겠다고 마음먹어도 알림이 울리거나 습관적으로 화면을 켜게 되는 경우가 많아요. 그래서 "앞으로 30분은 이 타이머만 본다"는 작은 약속을 눈에 보이는 형태로 만들었어요. 화면을 떠난 횟수가 기록으로 남으니 얼마나 자주 흔들렸는지 알 수 있고, 연속 일수가 쌓이면서 습관을 이어가는 재미도 있어요. 설치나 가입 없이 브라우저에서 바로 쓸 수 있고 기록은 이 브라우저에만 저장돼요.</p>
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>공부나 업무를 하기 전에 폰을 다른 곳에 두고 30분 동안 집중하고 싶을 때</li>
+      <li>식사나 대화 시간에 폰을 보지 않는 약속을 가족이나 친구와 함께 시도해보고 싶을 때</li>
+      <li>잠들기 전 1시간 동안 화면 없이 쉬는 습관을 만들고 싶을 때</li>
+      <li>하루에 몇 분이나 폰 없이 보냈는지 누적 기록으로 확인하고 싶을 때</li>
+    </ul>
+    <h2>사용할 때 알아둘 점</h2>
+    <p>웹페이지는 스마트폰을 멀리 두도록 강제할 수 없고, 이 타이머도 같은 기기에서 다른 탭이나 앱으로 이동했는지만 알 수 있어요. 스마트폰에서 이 화면만 켜 두면 화면이 자동으로 꺼지는 것도 이탈로 기록될 수 있으니, PC나 태블릿에 켜 두고 폰은 멀리 두는 방식을 권해요. 운전 중이거나 안전이 필요한 상황에서는 사용하지 마세요. 이 도구는 휴식과 습관 형성을 돕는 참고용이며 의학적 치료나 상담을 대신하지 않아요. 기록은 이 브라우저에만 저장돼요.</p>
+    <h2>디톡스 습관을 이어가는 요령</h2>
+    <p>처음부터 길게 잡기보다 10분처럼 짧은 시간으로 시작해서 일주일 동안 매일 완주하는 데 집중해보세요. 알림은 미리 꺼 두고, 폰은 눈에 안 보이는 곳이나 다른 방에 두면 훨씬 쉬워져요. 같은 시간대에 반복하면 습관이 되기 쉬워서, 식사 직후나 잠들기 1시간 전처럼 정해 둔 시간에 하는 것을 추천해요. 이탈 횟수가 줄어드는 것을 목표로 삼고, 하루를 놓쳐도 다음 날 다시 이어가면 돼요.</p>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 이탈 횟수는 어떻게 세나요?</div><div class="a">브라우저가 이 화면이 가려졌는지(다른 탭이나 앱으로 이동, 화면 꺼짐)를 알려주는 기능을 써서, 가려질 때마다 1회로 세고 가려진 시간을 더해요.</div></div>
+    <div class="faqitem"><div class="q">Q. 중간에 포기하면 기록은 어떻게 되나요?</div><div class="a">완주한 기록만 누적 시간과 연속 일수에 들어가요. 중단한 기록은 결과 화면에서만 확인할 수 있어요.</div></div>
+    <div class="faqitem"><div class="q">Q. 기록은 어디에 저장되나요?</div><div class="a">이 브라우저에만 저장되고 서버로 전송되지 않아요. 사이트 데이터를 지우면 기록도 사라져요.</div></div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="index.html">전체 도구</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+var KEY = 'digital-detox-v1';
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function showPanel(id){ ['menuBox','playBox','resultBox'].forEach(function(x){ $(x).classList.toggle('hidden', x !== id); }); }
+function renderResult(o){
+  var h = '<div class="ttl">' + o.title + '</div><div class="big">' + o.big + '</div>' + (o.tier ? '<div class="tier">' + o.tier + '</div>' : '') +
+    '<div class="rgrid">' + o.stats.map(function(s){ return '<div class="rcard"><div class="k">' + s[0] + '</div><div class="v">' + s[1] + '</div></div>'; }).join('') + '</div>' +
+    (o.extra || '') + '<div class="note">' + o.note + '</div>' +
+    '<button class="primary" id="againBtn" type="button">다시 도전</button><button class="ghost" id="copyBtn" type="button">결과 문구 복사</button><button class="ghost" id="menuBtn" type="button">설정 바꾸기</button>' +
+    '<div class="minote">※ 재미로 즐기는 참고용 결과예요.</div>';
+  $('resultBox').innerHTML = h; showPanel('resultBox');
+  $('againBtn').onclick = o.again;
+  $('menuBtn').onclick = function(){ showPanel('menuBox'); if(window.__menu) window.__menu(); };
+  $('copyBtn').onclick = function(){ if(navigator.clipboard) navigator.clipboard.writeText(o.share + ' https://itblogtools.github.io/digital-detox.html').then(function(){ $('copyBtn').textContent = '복사됨!'; }); };
+}
+
+var MINS = [10, 30, 60, 120], mins = 30, g = null, tmr = null;
+function ymd(d){ return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function streak(days){ var set = {}; days.forEach(function(x){ set[x] = 1; }); var n = 0, d = new Date(); if(!set[ymd(d)]) d.setDate(d.getDate() - 1); while(set[ymd(d)]){ n++; d.setDate(d.getDate() - 1); } return n; }
+function drawMenu(){
+  $('chips').innerHTML = MINS.map(function(m){ return '<button type="button" class="chip' + (m === mins ? ' on' : '') + '" data-m="' + m + '">' + (m >= 60 ? (m / 60) + '시간' : m + '분') + '</button>'; }).join('');
+  var d = load(), days = d.days || [];
+  $('logBox').innerHTML = '누적 디톡스 ' + (d.total || 0) + '분 · 완주 ' + (d.done || 0) + '회<br>연속 ' + streak(days) + '일째 (오늘 완주 기준)<br>이탈 없이 완주한 최장 시간 ' + (d.clean ? d.clean + '분' : '-');
+}
+window.__menu = drawMenu;
+$('chips').onclick = function(e){ var m = e.target.getAttribute('data-m'); if(m){ mins = Number(m); drawMenu(); } };
+function begin(){
+  g = {mins:mins, t0:Date.now(), end:Date.now() + mins * 60000, away:0, awayMs:0, hiddenAt:0, done:false};
+  showPanel('playBox'); clearInterval(tmr); tmr = setInterval(tick, 500); tick();
+}
+function fmt(ms){ var s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60; return (h ? h + ':' : '') + ('0' + m).slice(-2) + ':' + ('0' + ss).slice(-2); }
+function tick(){
+  if(!g || g.done) return;
+  var now = Date.now(), el = now - g.t0, total = g.mins * 60000, pct = Math.min(100, el / total * 100);
+  if(g.hiddenAt) { /* 숨김 중에는 화면 갱신만 건너뜀 */ }
+  $('tm').textContent = fmt(g.end - now); $('ring').style.setProperty('--p', pct + '%');
+  $('plant').textContent = pct < 25 ? '🌱' : (pct < 55 ? '🌿' : (pct < 90 ? '🪴' : '🌳'));
+  $('hEl').textContent = Math.floor(el / 60000) + '분'; $('hAway').textContent = g.away + '회'; $('hAwayT').textContent = Math.round(g.awayMs / 1000) + '초';
+  if(now >= g.end) finish(true);
+}
+document.addEventListener('visibilitychange', function(){
+  if(!g || g.done) return;
+  if(document.hidden){ g.hiddenAt = Date.now(); g.away++; }
+  else if(g.hiddenAt){ g.awayMs += Date.now() - g.hiddenAt; g.hiddenAt = 0; $('fb').textContent = '돌아오셨네요. 이탈은 ' + g.away + '회로 기록됐어요.'; tick(); }
+});
+$('quitBtn').onclick = function(){ if(g && !g.done) finish(false); };
+function finish(ok){
+  clearInterval(tmr); if(g.hiddenAt){ g.awayMs += Date.now() - g.hiddenAt; g.hiddenAt = 0; } g.done = true;
+  var el = Math.min(Date.now(), g.end) - g.t0, elMin = Math.floor(el / 60000), pure = Math.max(0, Math.round((el - g.awayMs) / 60000));
+  var d = load(); d.days = d.days || [];
+  if(ok){ d.total = (d.total || 0) + g.mins; d.done = (d.done || 0) + 1; if(d.days.indexOf(ymd(new Date())) < 0) d.days.push(ymd(new Date())); d.days = d.days.slice(-120); if(g.away === 0 && g.mins > (d.clean || 0)) d.clean = g.mins; save(d); }
+  var t = !ok ? '🌱 다음에 다시 도전해요' : (g.away === 0 ? '🌳 방해 없는 완주' : (g.away <= 2 ? '🌿 거의 방해 없이 완주' : '🪴 흔들렸지만 끝까지 완주'));
+  renderResult({title: g.mins + '분 디톡스 ' + (ok ? '완주!' : '중단'), big: ok ? g.mins + '분' : elMin + '분', tier: t,
+    stats: [['화면 이탈', g.away + '회'], ['이탈한 시간', Math.round(g.awayMs / 1000) + '초'], ['순수 집중 시간', pure + '분'], ['연속 일수', streak(d.days) + '일']],
+    note: ok ? '짧은 시간부터 시작해 하루에 한 번씩 이어가는 것이 좋아요. 알림을 끄거나 폰을 다른 방에 두면 이탈이 크게 줄어요. 휴식이 필요할 때는 스트레칭이나 물 마시기를 함께 해보세요.' : '중간에 멈춰도 괜찮아요. 이번 기록은 누적에 포함되지 않지만 다음에는 더 짧은 시간으로 시작해보세요.',
+    again: begin, share: '디지털 디톡스 ' + g.mins + '분 ' + (ok ? '완주' : '도전') + '! 화면 이탈 ' + g.away + '회 (' + t.replace(/^\S+\s/, '') + ')'});
+}
+$('startBtn').onclick = begin;
+drawMenu();
+window.__t = {get g(){ return g; }};
+
+})();
+</script>
+</body>
+</html>

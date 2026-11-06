@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
+     crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>수면 주기 계산기 – 알람 맞춤 취침·기상 시간 찾기 | IT 도구모음</title>
+<meta name="description" content="일어날 시간에서 거꾸로 몇 시에 자면 좋은지, 지금 자면 몇 시에 일어나는 게 좋은지 90분 수면 주기 기준으로 계산하는 참고용 수면 주기 계산기.">
+<style>
+  :root{--bg:#0d1117;--panel:#151b23;--line:#2b3440;--text:#e6edf3;--sub:#7d8590;--accent:#39ff88;--accent-dim:#1e7a4c;--bad:#ff5c5c;--amber:#ffb454;--dark:#04140b;}
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  body{display:flex;flex-direction:column;align-items:center;}
+  .wrap{width:100%;max-width:520px;padding:16px;display:flex;flex-direction:column;gap:14px;}
+  .sitenav{position:sticky;top:0;z-index:50;width:100%;background:rgba(13,17,23,0.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);}
+  .sitenav-inner{max-width:900px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:16px;overflow-x:auto;}
+  .sitenav .brand{color:var(--accent);font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;}
+  .sitenav .navlinks{display:flex;gap:14px;white-space:nowrap;}
+  .sitenav .navlinks a{color:var(--sub);font-size:12px;text-decoration:none;padding:4px 2px;}
+  .sitenav .navlinks a:hover{color:var(--accent);}
+  .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
+  .titlebar .prompt{color:var(--accent);}
+  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
+  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary::-webkit-details-marker{display:none;}
+  .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
+  .guide[open] summary .arrow{transform:rotate(90deg);}
+  .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
+  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .guide .step b{color:var(--text);}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+  .lbl{font-size:12px;color:var(--sub);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{background:var(--bg);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;cursor:pointer;}
+  .chip.on{border-color:var(--accent);color:var(--accent);}
+  button{font-family:inherit;cursor:pointer;}
+  button.primary{background:var(--accent);color:var(--dark);border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:700;}
+  button.primary:active{transform:scale(.98);}
+  button.ghost{background:var(--panel);border:1px solid var(--line);color:var(--sub);border-radius:8px;padding:10px 14px;font-size:12px;}
+  .hud{display:grid;gap:8px;}
+  .hud .c{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 6px;text-align:center;}
+  .hud .k{font-size:10px;color:var(--sub);} .hud .v{font-size:15px;font-weight:700;margin-top:2px;}
+  .hud .v.hot{color:var(--amber);}
+  .fb{min-height:18px;font-size:12px;text-align:center;color:var(--sub);}
+  .fb.bad{color:var(--bad);} .fb.good{color:var(--accent);}
+  .result{border-color:var(--accent);}
+  .result .ttl{font-size:13px;color:var(--sub);text-align:center;}
+  .result .big{font-size:34px;font-weight:700;color:var(--accent);text-align:center;margin:2px 0;}
+  .result .tier{font-size:16px;font-weight:700;text-align:center;color:var(--amber);}
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .rcard{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;}
+  .rcard .k{font-size:11px;color:var(--sub);} .rcard .v{font-size:16px;font-weight:700;margin-top:2px;}
+  .note{font-size:12px;line-height:1.7;color:var(--sub);}
+  .log{font-size:12px;color:var(--sub);line-height:1.8;}
+  .hidden{display:none !important;}
+  .minote{font-size:11px;color:var(--sub);line-height:1.6;}
+  .disclaimer{font-size:11px;color:var(--sub);line-height:1.6;border-top:1px dashed var(--line);padding-top:12px;}
+  .infosection{margin-top:8px;}
+  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2:first-child{margin-top:0;}
+  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection ul{padding-left:20px;margin:0 0 10px;}
+  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
+  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  footer{color:var(--sub);font-size:11px;text-align:center;padding:20px 0 4px;border-top:1px dashed var(--line);margin-top:10px;}
+  footer a{color:var(--sub);text-decoration:underline;} footer a:hover{color:var(--accent);}
+  footer .links{margin-top:8px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .inrow2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .inrow2 label{font-size:12px;color:var(--sub);display:block;margin-bottom:4px;}
+  .inrow2 input,.inrow2 select{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:12px;font-size:15px;font-family:inherit;}
+  .inrow2 input:focus,.inrow2 select:focus{outline:none;border-color:var(--accent);}
+  .slot{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:8px;}
+  .slot .t{font-size:20px;font-weight:700;color:var(--text);}
+  .slot .m{font-size:11px;color:var(--sub);text-align:right;line-height:1.6;}
+  .slot.rec{border-color:var(--accent);} .slot.rec .t{color:var(--accent);}
+  .slot .tg{display:inline-block;font-size:10px;color:var(--dark);background:var(--accent);border-radius:10px;padding:1px 7px;margin-left:6px;}
+  .nowbtn{align-self:flex-start;}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <div class="sitenav-inner">
+    <a href="index.html" class="brand">$ IT 도구모음</a>
+    <div class="navlinks">
+      <a href="index.html#cat-fun">심심할 때</a>
+      <a href="index.html#cat-pc">PC&amp;게임</a>
+      <a href="index.html#cat-security">보안</a>
+      <a href="index.html#cat-dev">개발도구</a>
+      <a href="index.html#cat-life">생활도구</a>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <div class="titlebar"><span class="prompt">$</span> sleep-cycle --run</div>
+  <h1>수면 주기 계산기</h1>
+  <p class="desc">일어날 시간이나 잘 시간을 넣으면 수면 주기(약 90분) 기준의 추천 시각을 알려드려요. 참고용 계산기예요.</p>
+
+  <details class="guide">
+    <summary>📖 사용법 보기 <span class="arrow">▸</span></summary>
+    <div class="body">
+      <div class="step"><span class="num">1</span><span><b>기준을 고르세요.</b> 일어날 시간이 정해져 있으면 취침 시각을, 잘 시간이 정해져 있으면 기상 시각을 알려드려요.</span></div>
+      <div class="step"><span class="num">2</span><span>시간을 선택하고 <b>잠드는 데 걸리는 시간</b>과 <b>주기 길이</b>를 내 패턴에 맞게 바꿔보세요.</span></div>
+      <div class="step"><span class="num">3</span><span><b>6·5·4·3주기</b> 후보가 한꺼번에 나와요. 5~6주기는 '추천 범위'로 표시돼요.</span></div>
+      <div class="step"><span class="num">4</span><span>지금 바로 잔다면 <b>현재 시각 넣기</b> 버튼으로 바로 계산할 수 있어요.</span></div>
+      <div class="tip">💡 주기 길이는 사람마다 달라요. 80·90·100분을 바꿔보며 아침에 가장 개운했던 값을 찾아보세요.</div>
+    </div>
+  </details>
+
+  <div class="panel" id="menuBox">
+    <div class="lbl">무엇을 알고 싶으세요?</div>
+    <div class="chips" id="chips">
+      <button type="button" class="chip on" data-m="wake">일어날 시간이 정해져 있어요 → 언제 잘까?</button>
+      <button type="button" class="chip" data-m="bed">잘 시간이 정해져 있어요 → 언제 일어날까?</button>
+    </div>
+    <div class="inrow2">
+      <div><label id="timeLbl">일어날 시간</label><input type="time" id="timeIn" value="07:00"></div>
+      <div><label>잠드는 데 걸리는 시간</label><select id="fall"><option value="5">약 5분</option><option value="10">약 10분</option><option value="15" selected>약 15분</option><option value="20">약 20분</option><option value="30">약 30분</option></select></div>
+      <div><label>한 주기 길이</label><select id="cyc"><option value="80">80분</option><option value="90" selected>90분 (일반적인 평균)</option><option value="100">100분</option></select></div>
+    </div>
+    <button type="button" class="ghost nowbtn hidden" id="nowBtn">지금 바로 잔다면? (현재 시각 넣기)</button>
+    <div class="lbl" id="resLbl">추천 취침 시각</div>
+    <div id="res"></div>
+    <div class="note">수면의 한 주기를 약 90분으로 보고 계산한 참고용 시각이에요. 사람마다 주기 길이와 필요한 수면 시간이 달라서 위의 주기 길이를 바꿔가며 나에게 맞는 값을 찾아보세요.</div>
+    <div class="lbl">낮잠 참고</div>
+    <div class="note">• 가볍게 쉬고 싶다면 20분 안팎 · 한 주기를 채우고 싶다면 90분 정도로 알람을 맞추는 방법이 흔히 소개돼요. 늦은 오후의 긴 낮잠은 밤잠에 영향을 줄 수 있어요.</div>
+  </div>
+
+  <div class="panel hidden" id="playBox">
+    <div></div>
+  </div>
+
+  <div class="panel result hidden" id="resultBox"></div>
+
+  <div class="minote">※ 계산 결과는 참고용이에요.</div>
+
+  <div class="disclaimer">
+    ※ 이 도구는 참고용 계산기예요. 수면 필요량과 주기는 사람마다 다르고 의학적 조언이 아니에요. 수면 문제가 계속되면 의료기관에 상담하세요. 개인차가 크고 의학적 조언이 아니에요. 입력한 시간은 브라우저 안에서만 계산되고 저장되거나 전송되지 않아요.
+  </div>
+
+  <div class="infosection">
+    <h2>일어날 시간에서 거꾸로 계산하는 수면 주기 계산기</h2>
+    <p>수면 주기 계산기는 일어나야 하는 시간이 정해져 있으면 몇 시에 누워야 하는지, 지금 자려고 한다면 몇 시에 일어나는 게 좋은지를 한 주기 약 90분 기준으로 계산해 주는 도구예요. 잠드는 데 걸리는 시간(기본 15분)과 주기 길이(80·90·100분)를 바꿀 수 있어서 내 패턴에 맞춰 조정할 수 있고, 6·5·4·3주기를 한꺼번에 보여줘요. 가입이나 입력 없이 시간만 고르면 바로 결과가 나와요.</p>
+    <h2>만든 이유: 같은 시간을 자도 일어나는 느낌이 다를 때가 있어서</h2>
+    <p>알람을 맞출 때 7시간이든 8시간이든 시간만 따져 맞추다 보면, 어떤 날은 개운하고 어떤 날은 유독 피곤한 경우가 있어요. 수면이 깊은 단계와 얕은 단계를 반복하는 주기로 이루어진다는 점을 참고해 주기가 끝나는 무렵에 일어나도록 시간을 잡아 보자는 아이디어가 널리 알려져 있어요. 그 계산을 매번 머릿속으로 하기 번거로워서 시간만 넣으면 후보를 바로 보여주도록 만들었어요. 효과는 개인마다 달라서 참고용으로 쓰시는 걸 권해요.</p>
+    <h2>이런 상황에 유용해요</h2>
+    <ul>
+      <li>내일 아침 7시에 일어나야 하는데 몇 시에 누우면 좋을지 후보를 빠르게 보고 싶을 때</li>
+      <li>밤늦게 누웠을 때 지금 자면 몇 시에 알람을 맞추는 게 나을지 궁금할 때</li>
+      <li>시험, 교대 근무, 여행처럼 일어나는 시간이 불규칙해서 매번 계산이 필요할 때</li>
+      <li>낮잠을 자기 전에 20분과 90분 중 어느 쪽으로 알람을 맞출지 참고하고 싶을 때</li>
+    </ul>
+    <h2>사용할 때 알아둘 점</h2>
+    <p>이 계산기는 한 주기를 일정한 길이로 가정한 참고용 도구예요. 실제 수면 주기와 깊이는 사람과 날마다 달라서 계산된 시각에 일어나도 개운하지 않을 수 있어요. 필요한 수면 시간도 개인차가 있고, 성인은 일반적으로 7~9시간이 권장된다고 알려져 있지만 나이와 건강 상태에 따라 달라요. 잠들기 어렵거나 낮에 심하게 졸린 상태가 계속된다면 이 도구가 아니라 의료기관에 상담하세요. 입력한 시간은 브라우저 안에서만 계산되고 저장되지 않아요.</p>
+    <h2>자주 묻는 질문</h2>
+    <div class="faqitem"><div class="q">Q. 왜 잠드는 시간을 따로 더하나요?</div><div class="a">누운 뒤 바로 잠들지 않는 경우가 많아서 평균적으로 걸리는 시간(기본 15분)을 더해 계산해요. 보통 더 빨리 또는 늦게 잠든다면 선택값을 바꿔보세요.</div></div>
+    <div class="faqitem"><div class="q">Q. 추천 범위는 어떤 기준인가요?</div><div class="a">5주기와 6주기(약 7시간 30분~9시간)를 성인에게 일반적으로 많이 언급되는 수면 시간에 가깝다는 이유로 표시한 참고용 표시예요. 반드시 이 시간만 자야 한다는 뜻은 아니에요.</div></div>
+    <div class="faqitem"><div class="q">Q. 입력한 시간은 저장되나요?</div><div class="a">아니요. 브라우저 안에서만 계산되고 서버로 전송되거나 저장되지 않아요.</div></div>
+  </div>
+
+  <footer>
+    <div class="links">
+      <a href="index.html">전체 도구</a>
+      <a href="about.html">사이트 소개</a>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+var $ = function(id){ return document.getElementById(id); };
+var KEY = 'sleep-cycle-v1';
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ return {}; } }
+function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = rnd(i + 1), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function showPanel(id){ ['menuBox','playBox','resultBox'].forEach(function(x){ $(x).classList.toggle('hidden', x !== id); }); }
+function renderResult(o){
+  var h = '<div class="ttl">' + o.title + '</div><div class="big">' + o.big + '</div>' + (o.tier ? '<div class="tier">' + o.tier + '</div>' : '') +
+    '<div class="rgrid">' + o.stats.map(function(s){ return '<div class="rcard"><div class="k">' + s[0] + '</div><div class="v">' + s[1] + '</div></div>'; }).join('') + '</div>' +
+    (o.extra || '') + '<div class="note">' + o.note + '</div>' +
+    '<button class="primary" id="againBtn" type="button">다시 도전</button><button class="ghost" id="copyBtn" type="button">결과 문구 복사</button><button class="ghost" id="menuBtn" type="button">설정 바꾸기</button>' +
+    '<div class="minote">※ 재미로 즐기는 참고용 결과예요.</div>';
+  $('resultBox').innerHTML = h; showPanel('resultBox');
+  $('againBtn').onclick = o.again;
+  $('menuBtn').onclick = function(){ showPanel('menuBox'); if(window.__menu) window.__menu(); };
+  $('copyBtn').onclick = function(){ if(navigator.clipboard) navigator.clipboard.writeText(o.share + ' https://itblogtools.github.io/sleep-cycle.html').then(function(){ $('copyBtn').textContent = '복사됨!'; }); };
+}
+
+var mode = 'wake';
+function fmt(m){ m = ((m % 1440) + 1440) % 1440; var h = Math.floor(m / 60), mm = m % 60; return (h < 12 ? '오전 ' : '오후 ') + (h % 12 || 12) + ':' + ('0' + mm).slice(-2); }
+function parse(v){ var p = v.split(':'); return Number(p[0]) * 60 + Number(p[1]); }
+function dur(min){ var h = Math.floor(min / 60), m = min % 60; return h + '시간' + (m ? ' ' + m + '분' : ''); }
+function calc(){
+  var v = $('timeIn').value; if(!v){ $('res').innerHTML = '<div class="note">시간을 선택해 주세요.</div>'; return; }
+  var fall = Number($('fall').value), cyc = Number($('cyc').value), base = parse(v), h = '';
+  [6, 5, 4, 3].forEach(function(n){
+    var total = n * cyc, t = mode === 'wake' ? base - total - fall : base + fall + total, rec = (n === 5 || n === 6);
+    h += '<div class="slot' + (rec ? ' rec' : '') + '"><span class="t">' + fmt(t) + (rec ? '<span class="tg">추천 범위</span>' : '') + '</span><span class="m">' + n + '주기<br>수면 ' + dur(total) + '</span></div>';
+  });
+  $('res').innerHTML = h;
+}
+function setMode(m){
+  mode = m;
+  [].forEach.call($('chips').children, function(c){ c.classList.toggle('on', c.getAttribute('data-m') === m); });
+  $('timeLbl').textContent = m === 'wake' ? '일어날 시간' : '잘 시간(눕는 시각)';
+  $('resLbl').textContent = m === 'wake' ? '추천 취침 시각 (이 시각에 눕기)' : '추천 기상 시각';
+  $('nowBtn').classList.toggle('hidden', m !== 'bed');
+  calc();
+}
+$('chips').onclick = function(e){ var m = e.target.getAttribute('data-m'); if(m) setMode(m); };
+['timeIn','fall','cyc'].forEach(function(id){ $(id).addEventListener('input', calc); $(id).addEventListener('change', calc); });
+$('nowBtn').onclick = function(){ var d = new Date(); $('timeIn').value = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); calc(); };
+setMode('wake');
+
+})();
+</script>
+</body>
+</html>
