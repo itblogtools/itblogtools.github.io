@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8930192898976815"
-     crossorigin="anonymous"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="description" content="공백 포함·제외 글자 수, 단어 수, 문단 수를 실시간으로 세고 글자 수 제한까지 남은 분량을 표시합니다. 자소서·에세이 작성용 글자 수 세기.">
@@ -14,7 +12,7 @@
     --accent:#39ff88; --accent-dim:#1e7a4c; --bad:#ff5c5c; --amber:#ffb454; --dark:#04140b;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono','Courier New',monospace;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
   body{display:flex;flex-direction:column;align-items:center;}
   .wrap{width:100%;max-width:560px;padding:16px;display:flex;flex-direction:column;gap:14px;}
 
@@ -26,30 +24,30 @@
   .sitenav .navlinks a:hover{color:var(--accent);}
 
   .infosection{margin-top:8px;}
-  .infosection h2{font-size:15px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
+  .infosection h2{font-size:17px;color:var(--accent);margin:22px 0 8px;padding-bottom:6px;border-bottom:1px dashed var(--line);}
   .infosection h2:first-child{margin-top:0;}
-  .infosection p{font-size:13px;line-height:1.85;color:var(--text);margin:0 0 10px;}
+  .infosection p{font-size:15px;line-height:1.85;color:var(--text);margin:0 0 10px;}
   .infosection ul{padding-left:20px;margin:0 0 10px;}
-  .infosection li{font-size:13px;line-height:1.85;color:var(--text);margin-bottom:6px;}
+  .infosection li{font-size:15px;line-height:1.85;color:var(--text);margin-bottom:6px;}
   .faqitem{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin-bottom:8px;}
-  .faqitem .q{font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
-  .faqitem .a{font-size:12px;color:var(--sub);line-height:1.75;}
+  .faqitem .q{font-size:15px;font-weight:700;color:var(--amber);margin-bottom:6px;}
+  .faqitem .a{font-size:14px;color:var(--sub);line-height:1.75;}
 
   .titlebar{display:flex;align-items:baseline;gap:8px;color:var(--sub);font-size:12px;}
   .titlebar .prompt{color:var(--accent);}
-  h1{font-size:18px;font-weight:700;margin:2px 0 4px;color:var(--text);}
-  .desc{color:var(--sub);font-size:12px;line-height:1.6;margin:0 0 6px;}
+  h1{font-size:22px;font-weight:700;margin:2px 0 4px;color:var(--text);}
+  .desc{color:var(--sub);font-size:14px;line-height:1.6;margin:0 0 6px;}
 
   .guide{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px;}
-  .guide summary{cursor:pointer;font-size:14px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
+  .guide summary{cursor:pointer;font-size:15px;font-weight:700;color:var(--accent);list-style:none;display:flex;align-items:center;justify-content:space-between;}
   .guide summary::-webkit-details-marker{display:none;}
   .guide summary .arrow{transition:transform .2s ease;color:var(--sub);}
   .guide[open] summary .arrow{transform:rotate(90deg);}
   .guide .body{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
-  .guide .step{display:flex;gap:10px;font-size:13px;color:var(--sub);line-height:1.6;}
+  .guide .step{display:flex;gap:10px;font-size:14px;color:var(--sub);line-height:1.6;}
   .guide .step .num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent-dim);color:var(--accent);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;}
   .guide .step b{color:var(--text);}
-  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:12px;color:var(--sub);line-height:1.6;}
+  .guide .tip{margin-top:6px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;color:var(--sub);line-height:1.6;}
 
   textarea{
     width:100%;min-height:220px;background:var(--panel);color:var(--text);
@@ -91,7 +89,8 @@
     align-self:flex-start;
   }
   .clearbtn:active{transform:scale(0.97);}
-</style>
+
+  .titlebar,.brand,code,pre{font-family:'JetBrains Mono','Courier New',monospace;}</style>
 <style>.tblwrap{overflow-x:auto;margin:0 0 12px;} .infosection table{width:100%;border-collapse:collapse;font-size:12px;min-width:420px;} .infosection th,.infosection td{border:1px solid var(--line);padding:8px 10px;text-align:left;color:var(--text);} .infosection th{background:var(--panel);color:var(--sub);} .infosection code{background:var(--panel);padding:1px 6px;border-radius:4px;color:var(--accent);font-size:12px;}</style>
 </head>
 <body>
@@ -278,7 +277,7 @@
 })();
 </script>
 
-<footer style="width:100%;max-width:600px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:12px;line-height:1.9;font-family:'JetBrains Mono','Courier New',monospace;">
+<footer style="width:100%;max-width:600px;margin:30px auto 0;padding:18px 16px 40px;border-top:1px dashed #2b3440;text-align:center;color:#7d8590;font-size:13px;line-height:1.9;font-family:'Pretendard','Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
   <div>IT 도구모음 · 모든 도구는 무료이며 입력값은 브라우저 안에서만 처리됩니다</div>
   <div style="margin-top:6px;">
     <a href="index.html" style="color:#7d8590;margin:0 8px;">전체 도구</a>
